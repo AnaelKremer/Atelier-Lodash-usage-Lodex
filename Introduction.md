@@ -10,7 +10,7 @@ A l’origine, Underscore avait été conçu pour faciliter le développement en
 
 Lodash est créé comme sur-ensemble (superset) d’Underscore dans le sens où il apporte plus de fonctionnalités que ce dernier. Plus lourd qu’Underscore, Lodash est aussi plus rapide, mieux adapté à l’enchaînement de fonctions et surtout, il permet de gérer des objets imbriqués (nested).
 
-Les deux bibliothèques tirent leur nom du caractère _ , qui est la variable globale qui contient toutes les fonctions utilitaires.
+Les deux bibliothèques tirent leur nom du caractère ```_``` , qui est la variable globale qui contient toutes les fonctions utilitaires.
 
 ## Une fonction Lodash classique
 
