@@ -17,9 +17,26 @@ Les deux bibliothèques tirent leur nom du caractère _ , qui est la variable gl
 Une fonction (ou méthode) Lodash doit toujours déclarer des arguments dans un ordre spécifique.
 
 ```
-_.replace("abc","abc","hello wordl")
+_.replace("abc","abc","hello world")
 ```
 * Le 1er argument déclaré ici est la chaîne de caractères à modifier, en l'occurrence "abc".
 * Le 2ème argument est le motif à remplacer dans la chaîne de caractères, c'est aussi "abc".
 * Le 3ème argument, "hello world", correspond à la valeur de remplacement du motif trouvé dans la chaîne de caractères.
+
+Ainsi cette fonction replace, remplace la chaîne de caractère "abc" par "hello world".
+
+## Un enchaînement de fonctions Lodash
+
+Afin d'effectuer plusieurs opérations sur des données, il convient de créer une chaîne de méthodes.
+
+```
+_.chain("abc")
+ .replace("abc","hello world")
+ .capitalize()
+ .split(" ")
+ .push("!")
+ .join(" ")
+ .value()
+```
+
 
