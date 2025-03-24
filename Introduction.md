@@ -39,4 +39,10 @@ _.chain("abc")
  .value()
 ```
 
+* Pour ce faire, il faut débuter par la méthode _.chain() et y déclarer les données à modifier (ici la chaîne "abc").
+* On peut ensuite ajouter les différentes méthodes souhaitées.
+* Puis on parachève le tout avec ```_.value()```. Cette fonction est **obligatoire** lorsque l'on utilise ```_.chain()```, elle sert à exécuter la chaîne Lodash et récupérer le résultat.
+
+## Ecrire du Lodash dans Lodex
+
 
