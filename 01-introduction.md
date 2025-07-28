@@ -55,3 +55,36 @@ value = get("value.colonneA").replace("abc","hello world").capitalize().split(" 
 ```
 Autre différence notable, les données à traiter sont déclarées avec **path**, **value** et **get** ici.
 Ce qui explique pourquoi il n'y a que 2 arguments déclarés dans ```.replace()``` et non plus 3 comme nous l'avons vu précédemment.
+
+## Différence entre enrichissements et transformers
+
+Dans **Lodex**, les *transformers* portent souvent le même nom que les méthodes Lodash qu’ils exécutent.
+
+La différence principale réside dans le fait qu'un transformer **modifie les données dans une ressource** là où un enrichissement **modifie directement les données du dataset et les stocke dans celui-ci**. 
+
+L'autre différence est que bon nombre de transformers agissent de façon "magique". 
+
+Nous le verrons en détail plus tard, mais les méthodes Lodash fonctionnent avec un certain type de données. Certaines méthodes transforment des chaînes de caractères (string), d'autres agissent sur des tableaux (array) et d'autres enfin sur des objets. Ainsi, sans que nous le voyons, un transformer va d'abord activer des tests pour savoir quel type de données on lui demande de traiter. Un script spécifique sera alors lancé en fonction des réponses renvoyées par les tests.
+
+Exemple : remplacer une valeur dans un tableau avec le transformer **replace**
+
+Dans le tableau de mots-clés suivant on souhaite remplacer "LOD" par "Linked Open Data".
+
+```json
+["data mining", "LOD", "web sémantique"]
+```
+
+Le transforme fonctionne et renvoie : 
+
+```json
+["data mining", "Linked Open Data", "web sémantique"]
+```
+
+Mais c'est un des effets "magiques" que nous avons évoqué, car **replace** est une méthode qui s'applique à des strings, or nous avons ici un tableau.
+Si en mode enrichissement nous saisissons ```.replace("LOD","Linked Open Data")``` la valeur est également transformée, mais notre tableau est également "cassé". Nous avons désormais un seul string en lieu et place de notre tableau de valeurs initial.
+
+```json
+"data mining,Linked Open Data,web sémantique"
+```
+
+Les fonctions Lodash sont souvent conçues pour des types précis, ainsi avant toute transformation il faut s'assurer de connaître la structure exacte des données.
