@@ -74,7 +74,7 @@ Dans le tableau de mots-clés suivant on souhaite remplacer "LOD" par "Linked Op
 ["data mining", "LOD", "web sémantique"]
 ```
 
-Le transforme fonctionne et renvoie : 
+Le transformer fonctionne et renvoie : 
 
 ```json
 ["data mining", "Linked Open Data", "web sémantique"]
