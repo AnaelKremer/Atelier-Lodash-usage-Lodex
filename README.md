@@ -12,7 +12,7 @@ Cela s'apparente désormais davantage à une collection d'heuristiques qu'à un 
 
 ## ✍️ Origine du parcours
 
-À l’origine, je n’avais aucune connaissance en programmation. J’ai découvert Lodash **sans savoir coder en JavaScript** (ni en quoi que ce soit d'autre d'ailleurs). En réalisant tout ce que Lodash permettait de faire dans Lodex, j'ai décidé d'étudier la chose "sérieusement".
+À l’origine, je n’avais aucune connaissance en programmation. J’ai découvert Lodash sans savoir coder en JavaScript (ni en quoi que ce soit d'autre d'ailleurs). En réalisant tout ce que Lodash permettait de faire dans Lodex, j'ai décidé d'étudier la chose "sérieusement".
 
 > 💬 Richard Feynman :
 > *« We learn better by teaching. »*
