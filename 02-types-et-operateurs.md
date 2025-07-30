@@ -1,6 +1,6 @@
-# 🧠 Comprendre les types de données et les opérateurs
+# Comprendre les types de données et les opérateurs
 
-## 1. Les différents types de données
+## Les différents types de données
 
 > “Bad programmers worry about the code. Good programmers worry about data structures and their relationships.”  
 > — *Linus Torvalds*, créateur de Linux et Git
@@ -10,7 +10,7 @@ Comme nous l’avons vu, les fonctions Lodash s’appliquent à différents **ty
 
 ---
 
-### 1.1. Types de données primitifs
+### Types de données primitifs
 
 - **`Number`**  
   Représente des nombres, entiers (integer) ou à virgule flottante (floating).  
@@ -36,7 +36,7 @@ JavaScript renvoi aussi "undefined" si l'on essaye d’accéder a une propriét�
 
 ---
 
-### 1.2. Types de données objets
+### Types de données objets
 
 Les **types objets** sont des structures de données plus complexes.  
 Ils permettent de **regrouper des valeurs** et **des fonctionnalités liées** dans une seule entité.
@@ -75,7 +75,7 @@ L'objet ci-dessous a pour valeurs des chaînes de caractères, des nombres, un b
 
 ---
 
-🧠 Ces types peuvent **s’imbriquer** :
+Ces types peuvent **s’imbriquer** :
 - Des **tableaux dans des objets**
 - Des **objets dans des tableaux**
 - Des **objets dans des objets dans des objets**…
@@ -83,7 +83,7 @@ L'objet ci-dessous a pour valeurs des chaînes de caractères, des nombres, un b
 
 ---
 
-## 2. Les opérateurs JavaScript
+## Les opérateurs JavaScript
 
 Il existe une multitude d'opérateurs en Javascript très bien détaillés [ici](https://developer.mozilla.org/fr/docs/Web/JavaScript/Guide/Expressions_and_operators).
 Ceux-ci permettent d'exprimer des conditions, de comparer ou évaluer des données, nous ne verrons ici que les opérateurs indispensables dans Lodex.
@@ -107,23 +107,26 @@ Ceux-ci permettent d'exprimer des conditions, de comparer ou évaluer des donné
 
 ---
 
-### 2.1. 🔁 Affectation (`=`)
+### Affectation (`=`)
 Permet d'assigner une valeur à une variable.  
 Ex. : `value = 3` affecte la valeur `3` à la variable `value`.
 💡 Dans un loader par exemple, on **affecte** un nom à une nouvelle colonne par path = maNouvelleColonne
 
-### 2.2. 🔍 Égalité (`==`) vs Égalité stricte (`===`)
+### Égalité (`==`) vs Égalité stricte (`===`)
 - `==` compare **la valeur**, en faisant des conversions automatiques si nécessaire (`3 == "3"` renvoie `true`).
-> [!WARNING] 
-> Evitez d'utiliser cet opérateur qui compare une égalité abstraite. L'opérateur effectue implicitement une coercition de type et peut retourner des bizarreries comme false == '0' // true, où sont considérés comme égaux un booléen  > et une châine de caractères...
 - `===` compare **la valeur et le type** : (`3 === "3"` renvoie `false` car l’un est un nombre, l’autre une chaîne).
 
-### 2.3. ❗ Négation (`!`) et inégalités
+> [!WARNING] 
+> Evitez d'utiliser `==` qui compare une égalité abstraite. L'opérateur effectue implicitement une coercition de type et peut retourner des bizarreries comme false == '0' // true, où sont considérés comme égaux un booléen  > et une châine de caractères...
+
+
+### Négation (`!`) et inégalités
 - `!` inverse une valeur booléenne : `!true` → `false`
 - `!=` vérifie que deux valeurs sont différentes (tolère la conversion)
-> [!WARNING] 
-> Même remarque que pour `==`, il y a ici une coercition implicite.
 - `!==` vérifie qu’elles sont différentes **et de types différents**
+
+> [!WARNING] 
+> Même remarque que pour `==`, il y a une coercition implicite en utilsant `!=`.
 
 > [!TIP]
 > On peut également utiliser `!` pour inverser des fonctions.
@@ -131,13 +134,14 @@ Ex. : `value = 3` affecte la valeur `3` à la variable `value`.
 > inversement... Manipulation qui est tout sauf logique et surtout incompréhensible pour quiconque lirait ce code. Heureusement Lodash permet **d'inverser des fonctions**  de façon très simple, en ajoutant `!` devant la fonction. 
 > Ainsi il est facilement possible d'inverser tout type de test retournant un booléen avec `!_.isEmpty`, `!_.isEqual`, `!_.includes`, `!_.startsWith` etc.
 
-### 2.4. ⚙️ Logique booléenne : `&&` et `||`
+### Logique booléenne : `&&` et `||`
 - `&&` (ET logique) retourne `true` **si les deux conditions sont vraies**
 - `||` (OU logique) retourne `true` **si au moins une condition est vraie**
+
 > [!WARNING] 
 > Attention de ne pas écrire `&` et `|` qui ne sont pas des opérateurs logiques mais "bit à bit" et qui renvoient donc les nombres 0 ou 1.
 
-### 2.5. ❓ Ternaire (`condition ? valeurSiVrai : valeurSiFaux`)
+### Ternaire (`condition ? valeurSiVrai : valeurSiFaux`)
 Une façon compacte d’écrire un `if/else`.  
 Ex. :  
 ```js
@@ -155,7 +159,7 @@ thru(function(age) {
 });
 ```
 
-#### 🔢 Comparateurs numériques
+#### Comparateurs numériques
 - `>` : supérieur à  
 - `>=` : supérieur ou égal à  
 - `<` : inférieur à  
@@ -163,7 +167,7 @@ thru(function(age) {
 
 ---
 
-## 3. Les fonctions fléchées `=>`ou anonymes
+## Les fonctions fléchées `=>`ou anonymes
 
 Une expression de fonction fléchée est une syntaxe plus compacte pour écrire des fonctions classiques, peut être plus claires pour des débutants, mais beaucoup plus verbeuses.
 Cette syntaxe est omniprésente dans Lodex quand on utilise des fonctions comme map, thru, filter etc.
@@ -183,30 +187,18 @@ Cette fonction qui permet d'ajouter 1 au nombre reçu s'écrit de façon plus co
 > Dès lors que l'on utilise une fonction fléchée via =>, on **n’écrit plus du Lodash pur, mais du JavaScript**.
 > Cela implique donc que certaines fonctions doivent être appelées **différemment**, en fonction de leur nature (native JS ou Lodash).
 
-Par exemple :
+*Par exemple :*
 
-✅ Il est tout à fait possible d’écrire :
-
-```js
-.map(item => item.trim())
-```
+✅ Il est tout à fait possible d’écrire : `.map(item => item.trim())`
 
 Ici, `.trim()` est une méthode native de JavaScript sur les chaînes de caractères, on peut l’appeler de la façon habituelle dans Lodex.
 La fonction applique `.trim()` à chaque élément du tableau (via `.map()`) pour retirer les espaces et caractères invisibles en début et fin de chaîne.
 
-❌ En revanche, si on tente :
-
-```js
-.map(item => item.startCase())
-```
+❌ En revanche, si on tente : `.map(item => item.startCase())`
 
 Cela échoue, car `startCase()` n’existe pas en JavaScript *(fonction qui met en majuscule la première lettre de chaque mot d’une chaîne)*. Étant une fonction propre à Lodash, elle doit être appelée avec le préfixe `_` pour que Lodex sache qu’il faut utiliser Lodash. 
 
-✅ Il faut écrire :
-
-```js
-.map(item => _.startCase(item))
-```
+✅ Il faut écrire : `.map(item => _.startCase(item))`
 
 > [!NOTE]
 > Outre l'ajout de `_` avant la fonction, on remarque également que la valeur à traiter est passée en argument entre parenthèses. *item* dan notre exemple.
