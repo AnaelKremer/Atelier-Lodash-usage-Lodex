@@ -114,22 +114,28 @@ Ex. : `value = 3` affecte la valeur `3` à la variable `value`.
 
 ### 2.2. 🔍 Égalité (`==`) vs Égalité stricte (`===`)
 - `==` compare **la valeur**, en faisant des conversions automatiques si nécessaire (`3 == "3"` renvoie `true`).
-[!WARNING] Evitez d'utiliser cet opérateur qui compare une égalité abstraite. L'opérateur effectue implicitement une coercition de type et peut retourner des bizarreries comme false == '0' // true, où sont considérés comme égaux un booléen et une châine de caractères...
+> [!WARNING] 
+> Evitez d'utiliser cet opérateur qui compare une égalité abstraite. L'opérateur effectue implicitement une coercition de type et peut retourner des bizarreries comme false == '0' // true, où sont considérés comme égaux un booléen  > et une châine de caractères...
 - `===` compare **la valeur et le type** : (`3 === "3"` renvoie `false` car l’un est un nombre, l’autre une chaîne).
 
 ### 2.3. ❗ Négation (`!`) et inégalités
 - `!` inverse une valeur booléenne : `!true` → `false`
 - `!=` vérifie que deux valeurs sont différentes (tolère la conversion)
-[!WARNING] Même remarque que pour `==`, il y a ici une coercition implicite.
+> [!WARNING] 
+> Même remarque que pour `==`, il y a ici une coercition implicite.
 - `!==` vérifie qu’elles sont différentes **et de types différents**
 
-[!TIP] On peut également utiliser `!` pour inverser des fonctions.
-Si l'on veut savoir si un champ **n'est pas vide**, il n'existe pas de fonction dédiée. Il faudrait utiliser la fonction `_.isEmpty`, puis inverser le résultat. Ce qui revient à dire "si c'est faux alors c'est vrai" et inversement... Manipulation qui est tout sauf logique et surtout incompréhensible pour quiconque lirait ce code. Heureusement Lodash permet **d'inverser des fonctions**  de façon très simple, en ajoutant `!` devant la fonction. Ainsi il est facilement possible d'inverser tout type de test retournant un booléen avec `!_.isEmpty`, `!_.isEqual`, `!_.includes`, `!_.startsWith` etc.
+> [!TIP]
+> On peut également utiliser `!` pour inverser des fonctions.
+> Si l'on veut savoir si un champ **n'est pas vide**, il n'existe pas de fonction dédiée. Il faudrait utiliser la fonction `_.isEmpty`, puis inverser le résultat. Ce qui revient à dire "si c'est faux alors c'est vrai" et 
+> inversement... Manipulation qui est tout sauf logique et surtout incompréhensible pour quiconque lirait ce code. Heureusement Lodash permet **d'inverser des fonctions**  de façon très simple, en ajoutant `!` devant la fonction. 
+> Ainsi il est facilement possible d'inverser tout type de test retournant un booléen avec `!_.isEmpty`, `!_.isEqual`, `!_.includes`, `!_.startsWith` etc.
 
 ### 2.4. ⚙️ Logique booléenne : `&&` et `||`
 - `&&` (ET logique) retourne `true` **si les deux conditions sont vraies**
 - `||` (OU logique) retourne `true` **si au moins une condition est vraie**
-[!WARNING] Attention de ne pas écrire `&` et `|` qui ne sont pas des opérateurs logiques mais "bit à bit" et qui renvoient donc les nombres 0 ou 1.
+> [!WARNING] 
+> Attention de ne pas écrire `&` et `|` qui ne sont pas des opérateurs logiques mais "bit à bit" et qui renvoient donc les nombres 0 ou 1.
 
 ### 2.5. ❓ Ternaire (`condition ? valeurSiVrai : valeurSiFaux`)
 Une façon compacte d’écrire un `if/else`.  
@@ -173,9 +179,9 @@ Cette fonction qui permet d'ajouter 1 au nombre reçu s'écrit de façon plus co
 .thru(number => number + 1)
 ```
 
-[!IMPORTANT]
-Dès lors que l'on utilise une fonction fléchée via =>, on **n’écrit plus du Lodash pur, mais du JavaScript**.
-Cela implique donc que certaines fonctions doivent être appelées **différemment**, en fonction de leur nature (native JS ou Lodash).
+> [!IMPORTANT]
+> Dès lors que l'on utilise une fonction fléchée via =>, on **n’écrit plus du Lodash pur, mais du JavaScript**.
+> Cela implique donc que certaines fonctions doivent être appelées **différemment**, en fonction de leur nature (native JS ou Lodash).
 
 Par exemple :
 
@@ -202,5 +208,5 @@ Cela échoue, car `startCase()` n’existe pas en JavaScript *(fonction qui met 
 .map(item => _.startCase(item))
 ```
 
-[!NOTE]
-Outre l'ajout de `_` avant la fonction, on remarque également que la valeur à traiter est passée en argument entre parenthèses. *item* dan notre exemple.
+> [!NOTE]
+> Outre l'ajout de `_` avant la fonction, on remarque également que la valeur à traiter est passée en argument entre parenthèses. *item* dan notre exemple.
