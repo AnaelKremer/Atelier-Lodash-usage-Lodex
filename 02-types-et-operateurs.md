@@ -73,9 +73,7 @@ L'objet ci-dessous a pour valeurs des chaînes de caractères, des nombres, un b
   - `"Bob"` est à l’index `[0]`
   - `"Alice"` est à l’index `[1]`
 
----
-
-Ces types peuvent **s’imbriquer** :
+🔀 Ces types peuvent **s’imbriquer** :
 - Des **tableaux dans des objets**
 - Des **objets dans des tableaux**
 - Des **objets dans des objets dans des objets**…
