@@ -8,7 +8,6 @@
 Comme nous l’avons vu, les fonctions Lodash s’appliquent à différents **types de données**, que l’on peut regrouper en deux grandes familles :  
 → **les types primitifs** et **les types objets**.
 
----
 
 ### Types de données primitifs
 
@@ -107,8 +106,9 @@ Ceux-ci permettent d'exprimer des conditions, de comparer ou évaluer des donné
 
 ### Affectation (`=`)
 Permet d'assigner une valeur à une variable.  
-Ex. : `value = 3` affecte la valeur `3` à la variable `value`.
-💡 Dans un loader par exemple, on **affecte** un nom à une nouvelle colonne par path = maNouvelleColonne
+Ex. : `value = 3` affecte la valeur `3` à la variable `value`.  
+💡 Dans un loader par exemple, on **affecte** un nom à une nouvelle colonne par `path = maNouvelleColonne`
+
 
 ### Égalité (`==`) vs Égalité stricte (`===`)
 - `==` compare **la valeur**, en faisant des conversions automatiques si nécessaire (`3 == "3"` renvoie `true`).
@@ -140,8 +140,7 @@ Ex. : `value = 3` affecte la valeur `3` à la variable `value`.
 > Attention de ne pas écrire `&` et `|` qui ne sont pas des opérateurs logiques mais "bit à bit" et qui renvoient donc les nombres 0 ou 1.
 
 ### Ternaire (`condition ? valeurSiVrai : valeurSiFaux`)
-Une façon compacte d’écrire un `if/else`.  
-Ex. :  
+Une façon compacte d’écrire un `if/else` :    
 ```js
 thru(age => age >= 18 ? "majeur" : "mineur");
 ```
