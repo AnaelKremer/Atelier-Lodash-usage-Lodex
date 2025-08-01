@@ -94,7 +94,7 @@ Ceux-ci permettent d'exprimer des conditions, de comparer ou évaluer des donné
 | `!=`        | Inégalité                | `3 != "3"` // `false`                                    |
 | `!==`       | Inégalité stricte        | `3 !== "3"` // `true`                                    |
 | `&&`        | ET logique (AND)         | `a=true` et `b=false` → `a && b` // `false`              |
-| `||`        | OU logique (OR)          | `a || b`                                                 |
+| `\|\|`       | OU logique (OR)          | `a \|\| b`                                              |
 | `? :`       | Conditionnel (if-else)   | `age = 18` → `age >= 18 ? "majeur" : "mineur"`           |
 | `>`         | Supérieur à              | `a = 2`, `b = 5` → `a > b` // `false`                    |
 | `>=`        | Supérieur ou égal à      | `a >= b` // `false`                                      |

@@ -109,6 +109,9 @@ On doit pouvoir distinguer les données brutes des données transformées : `key
 
 💡 Un autre avantage à adopter des noms explicites et cohérents : cela vous évite d’avoir à vérifier sans cesse comment vous avez nommé vos colonnes. En faisant un nouvel enrichissement, vous savez instinctivement comment appeler les colonnes dont vous avez besoin, sans avoir à fouiller dans les données ou dans les scripts.
 
+---
+
+
 ## Le nommage des variables utilisées
 
 Vous aurez sans doute recours aux fonctions fléchées dans vos traitements et vous devrez vous-même nommer les variables.  
@@ -137,6 +140,9 @@ Ainsi, pour une meilleure lisibilité, il est conseillé de nommer ses variables
 ```
 
 Cela facilite nettement la lisibilité du code et *"en rendant un code facile à lire, on le rend plus facile à écrire"*.
+
+---
+
 
 ## Mise en forme et commentaires
 
