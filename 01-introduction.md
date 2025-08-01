@@ -16,7 +16,7 @@ Les deux bibliothèques tirent leur nom du caractère ```_``` , qui est la varia
 
 Une fonction (ou méthode) Lodash doit toujours déclarer des arguments dans un ordre spécifique.
 
-```
+```js
 _.replace("abc","abc","hello world")
 ```
 * Le 1er argument déclaré ici est la chaîne de caractères à modifier, en l'occurrence "abc".
@@ -29,7 +29,7 @@ Ainsi cette fonction replace, remplace la chaîne de caractère "abc" par "hello
 
 Afin d'effectuer plusieurs opérations sur des données, il convient de créer une chaîne de méthodes.
 
-```
+```js
 _.chain("abc")
  .replace("abc","hello world")
  .capitalize()
@@ -48,7 +48,7 @@ _.chain("abc")
 Dans Lodex, les scripts peuvent s'écrire dans le mode enrichissement d'une instance ou dans un Loader au moment de charger ses données (nous verrons les différeces entre ces 2 usages plus tard).
 Dans ces cas-là, plusieurs petits programmes entrent en jeu afin de nous faciliter la tâche.
 En effet, le chaînage des méthodes y est rendu possible par défaut. Les méthodes ```_.chain``` et ```_.value``` sont actives mais pas visibles. Ce qui permet d'éccire l'enchaînnement de méthodes vu précédement de cette façon :
-```
+```js
 [assign]
 path = value
 value = get("value.colonneA").replace("abc","hello world").capitalize().split(" ").push("!").join(" ")

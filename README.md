@@ -14,7 +14,7 @@ Cela s'apparente désormais davantage à une collection d'heuristiques qu'à un 
 
 À l’origine, je n’avais aucune connaissance en programmation. J’ai découvert Lodash sans savoir coder en JavaScript (ni en quoi que ce soit d'autre d'ailleurs). En réalisant tout ce que Lodash permettait de faire dans Lodex, j'ai décidé d'étudier la chose "sérieusement".
 
-> 💬 Richard Feynman :
+> 💬 Richard Feynman :  
 > *« We learn better by teaching. »*
 
 Les traits d’esprit de Feynman m’ont toujours frappé par leur équilibre : simples en apparence, mais d’une pertinence redoutable.
