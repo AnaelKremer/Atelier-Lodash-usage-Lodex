@@ -28,7 +28,6 @@ Cette section présente les principales fonctions Lodash utiles pour manipuler l
 ## trim
 
 Supprime les espaces (et caractères invisibles) en début et fin de chaîne.  
-  *Exemple :*
 
   ```js
   value = get("value.entree").trim()
@@ -38,7 +37,6 @@ Supprime les espaces (et caractères invisibles) en début et fin de chaîne.
 ## deburr
 
 Supprime les accents et diacritiques.  
-  *Exemple :*
 
   ```js
   value = get("value.entree").deburr()
@@ -48,23 +46,19 @@ Supprime les accents et diacritiques.
 ## escape / unescape
 
 Encode ou décode les caractères HTML : `&`, `<`, `>`...  
-  *Exemple :*
 
-    ```js
+  ```js
   value = get("value.entree").escape()
   // Entrée : "<script>" → Sortie : "&lt;script&gt;"
   ```
-  
-  *Exemple :*
 
-    ```js
+  ```js
   value = get("value.entree").unescape()
   // Entrée : "&amp;" → Sortie : "&"
   ```
 ## capitalize
 
-Met en majuscule la première lettre d’une chaîne.
-  *Exemple :*
+Met en majuscule la première lettre d’une chaîne.  
 
   ```js
   value = get("value.entree").capitalize()
@@ -73,16 +67,14 @@ Met en majuscule la première lettre d’une chaîne.
 
 ## toLower / lowerCase
 
-`toLower` convertit une chaîne en minuscules.
-  *Exemple :*
+`toLower` convertit une chaîne en minuscules.  
 
   ```js
   value = get("value.entree").toLower()
   // Entrée : "John von Neumann" → Sortie : "john von neumann"
   ```
 
-`lowerCase` convertit une chaîne, considérée comme une suite de mots séparés par des espaces, en minuscules. La fonction reformate la chaîne en ajoutant des espaces là où il détecte des mots (basés sur la casse, les tirets ou underscores...)
-  *Exemple :*
+`lowerCase` convertit une chaîne, considérée comme une suite de mots séparés par des espaces, en minuscules. La fonction reformate la chaîne en ajoutant des espaces là où il détecte des mots (basés sur la casse, les tirets ou underscores...)  
 
   ```js
   value = get("value.entree").lowerCase()
@@ -91,16 +83,14 @@ Met en majuscule la première lettre d’une chaîne.
 
 ## toUpper / upperCase
 
-`toUpper` convertit une chaîne en majuscules.
-  *Exemple :*
+`toUpper` convertit une chaîne en majuscules.  
 
   ```js
   value = get("value.entree").toUpper()
   // Entrée : "Richard Feynman" → Sortie : "RICHARD FEYNMAN"
   ```
 
-`.upperCase` convertit une chaîne, considérée comme une suite de mots séparés par des espaces, en majuscules. La fonction reformate la chaîne en ajoutant des espaces là où il détecte des mots (basés sur la casse, les tirets ou underscores...)
-  *Exemple :*
+`.upperCase` convertit une chaîne, considérée comme une suite de mots séparés par des espaces, en majuscules. La fonction reformate la chaîne en ajoutant des espaces là où il détecte des mots (basés sur la casse, les tirets ou underscores...)  
 
   ```js
   value = get("value.entree").upperCase()
@@ -109,8 +99,7 @@ Met en majuscule la première lettre d’une chaîne.
 
 ## startCase
 
-Convertit une chaîne en mots séparés par des espaces, avec une majuscule au début de chaque mot.
-  *Exemple :*
+Convertit une chaîne en mots séparés par des espaces, avec une majuscule au début de chaque mot.  
 
   ```js
   value = get("value.entree").startCase()
@@ -118,8 +107,7 @@ Convertit une chaîne en mots séparés par des espaces, avec une majuscule au d
   ```
 ## words
 
-Coupe une chaîne en un tableau de mots, en tenant compte des majuscules et séparateurs.
-  *Exemple :*
+Coupe une chaîne en un tableau de mots, en tenant compte des majuscules et séparateurs.  
 
   ```js
   value = get("value.entree").words()
@@ -128,8 +116,7 @@ Coupe une chaîne en un tableau de mots, en tenant compte des majuscules et sép
 
 ## split
 
-Sépare une chaîne en tableau selon un séparateur.
-  *Exemple :*
+Sépare une chaîne en tableau selon un séparateur.  
 
   ```js
   value = get("value.entree").split(";")
@@ -138,8 +125,7 @@ Sépare une chaîne en tableau selon un séparateur.
 
 ## startsWith
 
-Vérifie si une chaîne commence par un motif donné (renvoie un booléen).
-  *Exemple :*
+Vérifie si une chaîne commence par un motif donné (renvoie un booléen).  
 
   ```js
     value = get("value.entree").startsWith("10.")
@@ -148,8 +134,7 @@ Vérifie si une chaîne commence par un motif donné (renvoie un booléen).
 
 ## endsWith
 
-Vérifie si une chaîne se termine par un motif donné (renvoie un booléen).
-  *Exemple :*
+Vérifie si une chaîne se termine par un motif donné (renvoie un booléen).  
 
   ```js
     value = get("value.entree").endsWith(".pdf")
@@ -158,8 +143,7 @@ Vérifie si une chaîne se termine par un motif donné (renvoie un booléen).
 
 ## prepend (EZS)
 
-Ajoute un préfixe dans une chaîne.
-  *Exemple :*
+Ajoute un préfixe dans une chaîne.  
 
   ```js
     value = get("value.entree").prepend("www.")
@@ -168,8 +152,7 @@ Ajoute un préfixe dans une chaîne.
 
 ## append (EZS)
 
-Ajoute un suffixe dans une chaîne.
-  *Exemple :*
+Ajoute un suffixe dans une chaîne.  
 
   ```js
     value = get("value.entree").append(".fr")
