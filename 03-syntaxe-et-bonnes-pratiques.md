@@ -175,10 +175,6 @@ value = get("documentType") \
     )
 ```
 
-```js
-value = get("documentType").thru(arr => arr.length === 1 ? "Non concerné (document unique)" : _.chain(arr).uniq().size().thru(n => n === 1 ? "Types de document identiques" : "Types de document différents").value())
-```
-
 ### Commenter son code
 
 > 💬 Robert C. Martin :  
