@@ -1,6 +1,6 @@
 # Manipuler des chaînes de caractères
 
-De nombreux champs sont constitués de simples chaînes de caractères. Qu’il s’agisse de titres, de résumés ou de DOIs Lodash offre une panoplie de fonctions pour **nettoyer**, **transformer** ou **tester** ces données.
+De nombreux champs sont constitués de simples chaînes de caractères. Qu’il s’agisse de titres, de résumés ou de DOIs, Lodash offre une panoplie de fonctions pour **nettoyer**, **transformer** ou **tester** ces données.
 
 Cette section présente les principales fonctions Lodash utiles pour manipuler les chaînes de caractères.
 
@@ -31,7 +31,7 @@ Supprime les espaces (et caractères invisibles) en début et fin de chaîne.
 
   ```js
   value = get("value.entree").trim()
-  // Entrée : "    Ceci est une phrase avec trop d'espaces.  " → Sortie : "Ceci est une phrase avec trop d'espaces."
+  // Entree : "    Ceci est une phrase avec trop d'espaces.  " → Sortie : "Ceci est une phrase avec trop d'espaces."
   ```
 
 ## deburr
@@ -40,7 +40,7 @@ Supprime les accents et diacritiques.
 
   ```js
   value = get("value.entree").deburr()
-  // Entrée : "éèêëàáâäîïìíôöòóùúûüçñãõčšž" → Sortie : "eeeeaaaaiiiioooouuuucnaocsz"
+  // Entree : "éèêëàáâäîïìíôöòóùúûüçñãõčšž" → Sortie : "eeeeaaaaiiiioooouuuucnaocsz"
   ```
 
 ## escape / unescape
@@ -49,12 +49,12 @@ Encode ou décode les caractères HTML : `&`, `<`, `>`...
 
   ```js
   value = get("value.entree").escape()
-  // Entrée : "<script>" → Sortie : "&lt;script&gt;"
+  // Entree : "<script>" → Sortie : "&lt;script&gt;"
   ```
 
   ```js
   value = get("value.entree").unescape()
-  // Entrée : "&amp;" → Sortie : "&"
+  // Entree : "&amp;" → Sortie : "&"
   ```
 ## capitalize
 
@@ -62,7 +62,7 @@ Met en majuscule la première lettre d’une chaîne.
 
   ```js
   value = get("value.entree").capitalize()
-  // Entrée : "ceci est une chaîne." → Sortie : "Ceci est une chaîne."
+  // Entree : "ceci est une chaîne." → Sortie : "Ceci est une chaîne."
   ```
 
 ## toLower / lowerCase
@@ -71,14 +71,14 @@ Met en majuscule la première lettre d’une chaîne.
 
   ```js
   value = get("value.entree").toLower()
-  // Entrée : "John von Neumann" → Sortie : "john von neumann"
+  // Entree : "John von Neumann" → Sortie : "john von neumann"
   ```
 
 `lowerCase` convertit une chaîne, considérée comme une suite de mots séparés par des espaces, en minuscules. La fonction reformate la chaîne en ajoutant des espaces là où il détecte des mots (basés sur la casse, les tirets ou underscores...)  
 
   ```js
   value = get("value.entree").lowerCase()
-  // Entrée : "PascalCase_ou_camelCase_?" → Sortie : "pascal case ou camel case"
+  // Entree : "PascalCase_ou_camelCase_?" → Sortie : "pascal case ou camel case"
   ```
 
 ## toUpper / upperCase
@@ -87,14 +87,14 @@ Met en majuscule la première lettre d’une chaîne.
 
   ```js
   value = get("value.entree").toUpper()
-  // Entrée : "Richard Feynman" → Sortie : "RICHARD FEYNMAN"
+  // Entree : "Richard Feynman" → Sortie : "RICHARD FEYNMAN"
   ```
 
 `.upperCase` convertit une chaîne, considérée comme une suite de mots séparés par des espaces, en majuscules. La fonction reformate la chaîne en ajoutant des espaces là où il détecte des mots (basés sur la casse, les tirets ou underscores...)  
 
   ```js
   value = get("value.entree").upperCase()
-  // Entrée : "snakeCase_or_kebabCase_?" → Sortie : "SNAKE CASE OR KEBAB CASE"
+  // Entree : "snakeCase_or_kebabCase_?" → Sortie : "SNAKE CASE OR KEBAB CASE"
   ```
 
 ## startCase
@@ -103,7 +103,7 @@ Convertit une chaîne en mots séparés par des espaces, avec une majuscule au d
 
   ```js
   value = get("value.entree").startCase()
-  // Entrée : "MANIAC : mathematical analyzer, numerical integrator, and computer" → Sortie : "MANIAC Mathematical Analyzer Numerical Integrator And Computer"
+  // Entree : "MANIAC : mathematical analyzer, numerical integrator, and computer" → Sortie : "MANIAC Mathematical Analyzer Numerical Integrator And Computer"
   ```
 ## words
 
@@ -111,7 +111,7 @@ Coupe une chaîne en un tableau de mots, en tenant compte des majuscules et sép
 
   ```js
   value = get("value.entree").words()
-  // Entrée : "Turing complete" → Sortie : ["Turing","complete"]
+  // Entree : "Turing complete" → Sortie : ["Turing","complete"]
   ```
 
 ## split
@@ -120,7 +120,7 @@ Sépare une chaîne en tableau selon un séparateur.
 
   ```js
   value = get("value.entree").split(";")
-  // Entrée : "A;B;C" → Sortie : ["A","B","C"]
+  // Entree : "A;B;C" → Sortie : ["A","B","C"]
   ```
 
 ## startsWith
@@ -128,8 +128,8 @@ Sépare une chaîne en tableau selon un séparateur.
 Vérifie si une chaîne commence par un motif donné (renvoie un booléen).  
 
   ```js
-    value = get("value.entree").startsWith("10.")
-  // Entrée : "10.1093/femsec/fiz063" → Sortie : true
+  value = get("value.entree").startsWith("10.")
+  // Entree : "10.1093/femsec/fiz063" → Sortie : true
   ```
 
 ## endsWith
@@ -137,8 +137,8 @@ Vérifie si une chaîne commence par un motif donné (renvoie un booléen).
 Vérifie si une chaîne se termine par un motif donné (renvoie un booléen).  
 
   ```js
-    value = get("value.entree").endsWith(".pdf")
-  // Entrée : "http://drehu.linguist.univ-paris-diderot.fr/ismo-2019/fichiers/abstracts/ISMo_2019_paper_41.pdf" → Sortie : true
+  value = get("value.entree").endsWith(".pdf")
+  // Entree : "http://drehu.linguist.univ-paris-diderot.fr/ismo-2019/fichiers/abstracts/ISMo_2019_paper_41.pdf" → Sortie : true
   ```
 
 ## prepend (EZS)
@@ -146,8 +146,8 @@ Vérifie si une chaîne se termine par un motif donné (renvoie un booléen).
 Ajoute un préfixe dans une chaîne.  
 
   ```js
-    value = get("value.entree").prepend("www.")
-  // Entrée : "lodex" → Sortie : "www.lodex"
+  value = get("value.entree").prepend("www.")
+  // Entree : "lodex" → Sortie : "www.lodex"
   ```
 
 ## append (EZS)
@@ -155,6 +155,6 @@ Ajoute un préfixe dans une chaîne.
 Ajoute un suffixe dans une chaîne.  
 
   ```js
-    value = get("value.entree").append(".fr")
-  // Entrée : "www.lodex" → Sortie : "www.lodex.fr"
+  value = get("value.entree").append(".fr")
+  // Entree : "www.lodex" → Sortie : "www.lodex.fr"
   ```
