@@ -186,11 +186,11 @@ Le second `replace` ne se fait donc pas car *antelope* qui contient *ant* a ét�
 Pour que les `replace` fonctionnent, il faudrait inverser leur ordre. Cela devient donc très compliqué d'anticiper tous les cas de chevauchement dès lors que l'on a beaucoup de motifs à remplacer. Sans parler du fait que le code va devenir difficile à lire et très lent à éxecuter...
 
 > [!NOTE]
-> D'une façon générale, pensez au principe DRY : *Don't Repeat Yourself*
+> D'une façon générale, pensez au principe DRY : *Don't Repeat Yourself*  
 > Si vous avez au moins 3 `replace` dans votre script, c'est le moment d'utiliser autre chose !
 
 
-Autre effet de bord, `replace` ne remplace **que la première occurence** d'un motif dans une chaîne de caractères. 
+Autre effet de bord, `replace` ne remplace **que la première occurence** d'un motif dans une chaîne de caractères.  
 Attention donc si vous manipulez des chaînes qui contiennent toujours un seul mot ou plusieurs. 
 
   ```js
