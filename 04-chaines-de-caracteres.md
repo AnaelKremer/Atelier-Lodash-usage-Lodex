@@ -158,3 +158,58 @@ Ajoute un suffixe dans une chaîne.
   value = get("value.entree").append(".fr")
   // Entree : "www.lodex" → Sortie : "www.lodex.fr"
   ```
+
+## replace
+
+Remplace un motif par un autre.
+
+  ```js
+  value = get("value.entree").replace("ant","insect")
+  // Entree : "ant" → Sortie : "insect"
+  ```
+
+> [!WARNING]
+> Quand on débute, on a souvent recours à `replace`, qui semble simple et pratique pour remplacer des termes à la volée… mais dont l’usage abusif ou mal maîtrisé peut entraîner des effets de bord difficiles à détecter.
+
+Un de ces effets de bord est la **collision de termes**, que l’on peut rapidement rencontrer dès lors que l’on souhaite effectuer plusieurs remplacements.  
+Reprenons le même exemple, on souhaite maintenant ajouter le remplacement  d'*antelope* par *mammal* : 
+
+  ```js
+  value = get("value.entree").replace("ant","insect").replace("antelope", "mammal")
+  // Entree : "ant" → Sortie : "insect"
+  // Entree : "antelope" → Sortie : "insectelope"
+  ```
+
+Lorsque vous effectuez plusieurs replace à la suite, les remplacements se font **les uns après les autres**, sur la chaîne modifiée à chaque étape.  
+Le second `replace` ne se fait donc pas car *antelope* qui contient *ant* a été remplacé par *insectelope* !  
+
+Pour que les `replace` fonctionnent, il faudrait inverser leur ordre. Cela devient donc très compliqué d'anticiper tous les cas de chevauchement dès lors que l'on a beaucoup de motifs à remplacer. Sans parler du fait que le code va devenir difficile à lire et très lent à éxecuter...
+
+> [!NOTE]
+> D'une façon générale, pensez au principe DRY : *Don't Repeat Yourself*
+> Si vous avez au moins 3 `replace` dans votre script, c'est le moment d'utiliser autre chose !
+
+
+Autre effet de bord, `replace` ne remplace **que la première occurence** d'un motif dans une chaîne de caractères. 
+Attention donc si vous manipulez des chaînes qui contiennent toujours un seul mot ou plusieurs. 
+
+  ```js
+  value = get("value.entree").replace("ant","insect")
+  // Entree : "The ant found another ant" → Sortie : "The insect found another ant"
+  ```
+
+Pour remplacer plusieurs fois le même terme il faut utiliser une expression régulière d'une part, et le flag "g" d'autre part pour "global".
+
+  ```js
+  value = get("value.entree").replace(/ant/g,"insect")
+  // Entree : "The ant found another ant" → Sortie : "The insect found another insect"
+  ```
+
+💡 Il existe diverses méthodes pour effectuer de multiples remplacements, qui sont plus explicites, plus rapides, plus flexibles et surtout plus sécurisées. Voir [thru](), [env]() ou...**TODO**
+
+> [!TIP]
+> Personnellement, je n’utilise `replace` qu'avec des *regex* et lorsque c’est la seule solution possible, par exemple pour supprimer des espaces superflus.
+> `.replace(/\s+/g, " ")`
+> Pour tout le reste (corrections, renommages, équivalences), je préfère `thru` ou `env`, qui évitent les effets indésirables et facilitent la maintenance.
+
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/05-tableaux.md)
