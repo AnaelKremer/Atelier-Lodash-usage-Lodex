@@ -179,4 +179,49 @@ value = get("value.entree").unzip()
 // Entree : [["Niels Bohr","Danemark"],["Albert Einstein","Allemagne"]] → Sortie : {"Niels Bohr":"Danemark","Albert Einstein":"Allemagne"}
 ```
 
+## difference
 
+Renvoie les éléments présents dans le premier tableau mais pas dans les suivants.
+
+```js
+value = get("value.entree").difference(self.value.entree2)
+// Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["B"]
+```
+
+## intersection
+
+Renvoie les éléments communs à plusieurs tableaux.
+
+```js
+value = get("value.entree").intersection(self.value.entree2)
+// Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["A"]
+```
+
+## xor
+
+Renvoie les éléments **exclusifs** à chaque tableau (présents dans un seul).
+
+```js
+value = get("value.entree").xor(self.value.entree2)
+// Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["B", "C"]
+```
+
+## union
+
+Crée un tableau contenant des valeurs uniques à partir de plusieurs tableaux.
+
+```js
+value = get("value.entree").union(self.value.entree2)
+// Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["A", "B", "C"]
+```
+
+## slice
+
+Extrait une partie d’un tableau à partir d’un index de début jusqu’à (mais sans inclure) un index de fin.
+
+```js
+value = get("value.entree").slice(2)
+// Entree : ["A", "B", "C", "D"] → Sortie : ["C","D"]
+```
+
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/06-objets.md)
