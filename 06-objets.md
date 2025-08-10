@@ -116,71 +116,55 @@ Retourne les valeurs d’un objet.
 
 ```js
 value = get("value").values()
-// → ["Mouvement historique...", 2012, "Vingtième Siècle Revue d histoire", [ ... ]]
+// → Sortie : ["Mouvement historique...", 2012, "Vingtième Siècle Revue d histoire", [ ... ]]
 ```
 
-## entries / toPairs  
+## toPairs  
 
-Retourne les paires [clé, valeur] d’un objet.  
+Convertit un objet en un tableau de paires [clé, valeur]. Chaque élément du tableau résultant est un tableau à deux éléments : le premier est la clé (ou le nom de la propriété), et le second est la valeur associée. 
 
 ```js
 value = get("value").toPairs()
-// → [["title","Mouvement historique..."], ["year", 2012], ...]
+// → Sortie : [["title","Mouvement historique..."], ["year", 2012], ...]
 ```
-
----
 
 ## mapValues  
 
 Applique une fonction à toutes les valeurs d’un objet.  
 
 ```js
-value = get("value").mapValues(v => _.isString(v) ? v.toUpperCase() : v)
-// → toutes les chaînes de caractères en majuscules
-```
+value = get("value").mapValues(value => _.isString(value) ? value.toUpperCase() : value)
 
----
+// → Sortie : {"title": "MOUVEMENT HISTORIQUE ET HISTOIRE SUSPENDUE","year": 2012,"source": "VINGTIÈME SIÈCLE REVUE D HISTOIRE"...}
+// → Si une valeur est une chaîne de caractères, on la passe en majuscules.
+```
 
 ## mapKeys  
 
 Applique une fonction à toutes les clés d’un objet.  
 
 ```js
-value = get("value").mapKeys((v, k) => k.toUpperCase())
-// → { TITLE: "...", YEAR: 2012, ... }
+value = get("value").mapKeys((value, key) => key.toUpperCase())
+// → Sortie : {"TITLE": "Mouvement historique et histoire suspendue","YEAR": 2012,"SOURCE": "Vingtième Siècle Revue d histoire"...}
 ```
-
----
 
 ## invert  
 
 Inverse les clés et valeurs.  
 
 ```js
-value = _.invert({ a: "x", b: "y" })
-// → { x: "a", y: "b" }
+value = get("value").invert()
+// → Sortie : {"2012": "year","Mouvement historique et histoire suspendue": "title"...}
 ```
-
----
-
-## merge  
-
-Fusionne plusieurs objets.  
-
-```js
-value = _.merge({ a: 1 }, { b: 2 }, { a: 3 })
-// → { a: 3, b: 2 }
-```
-
----
 
 ## transform  
 
 Transforme un objet en un autre en appliquant une fonction à chaque clé/valeur.  
 
 ```js
-value = get("value").transform((result, val, key) => {
-  result[key] = _.isNumber(val) ? val + 10 : val
-}, {})
-// → year passe de 2012 à 2022
+value = get("value").transform((result, val, key) => {result[key] = _.isNumber(val) ? val + 10 : val}, {})
+// → Sortie : "year": 2022
+// → Si une clé a comme valeur un nombre, on y ajoute 10.
 ```
+
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/07-collections.md)
