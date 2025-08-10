@@ -1,4 +1,4 @@
-# Manipuler les objets
+# Manipuler des objets
 
 Dans Lodex, de nombreuses colonnes ou valeurs peuvent contenir des objets (paires clé-valeur) : noms d'auteurs, adresses, informations bibliographiques… Lodash offre de nombreuses fonctions pour les parcourir, les transformer ou les enrichir.
 
