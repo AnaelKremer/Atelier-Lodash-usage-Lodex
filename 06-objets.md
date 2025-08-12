@@ -21,8 +21,8 @@ Certaines fonctions ci-dessous sont exclusives aux objets, tandis que d'autres s
 >         },
 >         {
 >           "forename": "Johann",
->           "surname": "Chapotot",
->           "fullname": "Johann Chapotot"
+>           "surname": "Chapoutot",
+>           "fullname": "Johann Chapoutot"
 >         }
 >       ]
 >     }
