@@ -1,5 +1,21 @@
 # Atelier Lodash (usage Lodex) 
 
+## 📚 Sommaire
+
+1. [Introduction](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/01-introduction.md)
+2. [Comprendre les types de données et les opérateurs](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/02-types-et-operateurs.md)
+3. [Syntaxe et bonnes pratiques](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/03-syntaxe-et-bonnes-pratiques.md)
+4. [Manipuler des chaînes de caractères (strings)](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/04-chaines-de-caracteres.md)
+5. [Manipuler des tableaux (arrays)](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/05-tableaux.md)
+6. [Manipuler des objets](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/06-objets.md)
+7. [Manipuler des collections](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/07-collections.md)
+8. [Autres fonctions utiles](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-autres-fonctions.md)
+9. [Scripts avancés et cas d'usage](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/09-cas-dusage.md)
+10. [Traitements avancés dans un loader](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-loader.md)
+11. [Pour allez plus loin](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-ressources.md)
+
+---
+
 Bienvenue dans ce dépôt qui porte mal son nom !
 
 Ce projet est né d'ateliers que j'ai montés et animés avec @jj618 en décembre 2023 et mars 2024, à destination de nos collègues de l'Inist-CNRS.
@@ -48,8 +64,6 @@ Voici ce que vous pourrez apprendre en parcourant ce dépôt :
 - apprendre à rédiger un loader personnalisé pour restructurer un jeu de données 
 
 - définir des transformations réutilisables pour éviter la répétition de code
-
----
 
 ---
 
