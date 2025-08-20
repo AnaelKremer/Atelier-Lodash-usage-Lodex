@@ -229,10 +229,10 @@ La fonction reduce parcourt le tableau élément par élément :
 * à chaque étape, elle additionne l’accumulateur et la valeur courante,
 * puis renvoie ce nouveau total comme nouvel accumulateur pour l’itération suivante.
 
-Ce qui donne :
-0 + 1 → 1
-1 + 2 → 3
-3 + 3 → 6
-6 + 4 → 10
+Ce qui donne :  
+0 + 1 → 1  
+1 + 2 → 3  
+3 + 3 → 6  
+6 + 4 → 10  
 
 👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-autres-fonctions.md)
