@@ -22,6 +22,8 @@ Les fonctions Lodash de cette catégorie permettent d’itérer, filtrer, transf
 >       "authors": [
 >         {
 >           "fullname": "Denis Maurel",
+>           "forename": "Denis",  
+>           "surname": "Maurel", 
 >           "rnsr": ["201220254T"],
 >           "affiliations": [
 >             {
@@ -31,6 +33,8 @@ Les fonctions Lodash de cette catégorie permettent d’itérer, filtrer, transf
 >         },
 >         {
 >           "fullname": "Enza Morale",
+>           "forename": "Enza",
+>           "surname": "Morale",  
 >           "rnsr": ["198822446E"],
 >           "affiliations": [
 >             {
@@ -40,6 +44,8 @@ Les fonctions Lodash de cette catégorie permettent d’itérer, filtrer, transf
 >         },
 >         {
 >           "fullname": "Nicolas Thouvenin",
+>           "forename": "Nicolas", 
+>           "surname": "Thouvenin",
 >           "rnsr": ["198822446E"],
 >           "affiliations": [
 >             {
@@ -49,6 +55,8 @@ Les fonctions Lodash de cette catégorie permettent d’itérer, filtrer, transf
 >         },
 >         {
 >           "fullname": "Patrice Ringot",
+>           "forename": "Patrice",
+>           "surname": "Ringot",
 >           "rnsr": ["198822446E"],
 >           "affiliations": [
 >             {
@@ -58,6 +66,8 @@ Les fonctions Lodash de cette catégorie permettent d’itérer, filtrer, transf
 >         },
 >         {
 >           "fullname": "Angel Turri",
+>           "forename": "Angel",
+>           "surname": "Turri",
 >           "rnsr": ["198822446E"],
 >           "affiliations": [
 >             {
@@ -120,3 +130,109 @@ value = get("value.authors").map("affiliations").flatten().map("address")
 value = get("value.authors").flatMap("affiliations").map("address")
 ```
 
+## includes
+
+Vérifie si un élément est présent dans la collection.
+Dans cet exemple, on cherche si dans les adresses de chaque auteur figure le motif *CNRS*
+
+```js
+value = get("value.authors").flatMap("affiliations").map(author => author.address.includes("CNRS"))
+// → Sortie : :[false,true,true,true,true]
+```
+
+## filter
+
+Renvoie les éléments qui satisfont une condition.
+Ici on ne veut conserver dans notre collection que les auteurs ayant comme *rnsr* *198822446E*. On utilise donc `filter` qui va exécuter pour chaque auteur la fonction `includes`.  
+Cette dernière renvoyant un booléen, `filter` ne gardera que les auteurs dont `includes` renvoie *true*.
+
+```js
+value = get("value.authors").filter(author => author.rnsr.includes("198822446E"))
+// → Sortie : le tableau des auteurs ne contient désormais plus que les auteurs ayant comme valeur "198822446E" pour la clé `rnsr`.
+```
+
+## every
+
+Vérifie si **tous** les éléments satisfont une condition.
+
+```js
+value = get("value.authors").every(author => author.rnsr.includes("198822446E"))
+// → Sortie : false
+```
+
+## some
+
+Vérifie si **au moins un** élément satisfait une condition.
+
+```js
+value = get("value.authors").some(author => author.rnsr.includes("198822446E"))
+// → Sortie : true
+```
+
+## find
+
+Renvoie le **premier** élément correspondant à une condition.
+
+```js
+value = get("value.authors").find(author => author.rnsr.includes("198822446E"))
+// → Sortie : {"fullname":"Enza Morale","forename":"Enza","surname":"Morale","rnsr":["198822446E"]...}
+```
+
+## groupBy
+
+Regroupe les éléments selon une clé.
+Ici on va regrouper les auteurs ayant la mention *CNRS* dans leur adresse sous la clé `Auteurs CNRS` et ceux qui ne l'ont pas sous la clé `Autres`.
+
+```js
+value = get("value.authors").groupBy(author => \
+  author.affiliations.some(aff => aff.address.includes("CNRS")) \
+    ? "Auteurs CNRS" \
+    : "Autres" \
+)
+// → Sortie : {"Autres":[{"fullname":"Denis Maurel"...}],"Auteurs CNRS":[{"fullname":"Enza Morale"...}]
+```
+
+## sortBy
+
+Trie les éléments selon une fonction.
+Ici on voudra trier le tableau d'auteurs par ordre alphabétique d'après leur nom de famille.
+
+```js
+value = get("value.authors").sortBy(author => author.surname)
+// → Entrée : [{"fullname":"Denis Maurel"...},{"fullname":"Enza Morale"...},{"fullname":"Nicolas Thouvenin"...},{"fullname":"Patrice Ringot"...},{"fullname":"Angel Turri"...}
+// → Sortie : [{"fullname":"Denis Maurel"...},{"fullname":"Enza Morale"...},{"fullname":"Patrice Ringot"...},{"fullname":"Nicolas Thouvenin"...},{"fullname":"Angel Turri"...}
+```
+
+## size
+
+Renvoie la taille de la collection.
+
+```js
+value = get("value.authors").size()
+// → Sortie : 5 (il y a bien 5 auteurs)
+```
+
+## reduce
+
+Parcourt une collection élément par élément et accumule un résultat au fil des itérations.  
+À chaque étape, la fonction reçoit la valeur accumulée jusqu’ici (accumulator) et l’élément courant, puis retourne une nouvelle valeur d’accumulation.  
+NB : si aucun accumulateur initial n’est fourni, le premier élément de la collection est utilisé comme valeur de départ.
+
+```js
+value = get("value.entrée").reduce((accumulator, current) => accumulator + current, 0)
+// → Entrée : [1, 2, 3, 4]
+// → Sortie : 10
+```
+
+Ici, l’accumulateur initial est *0*.
+La fonction reduce parcourt le tableau élément par élément :
+* à chaque étape, elle additionne l’accumulateur et la valeur courante,
+* puis renvoie ce nouveau total comme nouvel accumulateur pour l’itération suivante.
+
+Ce qui donne :
+0 + 1 → 1
+1 + 2 → 3
+3 + 3 → 6
+6 + 4 → 10
+
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-autres-fonctions.md)
