@@ -130,6 +130,27 @@ value = get("value.authors").map("affiliations").flatten().map("address")
 value = get("value.authors").flatMap("affiliations").map("address")
 ```
 
+## invokeMap
+
+Exécute une méthode donnée sur chaque élément d’une collection et renvoie les résultats.  
+
+```js
+value = get("value.authors").map("fullname").invokeMap("toUpperCase")
+// Entrée : ["Denis Maurel", "Enza Morale", "Nicolas Thouvenin"]
+// Sortie : ["DENIS MAUREL", "ENZA MORALE", "NICOLAS THOUVENIN"]
+```
+
+Cela permer d'écrire plus facilement :  
+
+```js
+value = get("value.authors").map("fullname").map(author => author.toUpperCase())
+```
+
+> [!WARNING]
+> `invokeMap` ne peut être utilisé qu’avec des méthodes natives : ce sont les fonctions déjà présentes en **JavaScript**.  
+> Par exemple, `toUpperCase` fonctionne car c’est une méthode de base des chaînes en **JavaScript** (et donc reconnue par **Lodash**).  
+> En revanche, `startCase` ne fonctionnera pas : c’est une fonction spécifique à **Lodash**, absente de **JavaScript** natif.  
+
 ## includes
 
 Vérifie si un élément est présent dans la collection.
@@ -149,6 +170,23 @@ Cette dernière renvoyant un booléen, `filter` ne gardera que les auteurs dont 
 ```js
 value = get("value.authors").filter(author => author.rnsr.includes("198822446E"))
 // → Sortie : le tableau des auteurs ne contient désormais plus que les auteurs ayant comme valeur "198822446E" pour la clé `rnsr`.
+```
+
+## reject
+
+Le contraire de `filter`, la fonction retire les éléments qui satisfont une condition.  
+
+On peut retirer des éléments en inversant filter comme ceci :
+
+```js
+value = get("value.authors").filter(author => !author.rnsr.includes("198822446E"))
+// Renvoie tous les auteurs sauf ceux dont le RNSR est "198822446E"
+```
+
+Mais `reject` est peut être plus lisible :
+
+```js
+value = get("value.authors").reject(author => author.rnsr.includes("198822446E"))
 ```
 
 ## every

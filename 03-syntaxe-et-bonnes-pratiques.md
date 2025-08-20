@@ -194,5 +194,6 @@ value = get('value.documentType') \
     .thru(type => ["Article", "Chapitre", "Ouvrage"].includes(type) ? type : "Autres")
 ```
 
-Une transformation peut s'avérer complexe ou inexplicable à première vue en raison de la structure des données (champs absents, formats incohérents etc.). Un commentaire s'avère donc nécessaire dans ce cas. Mais il faut toujurs garder à l'esprit qu'un bon commentaire explique un **pourquoi** et pas juste ce que fait le code.
+Une transformation peut s'avérer complexe ou inexplicable à première vue en raison de la structure des données (champs absents, formats incohérents etc.). Un commentaire s'avère donc nécessaire dans ce cas. Mais il faut toujurs garder à l'esprit qu'un bon commentaire explique un **pourquoi** et pas juste ce que fait le code.  
 
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/04-chaines-de-caracteres.md)

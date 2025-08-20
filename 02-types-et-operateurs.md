@@ -199,3 +199,5 @@ Cela échoue, car `startCase()` n’existe pas en JavaScript *(fonction qui met 
 
 > [!NOTE]
 > Outre l'ajout de `_` avant la fonction, on remarque également que la valeur à traiter est passée en argument entre parenthèses. *item* dan notre exemple.
+
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/03-syntaxe-et-bonnes-pratiques.md)

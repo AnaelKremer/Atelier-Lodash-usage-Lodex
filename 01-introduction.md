@@ -88,3 +88,5 @@ Si en mode enrichissement nous saisissons ```.replace("LOD","Linked Open Data")`
 ```
 
 Les fonctions Lodash sont souvent conçues pour des types précis, ainsi avant toute transformation il faut s'assurer de connaître la structure exacte des données.
+
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/02-types-et-operateurs.md)
