@@ -15,7 +15,7 @@ value = get("value.year").thru(y => y < 2000 ? "ancien" : "récent")
 ---
 
 Il existe plusieurs fonctions qui permettent de tester le type d'une valeur (*.isX*) et qui ont souvent leur pendant pour convertir une valeur dans un type donnée (*.toX*).  
-Malheureusement il n'existe pas de fonction unique pour renvoyer le type de la valeur testée. Pour ce faire il faut ituliser une fonction **JavaScript**, `typeof` en l'occurence.
+Malheureusement il n'existe pas de fonction unique pour renvoyer le type de la valeur testée. Pour ce faire il faut utiliser une fonction **JavaScript**, `typeof` en l'occurence.
 
 ```js
 value = get("value.entree").thru(valeur => typeof(valeur))
@@ -52,7 +52,7 @@ value = get("value.entree").thru(valeur => Object.prototype.toString.call(valeur
 // Entrée : 42 → Sortie : "[object Number]"
 ```
 
-Le résultat de la fonction sera toujours écrit `[object ...]`, on peut encore affiner cela pour n'obtenir que le type en enlevant les 8 premiers caractères ([object ) et le dernier (]) : 
+Le résultat de la fonction sera toujours écrit `[object ...]`, on peut encore affiner cela pour n'obtenir que le type en enlevant les 8 premiers caractères "[object " et le dernier "]" : 
 
 ```js
 value = get("value.entree").thru(valeur => Object.prototype.toString.call(valeur).slice(8, -1))
@@ -87,7 +87,7 @@ value = get("value.entree").toString()
 ```
 
 > [!NOTE]  
-> Toutes les fonctions de type *.toX* **prennent l'senemble de la valeur donnée** (nombre, objet, tableau, tableau de tableaux…) et tentent de la convertir en **une seule valeur cible** 
+> Toutes les fonctions de type *.toX* **prennent l'ensemble de la valeur donnée** (nombre, objet, tableau, tableau de tableaux…) et tentent de la convertir en **une seule valeur cible** 
 > (string, number...), en utilisant les règles de coercition de **JavaScript**.
 
 Ce qui donne :  
@@ -116,7 +116,7 @@ Convertit une valeur en nombre.
 ```js
 value = get("value.entree").toNumber()
 // Entrée : "42" → Sortie : 42
-// Entrée : "42, la répone à tout" → Sortie : null (null dans Lodex, NaN pour not a number en JavaScript)
+// Entrée : "42, la réponse à tout, ou presque." → Sortie : null (null dans Lodex, NaN pour not a number en JavaScript)
 // Entrée : false → Sortie : 0
 // Entrée : true → Sortie : 1
 // Entrée : [42] → Sortie : 42
@@ -164,8 +164,4 @@ Transforme une valeur en tableau :
 value = get("value.entree").toArray()
 // Entrée : "une chaîne de caractères" → Sortie : ["u","n","e"," ","c","h","a","î","n","e"," ","d","e"," ","c","a","r","a","c","t","è","r","e","s"]
 ```
-
-
-
-
 
