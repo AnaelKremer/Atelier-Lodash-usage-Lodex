@@ -9,10 +9,11 @@
 5. [Manipuler des tableaux (arrays)](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/05-tableaux.md)
 6. [Manipuler des objets](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/06-objets.md)
 7. [Manipuler des collections](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/07-collections.md)
-8. [Autres fonctions utiles](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-autres-fonctions.md)
-9. [Scripts avancés et cas d'usage](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/09-cas-dusage.md)
-10. [Traitements avancés dans un loader](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-loader.md)
-11. [Pour allez plus loin](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-ressources.md)
+8. [Fonctions sur les types (lang)](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-fonctions-sur-les-types-lang.md)
+9. [Autres fonctions utiles](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/09-autres-fonctions.md)
+10. [Scripts avancés et cas d'usage](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-cas-dusage.md)
+11. [Traitements avancés dans un loader](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-loader.md)
+12. [Pour allez plus loin](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/12-ressources.md)
 
 ---
 
