@@ -273,4 +273,4 @@ Ce qui donne :
 3 + 3 → 6  
 6 + 4 → 10  
 
-👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-autres-fonctions.md)
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-fonctions-sur-les-types-lang.md)
