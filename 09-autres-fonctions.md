@@ -4,7 +4,7 @@ Certaines fonctions Lodash ne sont pas spécifiques aux **chaînes**, **tableaux
 
 ## thru  
 
-**`thru` est le couteau suisse de Lodash ! ** 
+`thru` est le couteau suisse de Lodash ! 
 
 Si la fonction qu’il vous faut pour transformer vos données n’existe pas en **Lodash**, vous pouvez presque toujours la construire grâce à `thru`.  
 
@@ -178,3 +178,4 @@ value = get("value.entree").round(2)
 // Entrée : 3.14159265359 → Sortie : 3.14
 ```
 
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-cas-dusage.md)
