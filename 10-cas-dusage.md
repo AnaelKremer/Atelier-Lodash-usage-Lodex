@@ -52,7 +52,7 @@ Cas simple, on souhaite obtenir dans un tableau l'année de publication, la revu
 }
 ```
 
-Mais on souhaite également convertir l'année en chaîne (c'était un nombre), mettre en minuscules la revue et en majuscules l'éditeur.  Mais *sans modifier les champs du dataset*, juste dans le cas de ce tableau.  
+Mais on souhaite également convertir l'année en chaîne (c'était un nombre), mettre en minuscules la revue et en majuscules l'éditeur. Mais **sans modifier les champs du dataset**, juste dans le cas de ce tableau.  
 
 Plutôt que d'écrire 3 enrichissements, puis de les concaténer, on peut réaliser toutes les opérations en un seul script.
 
@@ -60,7 +60,9 @@ Plutôt que d'écrire 3 enrichissements, puis de les concaténer, on peut réali
 value=get("value.year").toString() \
 // On récupère l'année puis la transforme en chaîne
     .concat(_.toLower(self.value.source)) \
-// On concatène ensuite la revue que l'on met en minuscules. Pour cela on place la fonction de transformation avant le nom du champ, que l'on met entre parenthèses pour l'occasion. Et on n'oublie pas de préfixer la fonction par le _ de *Lodash*
+// On concatène ensuite la revue que l'on met en minuscules. 
+// Pour cela on place la fonction de transformation avant le nom du champ, que l'on met entre parenthèses pour l'occasion. 
+// Et on n'oublie pas de préfixer la fonction par le _ de Lodash
     .concat(_.toUpper(self.value.publisher))
 // Enfin on concatène le dernier champ en le transformant de la même façon
 ```
@@ -127,7 +129,7 @@ Pour visualiser, voici le dataset réduit à ces deux seuls champs :
 
 ```
 
-En pratique, on va créer un enrichissement pour extraire les noms des *auteurs* car l'opération nécessite un `map`, puis on fera ensuite un second enrichissement pour concaténer cette liste au *doi.  
+En pratique, on va créer un enrichissement pour extraire les noms des *auteurs* car l'opération nécessite un `map`, puis on fera ensuite un second enrichissement pour concaténer cette liste au *doi*.  
 
 Pour faire cela en une seule étape, il faudrait pouvoir mapper les *auteurs* à l'intérieur de `concat`. ce qui s'écrit comme cela : 
 
