@@ -134,7 +134,7 @@ En pratique, on va créer un enrichissement pour extraire les noms des *auteurs*
 Pour faire cela en une seule étape, il faudrait pouvoir mapper les *auteurs* à l'intérieur de `concat`. ce qui s'écrit comme cela : 
 
 ```js
-value=get("value.doi").concat(_(self.value.authors).map('fullname'))
+value = get("value.doi").concat(_(self.value.authors).map('fullname'))
 ```
 
 Seulement, on concatène ici une chaîne (le *doi*) à un tableau (les *auteurs*). On obtient donc comme résultat un tableau avec un tableau imbriqué :  
@@ -149,7 +149,7 @@ Nous ne développerons pas ici ce qu'est un **spread operator** ou [syntaxe de d
 Ainsi : 
 
 ```js
-value=fix(self.value.doi, ...(_(self.value.authors).map('fullname')))
+value = fix(self.value.doi, ...(_(self.value.authors).map('fullname')))
 ```
 
 renverra : 
