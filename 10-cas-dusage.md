@@ -27,7 +27,7 @@ value = get("value.entree").replace(/[^a-zA-ZÀ-ÖØ-öø-ÿ0-9 ]/g, "").trim()
 
 ### Nettoyer les balises et entités HTML
 
-Afin de nettoyer un texte stylé en HTML il convient d'abord d'utiliser `unescape` pour décoder les entités HTML. Par exemple `&amp;` deviendra `&`.  
+Afin de nettoyer un texte stylisé en HTML il convient d'abord d'utiliser `unescape` pour décoder les entités HTML. Par exemple `&amp;` deviendra `&`.  
 Puis à l'aide d'une *regex* on supprime les balises HTML.
 
 ```js
@@ -73,7 +73,7 @@ Ce qui donne  :
 
 ```js
 value=fix(_.toString(self.value.year), _.toLower(self.value.source), _.toUpper(self.value.publisher))
-// 
+// → Sortie : ["2019","information","MDPI"]
 ```
 
 ### Construire un tableau à partir d’un champ et d’une liste extraite d’un objet dans un autre champ
