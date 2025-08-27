@@ -11,6 +11,8 @@ value = get("value.entree").replace(/\s+/g, " ").trim()
 // Entrée : "Ceci      est      un       test    " → Sortie : "Ceci est un test"
 ```
 
+---
+
 ### Supprimer les caractères spéciaux et les accents
 
 ```js
@@ -18,12 +20,16 @@ value = get("value.entree").deburr().replace(/[^a-zA-Z0-9 ]/g, "").trim()
 // Entrée : "Eurêka !" → Sortie : "Eureka "
 ```
 
+---
+
 ### Supprimer les caractères spéciaux tout en conservant les accents
 
 ```js
 value = get("value.entree").replace(/[^a-zA-ZÀ-ÖØ-öø-ÿ0-9 ]/g, "").trim()
 // Entrée : "Eurêka !" → Sortie : "Eurêka"
 ```
+
+---
 
 ### Nettoyer les balises et entités HTML
 
@@ -33,7 +39,54 @@ Puis à l'aide d'une *regex* on supprime les balises HTML.
 ```js
 value = get("value.entree").thru(str => _.unescape(str)) \
     .replace(/<[^>]+>/g, '')
-// Entrée : "First lifetime investigations of <i>N</i> &gt; 82 iodine isotopes: The quest for collectivity" → Sortie : "First lifetime investigations of N > 82 iodine isotopes: The quest for collectivity"
+// Entrée : "First lifetime investigations of <i>N</i> &gt; 82 iodine isotopes: The quest for collectivity"
+// → Sortie : "First lifetime investigations of N > 82 iodine isotopes: The quest for collectivity"
+```
+
+---
+
+### Convertir les symboles grecs en alphabet latin
+
+Dans de nombreux titres et résumés apparaissent des symboles grecs, si pour des besoins de normalisation par exemple vous souhaitez les convertir, appliquer ce script.
+
+```js
+[env]
+path = replaceGreeks
+value = fix((title)=> \
+  Object \
+    .entries({ \
+      'α': 'alpha', \
+      'β': 'beta', \
+      'γ': 'gamma', \
+      'δ': 'delta', \
+      'ε': 'epsilon', \
+      'θ': 'theta', \
+      'λ': 'lambda', \
+      'μ': 'mu', \
+      'π': 'pi', \
+      'σ': 'sigma', \
+      'φ': 'phi', \
+      'ω': 'omega' \
+    }) \
+    .reduce( \
+      (acc, [symbol, name]) => \
+        acc \
+          .split(symbol) \
+          .join(name), \
+      title \
+    ) \
+)
+// Le script qui verbalise le symboles est stocké dans une variale d'environnement [ENV].
+// Ce qui permet de pouvoir l'utiliser plusieurs fois sur les champs title et abstract avec simplement
+// .thru(env("replaceGreeks"))
+
+[replace]
+path = sortie
+value = get("value.title")
+
+// Entrée : "From α to ω."
+// → Sortie : "From alpha to omega."
+
 ```
 
 ## Exemples de transformations diverses
@@ -77,6 +130,8 @@ Ce qui donne  :
 value=fix(_.toString(self.value.year), _.toLower(self.value.source), _.toUpper(self.value.publisher))
 // → Sortie : ["2019","information","MDPI"]
 ```
+
+---
 
 ### Construire un tableau à partir d’un champ et d’une liste extraite d’un objet dans un autre champ
 
