@@ -17,7 +17,7 @@ value = get("value.entree").replace(/\s+/g, " ").trim()
 
 ```js
 value = get("value.entree").deburr().replace(/[^a-zA-Z0-9 ]/g, "").trim()
-// Entrée : "Eurêka !" → Sortie : "Eureka "
+// Entrée : "Eurêka !" → Sortie : "Eureka"
 ```
 
 ---
