@@ -82,7 +82,7 @@ value = fix((title)=> \
 
 [replace]
 path = sortie
-value = get("value.title")
+value = get("value.title").thru(env("replaceGreeks"))
 
 // Entrée : "From α to ω."
 // → Sortie : "From alpha to omega."
