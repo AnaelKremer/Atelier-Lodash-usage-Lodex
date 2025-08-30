@@ -64,10 +64,13 @@ value = fix((str)=> \
 )
 ```
 
-> [!WARNING]
-> On le sait, utiliser `=>` nous fait passer dans du **JavaScript pur**. Mais pour réaliser un chaînage **Lodash** dans une fonction anonyme il convient de mettre le préfixe `_` avant chaque fonction comme ici.
+> [!NOTE]
+> On le sait, utiliser `=>` nous fait passer dans du **JavaScript pur**.
+> Mais pour réaliser un chaînage **Lodash** dans une fonction anonyme il convient de mettre le préfixe `_` avant chaque fonction comme ici.
 > Mais lorsque l'on combine des fonctions, la lecture peut devenir difficile. Dans cet exemple, `trim` est d'abord utilisée, puis `deburr` et enfin `toLower`.
+>
 > Il existe une autre façon de déclarer un chaînage, qui est sans doute plus lisible :
+>
 > Il faut placer la valeur à transformer dans un **wrapper Lodash**. Littéralement cela signifie que l'on *emballe* la valeur dans un objet spécial afin de pouvoir la passer dans un pipeline de transformations.
 > Et comme vu [ici](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/01-introduction.md#un-encha%C3%AEnement-de-fonctions-lodash) un pipeline **Lodash** doit commencer par `_.chain` et se conclure par `.value()`.
 
@@ -91,7 +94,8 @@ Puis la tester sur une chaîne de caractères :
 [assign]
 path = normalizedTitle
 value = get("value.title").thru(env("normalizeString"))
-// Entrée :  "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience" → Sortie : "bibliometrie prete a l'emploi avec openalex : retour d'experience"
+// Entrée :  "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience" 
+// → Sortie : "bibliometrie prete a l'emploi avec openalex : retour d'experience"
 ```
 
 On peut ensuite créer notre deuxième brique destinée à traiter des tableaux (que l'on ajoute dans [ENV] en dessous de la première) :
