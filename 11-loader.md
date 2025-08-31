@@ -2,6 +2,13 @@
 
 ## Fonctionnement d'un loader
 
+```mermaid
+flowchart LR
+  A[Fichier brut<br/>(CSV, JSON, XML...)] --> B[Loader<br/>(script EZS)]
+  B --> C[Objets JavaScript]
+  C --> D[Base MongoDB<br/>(Lodex)]
+```
+
 ## Les instructions
 
 ## ...
