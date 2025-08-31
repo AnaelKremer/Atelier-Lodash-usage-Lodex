@@ -4,12 +4,12 @@
 
 ```mermaid
 graph TD;
-  A[Fichier brut (CSV, JSON, XML...)] --> B[Loader (script EZS)];
-  B --> C[Objets JavaScript];
-  C --> D[Base MongoDB (Lodex)];
+  A["Fichier brut (CSV, JSON, XML...)"] --> B["Loader (script EZS)"];
+  B --> C["Objets JavaScript"];
+  C --> D["Base MongoDB (Lodex)"];
 ```
 
-## Les instructions
+## Les instructions EZS
 
 ## ...
 
