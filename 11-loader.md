@@ -44,22 +44,24 @@ retries = 5
 ```
 
 ```txt
- [assign]       → création du champ "Unpaywall" à partir du champ "DOI"
-        │
-        ▼
- [swing]        → On teste si le champ est vide (absence de DOI), si c'est le cas on exclue ces données du traitement
-        │
-        ▼
- [swing/expand]       → On regroupe  les données par paquet de 100
-        │
-        ▼
- [swing/expand/URLConnect]   → On interroge l’API Unpaywall
-        │
-        ▼
+        [assign]    → création du champ "Unpaywall" à partir du champ "DOI"
+           │
+           ▼
+        [swing]     → On teste si le champ est vide (absence de DOI), si c'est le cas on exclue ces données du traitement
+           │
+           ▼
+     [swing/expand]     → On regroupe  les données par paquet de 100
+           │
+           ▼
+ [swing/expand/URLConnect]    → On interroge l’API Unpaywall
+           │
+           ▼
  On récupère les information d'Unpaywall dans notre champ
 ```
 
 Ce modèle en **pipeline** rend les loaders très **flexibles** : on peut ajouter, retirer ou modifier des étapes sans casser l’ensemble.  
+
+---
 
 Ecrire ses transformations dans un *loader* plutôt que dans **Lodex** en *enrichissements* présente plusieurs avantages :  
 
