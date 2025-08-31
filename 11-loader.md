@@ -1,6 +1,10 @@
 # Traitements avancés dans un loader
 
-## Fonctionnement d'un loader
+## Qu’est-ce qu’un loader dans Lodex ?
+
+Dans **Lodex**, un loader est un fichier de configuration permettant d'importer un jeu de données dans une instance.  
+
+Son rôle est de convertir **un fichier brut** (CSV, JSON, XML, etc.) en un flux d’objets **JavaScript** prêts à être stockés dans **la base MongoDB de Lodex**.  
 
 ```mermaid
 graph TD;
@@ -8,6 +12,73 @@ graph TD;
   B --> C["Objets JavaScript"];
   C --> D["Base MongoDB (Lodex)"];
 ```
+
+Un loader s'écrit dans un **fichier `.ini`**.  
+- `.ini` = *Initialization file* (fichier d’initialisation).  
+- Historiquement, ce format sert à décrire des configurations sous forme texte, avec des **sections** (`[ ]`) et des paires `clé = valeur`.  
+- Lodex réutilise ce format pour décrire un **pipeline de transformation**.  
+
+Un fichier `.ini` suit une logique d'étapes : il est lu de haut en bas et est exécuté séquentiellement.  
+Chaque section étant une étape du pipeline qui applique une transformation au flux de données avant de le transmettre à la suivante.  
+
+👉 Exemple :  
+
+```ini
+[assign]
+path = Unpaywall
+value = get("Identifiers.DOI")
+
+[swing]
+test = get("Unpaywall").isEmpty()
+reverse = true
+
+[swing/expand]
+path = Unpaywall
+size = 100
+
+[swing/expand/URLConnect]
+url = https://biblio-tools.services.istex.fr/v2/unpaywall/works/expand
+timeout = 3600000
+noerror = false
+retries = 5
+```
+
+```txt
+ [assign]       → création du champ "Unpaywall" à partir du champ "DOI"
+        │
+        ▼
+ [swing]        → On teste si le champ est vide (absence de DOI), si c'est le cas on exclue ces données du traitement
+        │
+        ▼
+ [swing/expand]       → On regroupe  les données par paquet de 100
+        │
+        ▼
+ [swing/expand/URLConnect]   → On interroge l’API Unpaywall
+        │
+        ▼
+ On récupère les information d'Unpaywall dans notre champ
+```
+
+Ce modèle en **pipeline** rend les loaders très **flexibles** : on peut ajouter, retirer ou modifier des étapes sans casser l’ensemble.  
+
+Ecrire ses transformations dans un *loader* plutôt que dans **Lodex** en *enrichissements* présente plusieurs avantages :  
+
+- Tout d'abord, **Lodex** fonctionne en **stream** :
+  - Lorsqu’on applique des enrichissements, Lodex travaille par paquets.  
+  - Chaque paquet est transformé, envoyé dans MongoDB, puis relu pour passer à l’étape suivante.
+  - Cela provoque de nombreux allers-retours entre Lodex et MongoDB, ce qui rallonge les temps de traitement.
+- Un loader agit différemment :
+  - Le fichier est lu et transformé étape par étape dans le pipeline EZS.  
+  - Toutes les transformations sont effectuées **avant** l’écriture en base.
+  - Puis le flux final d’objets JavaScript est envoyé en une seule fois à MongoDB.
+- Et surtout, un loader permet de réaliser des opérations impossibles ou limitées dans Lodex:
+  - **Lodex** traite chaque "notice" indépendamment (*ou ligne par ligne)*.
+  - Un loader peut lire et transformer tout le dataset à la fois, ce qui rend possibles des opérations globales comme :
+    - dédoublonner des lignes entières (*notices identiques*),
+    - fusionner des données,
+    - ou appliquer des transformations lourdes sur l’ensemble.  
+
+📌 **En résumé, Lodex traite les données ligne par ligne et nous pousse à raisonner notice par notice, tandis qu’un loader permet de réfléchir en termes d’opérations globales sur l’ensemble du dataset, ce qui en augmente considérablement le potentiel de transformation.**
 
 ## Les instructions EZS
 
