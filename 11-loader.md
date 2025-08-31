@@ -4,9 +4,14 @@
 
 ```mermaid
 flowchart TB
-  A[Fichier brut (CSV, JSON, XML...)] --> B[Loader (script EZS)]
-  B --> C[Objets JavaScript]
-  C --> D[Base MongoDB (Lodex)]
+  A[Fichier brut (CSV, JSON, XML...)]
+  B[Loader (script EZS)]
+  C[Objets JavaScript]
+  D[Base MongoDB (Lodex)]
+
+  A --> B
+  B --> C
+  C --> D
 ```
 
 ## Les instructions
