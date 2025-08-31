@@ -43,6 +43,8 @@ noerror = false
 retries = 5
 ```
 
+🔍 Explications :
+
 ```txt
         [assign]    → création du champ "Unpaywall" à partir du champ "DOI"
            │
