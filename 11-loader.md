@@ -52,7 +52,7 @@ retries = 5
         [swing]     → On teste si le champ est vide (absence de DOI), si c'est le cas on exclue ces données du traitement
            │
            ▼
-     [swing/expand]     → On regroupe  les données par paquet de 100
+     [swing/expand]     → On regroupe les données par paquet de 100
            │
            ▼
  [swing/expand/URLConnect]    → On interroge l’API Unpaywall
@@ -84,7 +84,82 @@ Ecrire ses transformations dans un *loader* plutôt que dans **Lodex** en *enric
 
 📌 **En résumé, Lodex traite les données ligne par ligne et nous pousse à raisonner notice par notice, tandis qu’un loader permet de réfléchir en termes d’opérations globales sur l’ensemble du dataset, ce qui en augmente considérablement le potentiel de transformation.**
 
+---
+
+Pour qu'un loader fonctionne correctement, il faut inclure des instructions **EZS** spécifiques (comme `[unpack]`, `[identify]`, `[OBJFlatten]`…) et déclarer des *plugins*, mais ce n'est pas l'objet de cette documentation.  
+
+Ces aspects techniques relèvent davantage d’une formation dédiée à **EZS**, ça tombe bien ! Mon collègue François Parmentier en a justement fait une [ici](https://github.com/parmentf/formation-ezs/tree/master).  
+
+Nous allons nous concentrer ici sur un ensemble restreint d’instructions essentielles pour transformer et nettoyer les données avec Lodash.  
+
 ## Les instructions EZS
+
+### [assign]
+
+`[assign]` permet d'affecter une valeur à un champ de l'objet courant. Si le champ existe déjà, sa valeur est écrasée, sinon il est créé.
+
+```json
+[{
+    "DO": "10.3390/info10050178 ",
+    "TI": "Istex: A Database of Twenty Million Scientific Papers with a Mining Tool Which Uses Named Entities",
+    "SO": "Information"
+}]
+```
+
+```js
+[assign]
+path = doi
+value = get("DO")
+```
+
+:point_down:
+
+```json
+[{
+    "DO": "10.3390/info10050178 ",
+    "TI": "Istex: A Database of Twenty Million Scientific Papers with a Mining Tool Which Uses Named Entities",
+    "SO": "Information",
+    "doi": "10.3390/info10050178 "
+}]
+```
+
+Dans un `[assign]`, on peut créer autant de nouveaux champs que l’on veut, tant qu’ils s’appuient uniquement sur les champs existants du dataset original.  
+
+On peut donc les définir dans le même bloc [assign].
+
+```js
+[assign]
+path = doi
+value = get("DO")
+
+path = normalizedTitle
+value = get("TI").deburr().toLower()
+
+path = normalizedSource
+value = get("SO").deburr().toLower()
+```
+
+⚠️ Attention :  
+
+Un champ créé dans un `[assign]` n’est pas utilisable immédiatement dans ce même bloc.  
+Il ne devient disponible qu’à la sortie du bloc, c’est-à-dire pour les instructions suivantes.  
+
+Si l'on souhaite créer un champ contenant le doi ou, s'il n'existe pas, le titre normalisé, on ne peut ajouter ceci dans le bloc :
+
+```js
+path = doiOrNormalizedTitle
+value = get("doi").thru(doi => _.isEmpty(doi) ? self.normalizedTitle : doi)
+```
+
+Il faut ouvrir un nouvel `[assign]`
+
+```js
+[assign]
+path = doiOrNormalizedTitle
+value = get("doi").thru(doi => _.isEmpty(doi) ? self.normalizedTitle : doi)
+```
+
+
 
 ## ...
 
@@ -229,5 +304,4 @@ value = get("value.authorsKeywords") \
     "retour d’experience"
   ]
 }
-
 ```

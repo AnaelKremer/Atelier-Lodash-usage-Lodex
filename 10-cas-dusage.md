@@ -210,3 +210,5 @@ value = fix(self.value.doi, ...(_(self.value.authors).map('fullname')))
 renverra : 
 
 ```["10.3390/info10050178","Denis Maurel","Enza Morale","Nicolas Thouvenin","Patrice Ringot","Angel Turri"]```
+
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-loader.md)
