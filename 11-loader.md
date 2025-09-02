@@ -125,7 +125,7 @@ value = get("DO")
 
 Dans un `[assign]`, on peut créer autant de nouveaux champs que l’on veut, tant qu’ils s’appuient uniquement sur les champs existants du dataset original.  
 
-On peut donc les définir dans le même bloc [assign].
+On peut donc les définir dans le même bloc `[assign]`.
 
 ```js
 [assign]
@@ -159,7 +159,93 @@ path = doiOrNormalizedTitle
 value = get("doi").thru(doi => _.isEmpty(doi) ? self.normalizedTitle : doi)
 ```
 
+Résultat :
 
+```json
+[{
+    "DO": "10.3390/info10050178 ",
+    "TI": "Istex: A Database of Twenty Million Scientific Papers with a Mining Tool Which Uses Named Entities",
+    "SO": "Information",
+    "doi": "10.3390/info10050178 ",
+    "normalizedTitle": "istex: a database of twenty million scientific papers with a mining tool which uses named entities",
+    "normalizedSource": "information",
+    "doiOrNormalizedTitle": "10.3390/info10050178 "
+}]
+```
+
+🔑 **À retenir : `[assign]` permet d’ajouter de nouveaux champs ou de modifier des champs existants (s’ils portent le même nom), tout en conservant l’objet original.**  
+**On enrichit donc ce dernier, au lieu de le remplacer.**
+
+### [replace]
+
+On a vu que l’on pouvait modifier des valeurs ou ajouter de nouveaux champs avec `[assign]`, ce qui permet d’enrichir l’objet tout en conservant ses données originales.  
+
+Mais il arrive qu’on trouve les noms de champs du dataset peu intelligibles (DO, TI, SO...) ou pas adaptés à nos besoins. Plutôt que d'empiler des `[assign]` puis de supprimmer les champs originaux ensuite, il faut utiliser `[replace]` qui permet de reconstruire un objet en lieu et place de l'original.  
+
+Ainsi : 
+
+```js
+[replace]
+path = doi
+value = get("DO")
+
+path = normalizedTitle
+value = get("TI").deburr().toLower()
+
+path = normalizedSource
+value = get("SO").deburr().toLower()
+```
+
+retourne :
+
+```json
+[{
+    "doi": "10.3390/info10050178 ",
+    "normalizedTitle": "istex: a database of twenty million scientific papers with a mining tool which uses named entities",
+    "normalizedSource": "information"
+}]
+```
+
+L’instruction `[replace]` permet de **remplacer complètement l’objet courant** par un nouveau que l'on définit dans le même bloc.  
+
+Si l’on veut créer un champ supplémentaire à partir de l’objet déjà modifié, comme dans l'exemple d'`[assign]` avec *doiOrNormalizedTitle* attention au piège !
+
+Il faudra ici ajouter `[assign]` pour créer le champ *doiOrNormalizedTitle* et non pas `[replace]`.  
+
+Si l'on ouvre un nouveau bloc `[replace]`, il va remplacer celui que l'on avait créé juste avant :
+
+```js
+[replace]
+path = doi
+value = get("DO")
+
+path = normalizedTitle
+value = get("TI").deburr().toLower()
+
+path = normalizedSource
+value = get("SO").deburr().toLower()
+
+[replace]
+path = doiOrNormalizedTitle
+value = get("doi").thru(doi => _.isEmpty(doi) ? self.normalizedTitle : doi)
+```
+
+:point_down:
+
+```json
+[{
+    "doiOrNormalizedTitle": "10.3390/info10050178 "
+}]
+```
+
+`[replace]` n'est donc pas cumulatif comme l'est `[assign]`.
+
+🔑 **À retenir : [replace] reconstruit un objet neuf en remplaçant complètement l’objet courant. Tous les champs non explicitement redéfinis disparaissent.**
+
+### [exchange]
+### [remove]
+### [dedupe]
+### [aggregate]
 
 ## ...
 
