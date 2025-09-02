@@ -176,6 +176,8 @@ Résultat :
 🔑 **À retenir : `[assign]` permet d’ajouter de nouveaux champs ou de modifier des champs existants (s’ils portent le même nom), tout en conservant l’objet original.**  
 **On enrichit donc ce dernier, au lieu de le remplacer.**
 
+---
+
 ### [replace]
 
 On a vu que l’on pouvait modifier des valeurs ou ajouter de nouveaux champs avec `[assign]`, ce qui permet d’enrichir l’objet tout en conservant ses données originales.  
@@ -241,6 +243,8 @@ value = get("doi").thru(doi => _.isEmpty(doi) ? self.normalizedTitle : doi)
 `[replace]` n'est donc pas cumulatif comme l'est `[assign]`.
 
 🔑 **À retenir : [replace] reconstruit un objet neuf en remplaçant complètement l’objet courant. Tous les champs non explicitement redéfinis disparaissent.**
+
+---
 
 ### [exchange]
 ### [remove]
