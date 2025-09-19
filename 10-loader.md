@@ -247,10 +247,242 @@ value = get("doi").thru(doi => _.isEmpty(doi) ? self.normalizedTitle : doi)
 ---
 
 ### [exchange]
+
+`[exchange]` est souvent difficile à différencier de `[assign]` ou `[replace]`, on pourrait dire qu'il se situe un peu entre les deux.  
+Lui aussi remplace l'objet entier, mais le contenu du nouvel objet est transformé à partir de l'objet courant.  
+
+Un exemple simple :
+
+```json
+[
+  { "nom": "un", "valeur": 1 },
+  { "nom": "deux", "valeur": 2 }
+]
+```
+
+```js
+[exchange]
+value = get("nom")
+```
+
+Sortie :  
+
+```js
+["un","deux"]
+```
+
+Ici, chaque objet est remplacé par sa valeur du champ *nom*.  
+
+Combiné à **Lodash** `[exchange]` peut avoir d'autres utilités, comme supprimer des clés d'un objet, ce qui en d'autres termes signifie **retirer des colonnes indésirables de son dataset.**
+
+```json
+[
+  { "nom": "un", "valeur": 1 },
+  { "nom": "deux", "valeur": 2 }
+]
+```
+
+```js
+[exchange]
+value = omit("valeur")
+```
+
+Sortie :  
+
+```js
+[
+  { "nom": "un" },
+  { "nom": "deux" }
+]
+```
+
+> [!TIP]
+> Pour supprimer plusieurs colonnes ou champs en même temps, on met simplement la liste des champs inésirables dans un tableau.
+> ```js
+> [exchange]
+> value = omit(["colonneX","colonneY","colonneZ"])
+> ```
+
+Plus puissant encore, là ou `[assign]` permettait de d'ajouter ou de créer des champs un par un, `[exchange]` permet d'agir sur **l'objet entier** et donc de réaliser des **transformations globales**.  
+
+Un cas d'usage pour illustrer, où l'on souhaitait réaliser la même transformation sur 10 colonnes du dataset. A savoir, verbaliser des booléens en remplacant *true* par *disponible* et *false* par *non disponible*.
+
+```json
+[
+  {
+    "publication_title": "Cancer Research",
+    "publication_type": "serial",
+    "IN2P3": true,
+    "INC": false,
+    "INEE": true,
+    "INP": false,
+    "INS2I": true,
+    "INSB": false,
+    "INSHS": true,
+    "INSIS": false,
+    "INSMI": true,
+    "INSU": false,
+    "type_acces": "accès acquis"
+  }
+]
+```
+
+```js
+[exchange]
+value = self().mapValues((value, key) => \
+    ['IN2P3', 'INC', 'INEE', 'INP', 'INS2I', 'INSB', 'INSHS', 'INSIS', 'INSMI', 'INSU'].includes(key) \
+        ? value === true ? 'disponible' : 'non disponible' \
+        : value \
+)
+```
+
+:point_down:
+
+```json
+[
+  {
+    "publication_title": "Cancer Research",
+    "publication_type": "serial",
+    "IN2P3": "disponible",
+    "INC": "non disponible",
+    "INEE": "disponible",
+    "INP": "non disponible",
+    "INS2I": "disponible",
+    "INSB": "non disponible",
+    "INSHS": "disponible",
+    "INSIS": "non disponible",
+    "INSMI": "disponible",
+    "INSU": "non disponible",
+    "type_acces": "accès acquis"
+  }
+]
+```
+
+On a donc conservé notre objet complet : toutes les clés sélectionnées ont vu leurs valeurs transformées et les autres clés sont restées inchangées.  
+
+Décomponsons le script :
+
+- `self()` permet de récupérer l'objet dans son intégralité.
+- `.mapValues((value, key) => … )` permet de parcourir toutes les clés de l'objet et d'appliquer une fonction à chaque paire clé/valeur par `=>`.
+- `.includes(key)` est une **condition logique** qui vérifié si la clé en cours appartient à la liste (des instituts)
+  - si la clé appartient à la liste alors on applique à la valeur la transformation `value === true ? 'disponible' : 'non disponible'`
+  - ou si la clé n'appartient pas à la liste, on laisse la valeur telle quelle par `: value`.
+
+Vous l'aurez compris, combiner l'instruction **EZS** `[exchange]` avec des fonctions **Lodash** ouvre la voie à des **transformations globales, nombreuses et variées** que nous ne détaillerons pas plus ici mais dans les Scripts avancés et cas d'usage.  
+
+---
+ 
 ### [remove]
+
+`[remove]` permet de supprimer entèrement certains éléments du flux en fonction d’une condition. Les objets qui ne satisfont pas le test sont écartés et ne passent pas à l’étape suivante.  
+
+Autrement dit, dans le contexte de **Lodex** cela permet de supprimer des **lignes entières**.
+
+```json
+[
+  { "id": 1, "type": "article" },
+  { "id": 2, "type": "book chapter" },
+  { "id": 3, "type": "preprint" },
+  { "id": 4, "type": "article" }
+]
+```
+
+```js
+[remove]
+test = get("type").isEqual("preprint")
+```
+
+On souhaite ici supprimer les objets dont le `type` est "preprint".
+
+```json
+[{
+    "id": 1,
+    "type": "article"
+},
+{
+    "id": 2,
+    "type": "book chapter"
+},
+{
+    "id": 4,
+    "type": "article"
+}]
+```
+
+Si l'on souhaitait conserver uniquement le `type` "article", soit supprimer tout sauf "article", il suffit d'inverser le test.
+
+```js
+[remove]
+test = get("type").isEqual("article")
+reverse = true
+```
+
+```json
+[{
+    "id": 1,
+    "type": "article"
+},
+{
+    "id": 4,
+    "type": "article"
+}]
+```
+
+---
+
+
 ### [dedupe]
+
+Supprime les objets qui sont **considérés comme identiques**.  
+
+Par défaut `[dedupe]` agit sur le champ `uri`.  
+Cela signifie qu'il ne supprime pas automatiquement des objets identiques en tout point, il faut toujours réfléchir au bon critère de dédoublonnage.  
+
+Ici on veut dédoublonner des notices bibliographiques en se basant sur le DOI :
+
+```json
+[
+  { "doi": "10.123/abc", "title": "A" },
+  { "doi": "10.456/def", "title": "B" },
+  { "doi": "10.123/abc", "title": "A" }
+]
+```
+
+```js
+[dedupe]
+path = doi
+ignore = true
+```
+
+```json
+[{
+    "doi": "10.123/abc",
+    "title": "A"
+},
+{
+    "doi": "10.456/def",
+    "title": "B"
+}]
+```
+
+⚠️ Il est impératif de mettre `ignore = true`. Par défaut le paramètre `ignore` est `false`, il stoppe alors le flux de traitements dès qu'un doublon est rencontré :  
+`item #3 [dedupe] <Error: Duplicate identifier: 10.123/abc already exists>`  
+`ignore = true` permet de ne garder que le 1er élément parmi ceux qui sont identiques et de poursuivre le flux de traitements.  
+
+Si le dataset n’a pas d’identifiant unique fiable, on peut vouloir comparer l’intégralité de l’objet pour détecter les doublons.  
+Cette approche est plus complexe (parce qu’on doit comparer toutes les clés et valeurs de l’objet), et sera donc présentée dans le chapitre suivant.  
+
+---
+
 ### [aggregate]
 
+```json
+
+```
+
+```js
+
+```
 ## ...
 
 ### Définir des fonctions réutilisables

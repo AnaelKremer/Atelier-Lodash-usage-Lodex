@@ -178,4 +178,4 @@ value = get("value.entree").round(2)
 // Entrée : 3.14159265359 → Sortie : 3.14
 ```
 
-👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-cas-dusage.md)
+👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-loader.md)
