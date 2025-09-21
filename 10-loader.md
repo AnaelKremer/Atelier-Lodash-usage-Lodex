@@ -476,14 +476,225 @@ Cette approche est plus complexe (parce qu’on doit comparer toutes les clés e
 
 ### [aggregate]
 
-```json
+Cette instruction permet d'agréger des objets, autrement dit de fusionner des lignes d'après un critère précis.  
 
+Manipuler `[aggregate]` s'avère plus complexe que les autres instructions **EZS** vues précédemment.  
+
+Allons-y pas à pas : 
+
+```json
+[
+  { "doi": "10.1/abc", "dataBaseId": "WOS", "title": "bla bla bla" },
+  { "doi": "10.1/abc", "dataBaseId": "OpenAlex", "title": "bla bla bla" },
+  { "doi": "10.2/def", "dataBaseId": "HAL", "title": "bla bla" }
+]
 ```
+
+On souhaite ici fusionner les lignes ayant un *doi* en commun, tout en conservant toutes les informations propres aux autres champs.  
+
+> [!WARNING] 
+> `[aggregate]` ne fonctionne qu'avec une paire `id`/`value` où `id` sera le critère d'agrégation et `value` les données agrégées.  
+
+Il faut donc commencer par transformer notre dataset en une paire `id`/`value` :
 
 ```js
+[replace]
+path = id
+value = get("doi")
 
+path = value
+value = self()
 ```
-## ...
+
+On remplace donc notre dataset original composé de 3 clés en assignant la valeur du champ `doi` à `id` et en regroupant l'ensemble du dataset(`self`) dans `value`.
+
+```json
+[{
+  "id": "10.1/abc",
+    "value": {
+      "doi": "10.1/abc",
+        "dataBaseId": "WOS",
+        "title": "bla bla bla"
+    }
+},
+{
+  "id": "10.1/abc",
+    "value": {
+      "doi": "10.1/abc",
+        "dataBaseId": "OpenAlex",
+        "title": "bla bla bla"
+    }
+},
+{
+  "id": "10.2/def",
+    "value": {
+      "doi": "10.2/def",
+        "dataBaseId": "HAL",
+        "title": "bla bla"
+    }
+}]
+```
+
+On peut maintenant faire notre agrégation en ajoutant : 
+
+```js
+[aggregate]
+path = id
+```
+
+L'agrégation fonctionne bien mais l'objet final demanderait à être restructuré. Si Chaque identifiant id est bien unique, la clé value contient simplement un tableau des objets regroupés.
+
+```json
+[{
+  "id": "10.1/abc",
+    "value": [
+      {
+        "doi": "10.1/abc",
+            "dataBaseId": "WOS",
+            "title": "bla bla bla"
+        },
+        {
+          "doi": "10.1/abc",
+            "dataBaseId": "OpenAlex",
+            "title": "bla bla bla"
+        }
+    ]
+},
+{
+  "id": "10.2/def",
+    "value": [
+      {
+        "doi": "10.2/def",
+            "dataBaseId": "HAL",
+            "title": "bla bla"
+        }
+    ]
+}]
+```
+
+`[aggregate]` ne fusionne pas les champs, il les juxtapose.  
+
+Pour "fusionner" les lignes il faut donc ajouter quelques instructions pour restructurer le tableau : 
+
+```js
+[replace]
+
+; Tous les champs étant dans un tableau value, il convient de mapper toutes les clés
+
+path = doi
+value = get("value").map("doi").first()
+; S'il y a plusieurs doi, ils seront forcément identiques, on peut donc forcer une chaîne avec first
+
+path = dataBaseId
+value = get("value").map("dataBaseId")
+
+path = title
+value = get("value").map("title")
+```
+
+On récupère bien un résultat final conforme et bien structuré : 
+
+```json
+[{
+  "doi": "10.1/abc",
+    "dataBaseId": [
+      "WOS",
+        "OpenAlex"
+    ],
+    "title": [
+      "bla bla bla",
+        "bla bla bla"
+    ]
+},
+{
+  "doi": "10.2/def",
+    "dataBaseId": [
+      "HAL"
+    ],
+    "title": [
+      "bla bla"
+    ]
+}]
+```
+
+> [!TIP]
+> On peut ajouter des transformations afin de savoir ce qui a été agrégé et en quelle quantité.
+
+```js
+path = isAggregated
+value = get("value").size().thru(numb=>numb===1 ? "Non agrégé" : "Agrégé")
+
+path = worksNumber
+value = get("value").size()
+```
+
+Ces 2 champs nous informeront sur quelles lignes ont été agrégées ou non, ainsi que le nombre de lignes agrégées en une seule.  
+
+```json
+[{
+  "doi": "10.1/abc",
+    "dataBaseId": [
+      "WOS",
+        "OpenAlex"
+    ],
+    "title": [
+      "bla bla bla",
+        "bla bla bla"
+    ],
+    "isAggregated": "Agrégé",
+    "worksNumber": 2
+}]
+```
+
+> [!WARNING] 
+> Si une ligne n’a pas de valeur pour le champ qui sert d'`id` (ici le doi), alors elle est purement et simplement supprimée du flux !!!
+
+Pour éviter cela on doit générer une valeur de repli (fallback), mais qui doit nécessairement être unique. Sinon tous les objets sans doi seront agrégés en un seul.  
+
+On utilisera donc ceci :  
+`_.now().toString(36) + Math.random().toString(36).substr(2)`  
+
+On renvoie la date en millisecondes, que l'on convertit en base 36, on y ajoute un nombre flottant entre 0 et 1, on convertit de nouveau en base 36 puis on enlève "0.". Cela donne des `id` de ce type :  
+
+```json
+[
+{    "id": "mfu5iwtr933w2udkp7q"},
+{    "id": "mfu5iwtry8lsbtri68"},
+{    "id": "mfu5iwtstvs86nojdmj"},
+{    "id": "mfu5iwtsa6dx1m8clh7"}
+]
+```
+
+On peut placer ces fonctions directement sur le champ `id` ce qui donne un script final comme ceci :  
+
+```js
+[replace]
+path = id
+value = get("doi").thru(doi =>doi === ""? _.now().toString(36) + Math.random().toString(36).substr(2): doi)
+
+path = value
+value = self()
+
+[aggregate]
+path = id
+
+[replace]
+
+path = doi
+value = get("value").map("doi").first()
+
+path = dataBaseId
+value = get("value").map("dataBaseId")
+
+path = title
+value = get("value").map("title")
+
+path = isAggregated
+value = get("value").size().thru(numb=>numb===1 ? "Non agrégé" : "Agrégé")
+
+path = worksNumber
+value = get("value").size()
+```
 
 ### Définir des fonctions réutilisables
 

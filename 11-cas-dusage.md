@@ -211,7 +211,7 @@ renverra :
 
 ```["10.3390/info10050178","Denis Maurel","Enza Morale","Nicolas Thouvenin","Patrice Ringot","Angel Turri"]```
 
----
+## Transformations globales (dans le cadre d'un loader)
 
 ### Dédoublonner des lignes parfaitement identiques
 
@@ -599,3 +599,49 @@ Cela s'écrit de la même façon que dans l'exemple précédent, on ajoute seule
 On constate que tous les champs n'étant pas des tableaux n'ont pas été impactés, et que le champ *des booléens* qui ne contenait pas de strings n'a pas été transformé non plus.  
 Seuls les tableaux *authors* et *keywords* ont été modifiés.
 
+---
+
+### Transformer des champs en tableaux à partir de chaînes délimitées
+
+On peut rencontrer dans certains jeux de données des champs contenant plusieurs valeurs sous forme de chaînes avec un séparateur.  
+Cela peut facilmeent être transformé en tableaux :
+
+```json
+[
+  {
+    "authors": "Carine Bach;Lucile Bourguignon;Christa Guélé;Philippe Houdry;Anaël Kremer",
+    "year": 2025,
+    "keywords": "OpenAlex;bibliométrie"
+  }
+]
+```
+
+Toujours les célèbres `mapValues` et `includes`, il suffit esnuite de splitter les champs avec le bon séparateur.
+
+```js
+[exchange]
+value = self().mapValues((value, key) => \
+  ['authors', 'keywords'].includes(key) \
+    ? _.split(value, ';') \
+    : value \
+)
+```
+
+:point_down:
+
+```json
+[{
+    "authors": [
+        "Carine Bach",
+        "Lucile Bourguignon",
+        "Christa Guélé",
+        "Philippe Houdry",
+        "Anaël Kremer"
+    ],
+    "year": 2025,
+    "keywords": [
+        "OpenAlex",
+        "bibliométrie"
+    ]
+}]
+```
