@@ -368,7 +368,7 @@ Décomponsons le script :
   - si la clé appartient à la liste alors on applique à la valeur la transformation `value === true ? 'disponible' : 'non disponible'`
   - ou si la clé n'appartient pas à la liste, on laisse la valeur telle quelle par `: value`.
 
-Vous l'aurez compris, combiner l'instruction **EZS** `[exchange]` avec des fonctions **Lodash** ouvre la voie à des **transformations globales, nombreuses et variées** que nous ne détaillerons pas plus ici mais dans les Scripts avancés et cas d'usage.  
+Vous l'aurez compris, combiner l'instruction **EZS** `[exchange]` avec des fonctions **Lodash** ouvre la voie à des **transformations globales, nombreuses et variées** que nous ne détaillerons pas plus ici mais dans les scripts avancés et cas d'usage.  
 
 ---
  

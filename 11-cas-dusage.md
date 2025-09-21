@@ -211,4 +211,391 @@ renverra :
 
 ```["10.3390/info10050178","Denis Maurel","Enza Morale","Nicolas Thouvenin","Patrice Ringot","Angel Turri"]```
 
-👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-loader.md)
+---
+
+### Dédoublonner des lignes parfaitement identiques
+
+Dans certains jeux de données, on ne dispose pas de champ discriminant clair (comme un DOI ou autre identifiant unique) qui permet de détecter et supprimer les doublons.  
+
+Dans ces situations, la seule solution consiste à comparer l’objet entier. Si deux lignes sont strictement identiques, l’une d’elles doit être supprimée.  
+
+Or, deux objets JavaScript identiques peuvent être difficiles à comparer directement, surtout dans un flux de données.  
+La seule solution consiste à générer une **empreinte unique** de chaque objet, puis à dédoublonner sur cette empreinte.  
+
+Pour ce faire, il faut utiliser un **SHA** *(Secure Hash Algorithm)*.  
+C'est une fonction de hachage cryptographique qui transforme une donnée (texte, nombre, objet JSON…) en une empreinte numérique unique (une longue chaîne de caractères).  
+*(Si vous souhaitez en connaitre davantage sur ce point, je vous conseille cet excellent [livre](https://www.deboecksuperieur.com/livre/9782807345331-les-algorithmes-c-est-plus-simple-avec-un-dessin)).*
+
+Il faut donc appliquer une fonction SHA à chaque ligne de son dataset pour pouvoir dédoublonner.
+
+Démonstration :
+
+```json
+[
+  { "a": 1, "b": 2 },
+  { "a": 2, "b": 3 },
+  { "a": 1, "b": 2 }
+]
+```
+
+```js
+[assign]
+; On met l'objet complet dans un champ hash
+path = hash
+value = self().cloneDeep().thru(obj => _(obj).toPairs().sortBy(0).fromPairs().value())
+; Par sécurité on copie un objet propre pour éviter les références circulaires et on trie ses clés par ordre alphabétique
+
+[map]
+; On "prépare" le champ hash pour lui appliquer plusieurs transformations spécifiques
+path = hash
+
+[map/identify]
+; On génère un identifiant SHA
+scheme = sha
+path = hash
+
+[map/exchange]
+value = get('hash')
+```
+
+A cette étape du script on a bien généré des empreintes numériques dans le champ *hash* :
+
+```json
+[{
+    "a": 1,
+    "b": 2,
+    "hash": [
+        "sha:/43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777z"
+    ]
+},
+{
+    "a": 2,
+    "b": 3,
+    "hash": [
+        "sha:/206f7b5543e6f2ef39bf334988fd7097b725caeed16588cd9d785480f2f0f8f6S"
+    ]
+},
+{
+    "a": 1,
+    "b": 2,
+    "hash": [
+        "sha:/43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777z"
+    ]
+}]
+```
+
+Ne reste plus qu'à dédoublonner et éventuellement enlever le champ *hash* qui a joué son rôle.
+
+```js
+[dedupe]
+path = hash
+ignore = true
+
+[exchange]
+value = omit("hash")
+```
+
+:point_down:
+
+```json
+[
+  {"a":1,"b":2},
+  {"a":2,"b":3}
+]
+```
+
+---
+
+### Trier les colonnes de son dataset par ordre alphabétique
+
+```json
+[
+  {
+    "title": "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience",
+    "authors": [
+      "Carine Bach",
+      "Lucile Bourguignon",
+      "Christa Guélé",
+      "Philippe Houdry",
+      "Anaël Kremer"
+    ],
+    "document_type": "Working Paper",
+    "year": 2025,
+    "abstract": "En décembre 2023, le MESR a mis en place un partenariat pluriannuel avec OpenAlex. En janvier 2024, le CNRS annonce se désabonner de Scopus...",
+    "keywords": [
+      "OpenAlex",
+      "bibliométrie"
+    ]
+  }
+]
+```
+
+```js
+[exchange]
+value = self() \
+    .toPairs() \
+    .sortBy(0) \
+    .fromPairs() 
+```
+
+On utilise évidemment `[exchange]` pour remplacer le dataset d'origine par notre dataset transformé.  
+
+- `self` pour travailler sur tout l'objet courant,  
+- `toPairs` transforme l'objet en un tableau de paires clé/valeur => `["document_type", "Working Paper"],["year", 2025]...`,
+- `sortBy(0)` trie le tableau par le premier élément de chaque paire (donc la clé),
+- `fromPairs` reconstruit l'objet.
+
+```json
+[{
+    "abstract": "En décembre 2023, le MESR a mis en place un partenariat pluriannuel avec OpenAlex. En janvier 2024, le CNRS annonce se désabonner de Scopus...",
+    "authors": [
+        "Carine Bach",
+        "Lucile Bourguignon",
+        "Christa Guélé",
+        "Philippe Houdry",
+        "Anaël Kremer"
+    ],
+    "document_type": "Working Paper",
+    "keywords": [
+        "OpenAlex",
+        "bibliométrie"
+    ],
+    "title": "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience",
+    "year": 2025
+}]
+```
+
+---
+
+### Supprimer des préfixes ou suffixes dans des noms de colonnes.  
+
+Il arrive fréquemment que les colonnes d’un dataset contiennent des préfixes ou suffixes parasites. Par exemple : 
+
+```json
+[{
+  "metaTitle": "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience",
+  "metaDocument_type": "Working Paper",
+  "metaYear": 2025
+}]
+```
+
+```js
+[exchange]
+value = self().mapKeys((value, key) => \
+    _.startsWith(key, "meta") \
+        ? key.slice(4) \
+        : key \
+)
+```
+
+- `mapKeys` permet d'appliquer une fonction à toutes les clés d'un objet,
+- `.startsWith(key, "meta")` permet de ne capturer que les clés commençant par "meta",
+- `key.slice(4)` supprime les 4 premiers caractères de ces clés, donc meta,
+- `: key` renvoie toutes les autres clés inchangées.
+
+```json
+[{
+    "Title": "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience",
+    "Document_type": "Working Paper",
+    "Year": 2025
+}]
+```
+
+Si l'on souhaite supprimer des suffixes, on utilisera `endsWith` en lieu et place de `startsWith` et modifiera `slice` pour supprimer les derniers caractères cette fois.
+
+```js
+[exchange]
+value = self().mapKeys((value, key) => \
+    _.endsWith(key, "_old") \
+        ? key.slice(0,-4) \
+        : key \
+)
+```
+
+---
+
+### Standardiser des noms de colonnes.
+
+Si vous vous souvenez des "bonnes pratiques" [énnoncées](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/03-syntaxe-et-bonnes-pratiques.md#le-nommage-des-colonnesenrichissements) au début de ce parcours, vous savez qu'il est important d'avoir des colonnes nommées correctement.  
+
+Mais souvent on doit faire avec ce que l'on a... 
+
+On a déjà vu comment nettoyer des chaînes de caractères, en combinant `mapKeys` à `[exchange]` on peut appliquer ces transformations à toutes les colonnes du datatset !  
+
+```json
+[
+  {
+    "_is_oa_?": true,
+    "_publication_year": 2025,
+    "_author_affiliations": "CNRS"
+  }
+]
+
+```
+
+```js
+[exchange]
+value = self().mapKeys((value, key) => \
+    _.camelCase( \
+        _.deburr(key) \
+          .replace(/[^a-zA-Z0-9_ ]/g, "") \
+    ) \
+)
+```
+
+- `mapKeys` pour itére sur toutes les clés d'un objet,
+- `camelCase` qui applique la convention de nommage du même nom,
+- `deburr` pour enlever les accents,
+- `replace` avec une *regex* pour retirer la ponctuation ou caractères spéciaux.
+
+:point_down:
+
+```json
+[{
+    "isOa": true,
+    "publicationYear": 2025,
+    "authorAffiliations": "CNRS"
+}]
+```
+
+---
+
+### Transformer les valeurs de type chaînes de caractères de plusieurs colonnes
+
+On peut transformer les valeurs de plusieurs colonnes à l'aide `mapValues` et `[exchange]` en sélectionnant les colonnes à transformer :
+
+```json
+[
+  {
+    "title": "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience",
+    "authors": [
+"Carine Bach", "Lucile Bourguignon", "Christa Guélé", "Philippe Houdry", "Anaël Kremer"],
+    "document_type": "Working Paper",
+    "year": 2025,
+    "abstract": "En décembre 2023, le MESR a mis en place un partenariat pluriannuel avec OpenAlex. En janvier 2024, le CNRS annonce se désabonner de Scopus...",
+    "keywords": ["OpenAlex", "bibliométrie"]
+  }
+]
+```
+
+```js
+[exchange]
+value = self().mapValues( \
+    (value, key) => \
+        ['title', 'abstract','document_type'].includes(key) \
+            ? _.toLower(_.deburr(_.trim(value))) \
+            : value \
+)
+```
+
+- `mapValues` applique une transformation à toutes les valeurs de l’objet, clé par clé,
+- `includes(key)` ne transforme que si la clé fait partie de la liste ['title', 'abstract','document_type'],
+- `deburr` supprime les accents et diacritiques (é → e),
+- `trim` supprime les espaces superflus au début et à la fin de la chaîne,
+- `toLower` convertit tout le texte en minuscules.
+
+:point_down:
+
+```json
+[{
+    "title": "bibliometrie prete a l'emploi avec openalex : retour d'experience",
+    "authors": [
+        "Carine Bach",
+        "Lucile Bourguignon",
+        "Christa Guélé",
+        "Philippe Houdry",
+        "Anaël Kremer"
+    ],
+    "document_type": "working paper",
+    "year": 2025,
+    "abstract": "en decembre 2023, le mesr a mis en place un partenariat pluriannuel avec openalex. en janvier 2024, le cnrs annonce se desabonner de scopus...",
+    "keywords": [
+        "OpenAlex",
+        "bibliométrie"
+    ]
+}]
+```
+
+💡 On peut également étendre les transformations à **tous les champs de type string** !
+
+```js
+[exchange]
+value = self().mapValues( \
+    (value) => \
+        _.isString(value) \
+            ? _.toLower(_.deburr(_.trim(value))) \
+            : value \
+)
+```
+
+L'utilisation de `isString` ici permet d'appliquer les fonction à tous les champs ayant des données de type string sans devoir sélectionner tous les champs manuellement.
+
+---
+
+### Transformer des valeurs dans des tableaux pour plusieurs colonnes
+
+Ici on va appliquer nos transformations uniquement à des tableaux, et seulement si les valeurs de ces tableaux sont des strings : 
+
+```json
+[
+  {
+    "title": "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience",
+    "authors": [
+      "Carine Bach",
+      "Lucile Bourguignon",
+      "Christa Guélé",
+      "Philippe Houdry",
+      "Anaël Kremer"
+    ],
+    "des booléens": [
+      true,
+      false,
+      true
+    ],
+    "year": 2025,
+    "keywords": [
+      "OpenAlex",
+      "bibliométrie"
+    ]
+  }
+]
+```
+
+```js
+[exchange]
+value = self().mapValues( \
+    (value, key) => \
+        _.isArray(value) \
+            ? value.map(v => _.isString(v) ? _.capitalize(_.deburr(_.trim(v))) : v) \
+            : value \
+)
+```
+
+Cela s'écrit de la même façon que dans l'exemple précédent, on ajoute seulement une nouvelle condition avec `isArray` et un `map` pour itérer sur chaque élément des tableaux.
+
+```json
+[{
+    "title": "Bibliométrie prête à l'emploi avec OpenAlex : retour d'expérience",
+    "authors": [
+        "Carine bach",
+        "Lucile bourguignon",
+        "Christa guele",
+        "Philippe houdry",
+        "Anael kremer"
+    ],
+    "un tableau de booléens": [
+        true,
+        false,
+        true
+    ],
+    "year": 2025,
+    "keywords": [
+        "Openalex",
+        "Bibliometrie"
+    ]
+}]
+```
+
+On constate que tous les champs n'étant pas des tableaux n'ont pas été impactés, et que le champ *des booléens* qui ne contenait pas de strings n'a pas été transformé non plus.  
+Seuls les tableaux *authors* et *keywords* ont été modifiés.
+
