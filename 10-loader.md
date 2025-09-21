@@ -542,7 +542,7 @@ On peut maintenant faire notre agrégation en ajoutant :
 path = id
 ```
 
-L'agrégation fonctionne bien mais l'objet final demanderait à être restructuré. Si Chaque identifiant id est bien unique, la clé value contient simplement un tableau des objets regroupés.
+L'agrégation fonctionne bien mais l'objet final demanderait à être restructuré. Si chaque identifiant id est bien unique, la clé value contient simplement un tableau des objets regroupés.
 
 ```json
 [{
@@ -695,6 +695,8 @@ value = get("value").size().thru(numb=>numb===1 ? "Non agrégé" : "Agrégé")
 path = worksNumber
 value = get("value").size()
 ```
+
+---
 
 ### Définir des fonctions réutilisables
 
