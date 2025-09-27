@@ -645,3 +645,96 @@ value = self().mapValues((value, key) => \
     ]
 }]
 ```
+
+---
+
+### Trier les lignes du dataset en fonction d'un champ
+
+On souhaite, par exemple, réorganiser son dataset selon le `nom` et par ordre alphabétique.
+
+```json
+[
+  { "nom": "Dupont", "prenom": "Bob" },
+  { "nom": "Martin", "prenom": "Zoe" },
+  { "nom": "Dupont", "prenom": "Alice" },
+  { "nom": "Martin", "prenom": "Alex" }
+]
+```
+
+```js
+[sort]
+path = nom
+```
+
+:point_down:
+
+```json
+[{
+    "nom": "Dupont",
+    "prenom": "Bob"
+},
+{
+    "nom": "Dupont",
+    "prenom": "Alice"
+},
+{
+    "nom": "Martin",
+    "prenom": "Zoe"
+},
+{
+    "nom": "Martin",
+    "prenom": "Alex"
+}]
+```
+
+> [!TIP]
+> On peut inverser le tri en ajoutant simplement 
+> `reverse = true`
+
+---
+
+### Trier les lignes du dataset en fonction de plusieurs champs
+
+Pour le même exemple, on souhaiterait affiner le tri. Si le même nom est présent plusieurs fois, on classe par prénom et par ordre alphabétique.
+
+```json
+[
+  { "nom": "Dupont", "prenom": "Bob" },
+  { "nom": "Martin", "prenom": "Zoe" },
+  { "nom": "Dupont", "prenom": "Alice" },
+  { "nom": "Martin", "prenom": "Alex" }
+]
+```
+
+Il est nécessaire de mettre 2 fois l'instruction, et on fait bien attention à l'ordre des instructions. Du plus fin au plus général. 
+
+```js
+[sort]
+path = prenom
+
+[sort]
+path = nom
+```
+
+:point_down:
+
+```json
+[{
+    "nom": "Dupont",
+    "prenom": "Alice"
+},
+{
+    "nom": "Dupont",
+    "prenom": "Bob"
+},
+{
+    "nom": "Martin",
+    "prenom": "Alex"
+},
+{
+    "nom": "Martin",
+    "prenom": "Zoe"
+}]
+```
+
+---
