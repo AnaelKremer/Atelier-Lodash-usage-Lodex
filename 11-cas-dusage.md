@@ -2,9 +2,29 @@
 
 ## Nettoyage des chaînes de caractères
 
+### Mettre une chaîne de caractères sous une forme canonique normalisée
+
+Si vous souhaitez réaliser un important travail de normalisation des chaînes de caractères, voici la 1ère fonction à appliquer afin d'éviter toute surprise.  
+
+Il peut arriver de rencontrer, dans d'importants jeux de données hétérogènes, des **variantes Unicode** comme par exemple `e\u0301cole`.  
+
+Pour traiter ces cas on utilisera donc une méthode **JavaScript native**, `normalize` (que l'on appelle donc via une fonction fléchée) avec la forme de normalisation `NFKC` (*Normalization Form Compatibility Composition*).
+
+```js
+value = get("value.entree") \
+    .thru(str => str.normalize("NFKC")) \
+    .replace(/\s+/g, " ") \
+    .deburr()
+    .toLower() \
+    .trim()
+// Entrée : "\u00E9cole" → Sortie : "ecole"
+```
+
+---
+
 ### Supprimer les espaces superflus
 
-Lorsque l'on réalise des opérations de nettoyage - comme par exemple enelever la ponctuation, les caractères spéciaux etc - il peut arriver que l'on ai plusieurs espaces consécutifs entre des mots. On utilisera `replace` avec une *regex* afin de remplacer ces multiples espaces par un seul.
+Lorsque l'on réalise des opérations de nettoyage - comme par exemple enlever la ponctuation, les caractères spéciaux etc - il peut arriver que l'on ai plusieurs espaces consécutifs entre des mots. On utilisera `replace` avec une *regex* afin de remplacer ces multiples espaces par un seul.
 
 ```js
 value = get("value.entree").replace(/\s+/g, " ").trim()
@@ -738,3 +758,158 @@ path = nom
 ```
 
 ---
+
+### Eclater puis fusionner des données
+
+Ce type de manipulation est utile lorsqu’on veut **changer la logique d’organisation** d’un dataset :  
+passer d’un format « une ligne par publication » à un format « une ligne par affiliation », par exemple.  
+
+Prenons un jeu de données où figurent des publications et les affiliations associées :   
+
+| doi | affiliations   |
+|------------|-----------------------------------|
+| 10.11111   | laboratoire A ; laboratoire B     |
+| 10.22222   | laboratoire B ; laboratoire C     |
+
+Soit l'objet : 
+
+```json
+[
+  {
+    "doi": "10.11111",
+    "affiliations": ["laboratoire A", "laboratoire B"]
+  },
+  {
+    "doi": "10.22222",
+    "affiliations": ["laboratoire B", "laboratoire C"]
+  }
+]
+```
+
+On souhaiterais réorganiser le jeu de données de sorte à obtenir une ligne pour chaque affiliation avec les publications associées, soit :  
+
+| affiliations | doi       |
+|---------------------------------|--------------------|
+| laboratoire A                   | 10.11111           |
+| laboratoire B                   | 10.11111 ; 10.22222|
+| laboratoire C                   | 10.22222           |
+
+Il va donc falloir dans un premier temps multiplier les lignes à partir des affiliations. Pour cela, 3 petites lignes suffisent.  
+
+```js
+[exploding]
+id = doi
+value = affiliations
+```
+
+On obtient désormais ceci :
+
+```json
+[{
+    "id": "10.11111",
+    "value": "laboratoire A"
+},
+{
+    "id": "10.11111",
+    "value": "laboratoire B"
+},
+{
+    "id": "10.22222",
+    "value": "laboratoire B"
+},
+{
+    "id": "10.22222",
+    "value": "laboratoire C"
+}]
+```
+
+On notera qu’à cette étape, nous avons perdu les noms de nos champs d’origine :
+- les doi sont désormais contenus dans la clé `id`,
+- les affiliations se trouvent dans la clé `value`.  
+
+Avant d’utiliser [aggregate], il faut donc inverser cette logique :
+- placer les affiliations (actuellement dans `value`) dans `id`,
+- mettre les DOIs (actuellement dans `id`) dans `value`.
+
+Cela se fait en quelques lignes :
+
+```js
+[replace]
+path = id
+value = get("value")
+
+path = value
+value = self().omit("value")
+
+[aggregate]
+path = id
+```
+
+Les données sont maintenant agrégées mais il faut encore reconstruire l'objet :  
+
+```json
+[{
+    "id": "laboratoire A",
+    "value": [
+        {
+            "id": "10.11111"
+        }
+    ]
+},
+{
+    "id": "laboratoire B",
+    "value": [
+        {
+            "id": "10.11111"
+        },
+        {
+            "id": "10.22222"
+        }
+    ]
+},
+{
+    "id": "laboratoire C",
+    "value": [
+        {
+            "id": "10.22222"
+        }
+    ]
+}]
+```
+
+On renomme donc les clés pour récupérer les noms explicites.  
+
+- On change donc le nom de la clé `id` en `affiliation`
+- On créé une clé `doi` où l'on récupère toutes les valeurs des champs `id`, eux mêmes contenus dans `value`.
+
+```js
+[exchange]
+value = fix({ \
+  affiliation: self.id, \
+  doi: _.map(self.value, "id") \
+})
+```
+
+:point_down: Résultat final :
+
+```json
+[{
+    "affiliation": "laboratoire A",
+    "doi": [
+        "10.11111"
+    ]
+},
+{
+    "affiliation": "laboratoire B",
+    "doi": [
+        "10.11111",
+        "10.22222"
+    ]
+},
+{
+    "affiliation": "laboratoire C",
+    "doi": [
+        "10.22222"
+    ]
+}]
+```

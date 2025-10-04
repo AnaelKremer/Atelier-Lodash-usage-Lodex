@@ -474,6 +474,154 @@ Cette approche est plus complexe (parce qu’on doit comparer toutes les clés e
 
 ---
 
+### [exploding]
+
+L’instruction `[exploding]` permet de démultiplier les éléments d’un tableau contenu dans un champ en plusieurs lignes.  
+Chaque valeur contenue dans le tableau devient alors une ligne indépendante.  
+
+Elle prend deux paramètres :
+
+- `id` : le champ qui sert « d’identifiant » et reste inchangé
+- `value` : le champ qui contient un tableau et qui sera « explosé »
+
+
+```json
+[
+  {
+    "title": "Exploring OpenAlex",
+    "keywords": ["OpenAlex", "bibliométrie", "CNRS"]
+  }
+]
+```
+
+Dans cet exemple on veut obtenir autant de lignes qu'il y a de mots-clés, tout en gardant le lien entre un mot clé et le titre de la publication dont il est issu.  
+
+```js
+[exploding]
+id = title
+value = keywords
+```
+
+:point_down:
+
+```json
+[{
+    "id": "Exploring OpenAlex",
+    "value": "OpenAlex"
+},
+{
+    "id": "Exploring OpenAlex",
+    "value": "bibliométrie"
+},
+{
+    "id": "Exploring OpenAlex",
+    "value": "CNRS"
+}]
+```
+
+Cela fonctionne de cette façon pour un jeux de données composé de deux champs seulement. S'il y en a plus, et c'est souvent le cas, il faut restructurer l'objet avant et après `[exploding]`.
+
+```json
+[
+  {
+    "title": "Exploring OpenAlex",
+    "doi": "10.212121",
+    "keywords": ["OpenAlex", "bibliométrie", "CNRS"]
+  }
+]
+```
+
+```js
+[replace]
+path = id
+value = self().omit("keywords")
+// pour conserver tous les autres champs on les regroupe dans id. On enlève keywords pour ne pas l'avoir en double.
+
+path = value
+value = get("keywords")
+// On assigne keywords à value pour qu'il soit "explosé".
+
+[exploding]
+id = id
+value = value
+```
+
+Ici notre dataset a bien été démultiplié en autant de "keywords" qu'il y en a mais on récupère un objet avec seulement deux champs `id` et `value`.
+
+```json
+[{
+    "id": {
+      "title": "Exploring OpenAlex",
+        "doi": "10.212121"
+    },
+    "value": "OpenAlex"
+},
+{
+  "id": {
+    "title": "Exploring OpenAlex",
+        "doi": "10.212121"
+    },
+    "value": "bibliométrie"
+},
+{
+  "id": {
+    "title": "Exploring OpenAlex",
+        "doi": "10.212121"
+    },
+    "value": "CNRS"
+}]
+```
+De façon plus visuelle : 
+
+      | id (objet regroupé) | value |
+      |---------------------|-------|
+      | `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | OpenAlex |
+      | `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | bibliométrie |
+      | `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | CNRS |
+
+Il faudrait donc pouvoir "déballer" tous les champs contenus dans `id` afin d'en faire des colonnes dans **Lodex**.  
+Pour cela on utilisera l'instruction `[exchange]` avec un peu de Lodash.
+
+```js
+[exchange]
+value = self() \
+    .assign({keyword: self.value}) \
+    .assign(self.id) \
+    .omit(["id", "value"])  
+
+```
+
+- `assign({ keyword: self.value })` → on crée une nouvelle clé `keyword` avec le contenu de `value`
+- `assign(self.id)` → on ajoute les champs contenus dans `id` (ici `title` et `doi`)
+
+A ce stade, notre dataset se compose désormais de 5 clés : `id`, `value`, `keyword`, `title` et `doi`. Ne reste plus qu'à supprimer `id` et `value`.
+ 
+- `omit(["id", "value"])`  
+
+On obtient bien un "dataset" de 3 objets (3 lignes), composés de 3 clés (3 colonnes).  
+
+:point_down:
+
+```json
+[{
+    "keyword": "OpenAlex",
+    "title": "Exploring OpenAlex",
+    "doi": "10.212121"
+},
+{
+    "keyword": "bibliométrie",
+    "title": "Exploring OpenAlex",
+    "doi": "10.212121"
+},
+{
+    "keyword": "CNRS",
+    "title": "Exploring OpenAlex",
+    "doi": "10.212121"
+}]
+```
+
+---
+
 ### [aggregate]
 
 Cette instruction permet d'agréger des objets, autrement dit de fusionner des lignes d'après un critère précis.  
@@ -695,6 +843,9 @@ value = get("value").size().thru(numb=>numb===1 ? "Non agrégé" : "Agrégé")
 path = worksNumber
 value = get("value").size()
 ```
+
+> [!TIP]
+> On verra dans les [Scripts avancés et cas d'usage](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-cas-dusage.md) comment combiner les instructions `[exploding]` et `[aggregate]`.
 
 ---
 
