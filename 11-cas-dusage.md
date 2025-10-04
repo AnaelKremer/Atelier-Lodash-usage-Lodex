@@ -827,7 +827,7 @@ On notera qu’à cette étape, nous avons perdu les noms de nos champs d’orig
 - les doi sont désormais contenus dans la clé `id`,
 - les affiliations se trouvent dans la clé `value`.  
 
-Avant d’utiliser [aggregate], il faut donc inverser cette logique :
+Avant d’utiliser `[aggregate]`, il faut donc inverser cette logique :
 - placer les affiliations (actuellement dans `value`) dans `id`,
 - mettre les DOIs (actuellement dans `id`) dans `value`.
 

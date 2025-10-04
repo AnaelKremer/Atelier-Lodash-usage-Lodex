@@ -573,11 +573,11 @@ Ici notre dataset a bien été démultiplié en autant de "keywords" qu'il y en 
 ```
 De façon plus visuelle : 
 
-      | id (objet regroupé) | value |
-      |---------------------|-------|
-      | `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | OpenAlex |
-      | `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | bibliométrie |
-      | `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | CNRS |
+| id (objet regroupé) | value |
+|---------------------|-------|
+| `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | OpenAlex |
+| `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | bibliométrie |
+| `{ "title": "Exploring OpenAlex", "doi": "10.212121" }` | CNRS |
 
 Il faudrait donc pouvoir "déballer" tous les champs contenus dans `id` afin d'en faire des colonnes dans **Lodex**.  
 Pour cela on utilisera l'instruction `[exchange]` avec un peu de Lodash.
