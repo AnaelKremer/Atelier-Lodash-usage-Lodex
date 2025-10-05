@@ -111,7 +111,96 @@ value = get("value.title").thru(env("replaceGreeks"))
 
 ## Exemples de transformations diverses
 
-Ces scripts ne sont pas forcément tous des cas d'usages existants, mais peuvent servir à montrer les bonnes syntaxes à adopter pour combiner vos fonctions.
+Ces scripts ne sont pas forcément tous des cas d'usages existants, mais peuvent servir à montrer les bonnes syntaxes à adopter pour combiner vos fonctions.  
+
+### Générer une date selon les conventions françaises
+
+La fonction **JavaScript** `new Date` permet de retourner la date et l'heure ainsi que la valeur UTC (universelle).  
+
+```json
+[
+  {
+    "doi": "10.11111"
+  },
+  {
+    "doi": "10.22222"
+  }
+]
+```
+
+```js
+[assign]
+path = date
+value = fix(new Date())
+```
+
+```json
+[{
+    "doi": "10.11111",
+    "date": "2025-10-05T16:09:28.554Z"
+},
+{
+    "doi": "10.22222",
+    "date": "2025-10-05T16:09:28.555Z"
+}]
+```
+
+Si l'on souhaite obtenir la date selon les conventions françaises (pour dater le corpus, ou une transformation) on peut ajouter une autre fonction **JavaScript** :
+
+```js
+[assign]
+path = date
+value = fix(new Date()) \
+  .thru(d => new Intl.DateTimeFormat('fr-FR', { \
+    year: 'numeric', \
+    month: 'long', \
+    day: 'numeric', \
+  }).format(d))
+```
+
+```json
+[{
+    "doi": "10.11111",
+    "date": "5 octobre 2025"
+},
+{
+    "doi": "10.22222",
+    "date": "5 octobre 2025"
+}]
+```
+
+Et si l'on souhaite davantage de précisions :  
+
+```js
+[assign]
+path = date
+value = fix(new Date()) \
+  .thru(d => new Intl.DateTimeFormat('fr-FR', { \
+    timeZone: 'Europe/Paris', \
+    year: 'numeric', \
+    month: 'long', \
+    weekday: 'long', \
+    day: 'numeric', \
+    hour: '2-digit', \
+    minute: '2-digit', \
+    second: '2-digit' \
+  }).format(d))
+```
+
+:point_down:
+
+```json
+[{
+    "doi": "10.11111",
+    "date": "dimanche 5 octobre 2025 à 18:20:44"
+},
+{
+    "doi": "10.22222",
+    "date": "dimanche 5 octobre 2025 à 18:20:44"
+}]
+```
+
+---
 
 ### Construire un tableau à partir d’un champ et d'un autre champ transformé pour l'occasion
 
@@ -232,6 +321,73 @@ renverra :
 ```["10.3390/info10050178","Denis Maurel","Enza Morale","Nicolas Thouvenin","Patrice Ringot","Angel Turri"]```
 
 ## Transformations globales (dans le cadre d'un loader)
+
+### Numéroter les lignes de son dataset
+  
+Il peut être utile, pour retrouver certaines données, d'avoir un corpus numéroté. Pour cela on peut utiliser la fonction `uniqueId` et customiser notre identifiant pour mieux s'adapter à nos besoin.  
+
+Ici par exemple, pour un corpus de donnée de plusieurs centaines de milliers de documents, on créé un champ *line* à 6 chiffres :
+
+```json
+[
+  {
+    "doi": "10.11111"
+  },
+  {
+    "doi": "10.22222"
+  },
+ {
+    "doi": "10.33333"
+  },
+ {
+    "doi": "10.44444"
+  },
+ {
+    "doi": "10.99999"
+  }
+]
+```
+
+```js
+[assign]
+path = line
+value = fix("").uniqueId().padStart(6, "0")
+```
+
+:point_down:
+
+```json
+[{
+    "doi": "10.11111",
+    "line": "000001"
+},
+{
+    "doi": "10.22222",
+    "line": "000002"
+},
+{
+    "doi": "10.33333",
+    "line": "000003"
+},
+{
+    "doi": "10.44444",
+    "line": "000004"
+},
+{
+    "doi": "10.99999",
+    "line": "000005"
+}]
+```
+
+💡 On peut également mettre cet identifiant unique en guise d'uri :
+
+```js
+[assign]
+path = uri
+value = fix("").uniqueId().padStart(6, "0")
+```
+
+---
 
 ### Dédoublonner des lignes parfaitement identiques
 
