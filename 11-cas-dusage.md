@@ -121,7 +121,7 @@ La fonction **JavaScript** `new Date` permet de retourner la date et l'heure ain
 [
   {"doi": "10.11111"},
   {"doi": "10.22222"}
-  ]
+]
 ```
 
 ```js
@@ -131,14 +131,12 @@ value = fix(new Date())
 ```
 
 ```json
-[{
-    "doi": "10.11111",
-    "date": "2025-10-05T16:09:28.554Z"
-},
-{
-    "doi": "10.22222",
-    "date": "2025-10-05T16:09:28.555Z"
-}]
+[
+  {"doi": "10.11111",
+   "date": "2025-10-05T16:09:28.554Z"},
+  {"doi": "10.22222",
+   "date": "2025-10-05T16:09:28.555Z"}
+]
 ```
 
 Si l'on souhaite obtenir la date selon les conventions françaises (pour dater le corpus, ou une transformation) on peut ajouter une autre fonction **JavaScript** :
@@ -155,14 +153,12 @@ value = fix(new Date()) \
 ```
 
 ```json
-[{
-    "doi": "10.11111",
-    "date": "5 octobre 2025"
-},
-{
-    "doi": "10.22222",
-    "date": "5 octobre 2025"
-}]
+[
+  {"doi": "10.11111",
+   "date": "5 octobre 2025"},
+  {"doi": "10.22222",
+   "date": "5 octobre 2025"}
+]
 ```
 
 Et si l'on souhaite davantage de précisions :  
@@ -186,14 +182,12 @@ value = fix(new Date()) \
 :point_down:
 
 ```json
-[{
-    "doi": "10.11111",
-    "date": "dimanche 5 octobre 2025 à 18:20:44"
-},
-{
-    "doi": "10.22222",
-    "date": "dimanche 5 octobre 2025 à 18:20:44"
-}]
+[
+  {"doi": "10.11111",
+   "date": "dimanche 5 octobre 2025 à 18:20:44"},
+  {"doi": "10.22222",
+   "date": "dimanche 5 octobre 2025 à 18:20:44"}
+]
 ```
 
 ---
@@ -331,7 +325,7 @@ Ici par exemple, pour un corpus de donnée de plusieurs centaines de milliers de
   {"doi": "10.33333"},
   {"doi": "10.44444"},
   {"doi": "10.99999"}
-  ]
+]
 ```
 
 ```js
@@ -343,26 +337,18 @@ value = fix("").uniqueId().padStart(6, "0")
 :point_down:
 
 ```json
-[{
-    "doi": "10.11111",
-    "line": "000001"
-},
-{
-    "doi": "10.22222",
-    "line": "000002"
-},
-{
-    "doi": "10.33333",
-    "line": "000003"
-},
-{
-    "doi": "10.44444",
-    "line": "000004"
-},
-{
-    "doi": "10.99999",
-    "line": "000005"
-}]
+[
+  {"doi": "10.11111",
+   "line": "000001"},
+  {"doi": "10.22222",
+   "line": "000002"},
+  {"doi": "10.33333",
+   "line": "000003"},
+  {"doi": "10.44444",
+   "line": "000004"},
+  {"doi": "10.99999",
+   "line": "000005"}
+]
 ```
 
 💡 On peut également mettre cet identifiant unique en guise d'uri :
