@@ -119,13 +119,9 @@ La fonction **JavaScript** `new Date` permet de retourner la date et l'heure ain
 
 ```json
 [
-  {
-    "doi": "10.11111"
-  },
-  {
-    "doi": "10.22222"
-  }
-]
+  {"doi": "10.11111"},
+  {"doi": "10.22222"}
+  ]
 ```
 
 ```js
@@ -329,23 +325,13 @@ Il peut être utile, pour retrouver certaines données, d'avoir un corpus numér
 Ici par exemple, pour un corpus de donnée de plusieurs centaines de milliers de documents, on créé un champ *line* à 6 chiffres :
 
 ```json
-[
-  {
-    "doi": "10.11111"
-  },
-  {
-    "doi": "10.22222"
-  },
- {
-    "doi": "10.33333"
-  },
- {
-    "doi": "10.44444"
-  },
- {
-    "doi": "10.99999"
-  }
-]
+[ 
+  {"doi": "10.11111"},
+  {"doi": "10.22222"},
+  {"doi": "10.33333"},
+  {"doi": "10.44444"},
+  {"doi": "10.99999"}
+  ]
 ```
 
 ```js
