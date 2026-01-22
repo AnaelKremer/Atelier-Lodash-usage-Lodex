@@ -849,7 +849,7 @@ value = get("value").size()
 
 ---
 
-### Définir des fonctions réutilisables
+### [env] Définir des fonctions réutilisables
 
 On a déjà vu qu'avec l'instruction `[ENV]` il était possible de stocker un dictionnaire que l'on pouvait réutiliser.  
 
