@@ -175,7 +175,7 @@ value = get("value.entree").unzip()
 Transforme un tableau de paires en un objet clé-valeur. ! Attention à toujours bien avoir des tableaux des deux éléments.
 
 ```js
-value = get("value.entree").unzip()
+value = get("value.entree").fromPairs()
 // Entree : [["Niels Bohr","Danemark"],["Albert Einstein","Allemagne"]] → Sortie : {"Niels Bohr":"Danemark","Albert Einstein":"Allemagne"}
 ```
 
