@@ -47,6 +47,30 @@ value = get("value.entree").thru(v => \
 // Entrée : "" → Sortie : "non renseigné"
 ```
 
+## fix (EZS)
+
+`fix` permet de définir une valeur constante ou calculée, indépendante du flux de données courant, que l’on peut ensuite injecter dans le pipeline.  
+
+Autrement dit, `fix` sert à **fabriquer une valeur** : 
+- constante (chaîne, nombre, objet, tableau...)
+- ou le résultat d'une fonction
+
+Un exemple simple : une valeur constante
+
+```js
+[assign]
+path = status
+value = fix("Publié")
+```
+
+Le champ status vaudra toujours "Publié", quel que soit le contenu du dataset.
+
+On peut s'en servir pour générer des valeurs calculées comme dans les fonctions `now` ou `uniqueId`.  
+
+C'est également utile pour stocker des valeurs dans une variable d'environnement (`[env]`), indipensable pour déclarer une [table de correspondance](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-cas-dusage.md#remplacer-des-valeurs-en-fonction-dun-dictionnaire-de-correspondance).
+
+Puis, dans un usage plus avancé, pour créer des [fonctions utilitaires](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-loader.md#env-d%C3%A9finir-des-fonctions-r%C3%A9utilisables)
+
 ## uniqueId  
 
 Génère un identifiant unique. Peut être utile pour numéroter les lignes d'un corpus.
