@@ -398,6 +398,8 @@ value = get("value.entree").thru(status => env("oaStatus")[status] ?? "statut in
 }]
 ```
 
+💡 Si dans la colonne entrée on a un tableau avec plusieurs valeurs, et non plus une chaîne de caractères, un simple `map` en lieu et place de `thru` remplacera toutes les valeurs du tableau.
+
 ---
 
 ### Remplacer une valeur en fonction d’un dictionnaire de correspondance via un fichier CSV distant  
