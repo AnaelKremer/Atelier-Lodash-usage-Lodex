@@ -357,19 +357,13 @@ Il ne reste plus qu'à appliquer cette table à nos données :
 [
   {
     "value": {
-      "entree": "gold"
-    }
-  },
+      "entree": "gold"}},
   {
     "value": {
-      "entree": "green"
-    }
-  },
+      "entree": "green"}},
   {
     "value": {
-      "entree": "bronze"
-    }
-  }
+      "entree": ""}}
 ]
 ```
 
@@ -391,20 +385,15 @@ value = get("value.entree").thru(status => env("oaStatus")[status] ?? "statut in
 ```js
 [{
     "value": {
-        "entree": "gold"
-    },
-    "sortie": "voie dorée"
-},
+        "entree": "gold"},
+    "sortie": "voie dorée"},
 {
     "value": {
-        "entree": "green"
-    },
-    "sortie": "voie verte"
-},
+        "entree": "green"},
+    "sortie": "voie verte"},
 {
     "value": {
-        "entree": ""
-    },
+        "entree": ""},
     "sortie": "statut inconnu"
 }]
 ```
