@@ -308,7 +308,152 @@ value = fix(self.value.doi, ...(_(self.value.authors).map('fullname')))
 
 renverra : 
 
-```["10.3390/info10050178","Denis Maurel","Enza Morale","Nicolas Thouvenin","Patrice Ringot","Angel Turri"]```
+```["10.3390/info10050178","Denis Maurel","Enza Morale","Nicolas Thouvenin","Patrice Ringot","Angel Turri"]```  
+
+---
+
+### Remplacer des valeurs en fonction d'un dictionnaire de correspondance
+
+Lorsqu’il n’y a qu’un ou deux cas, on peut tout à fait transformer une valeur à l’aide d’un `thru` et d’une condition ternaire `(===, ? :)`.  
+
+Mais dès que les cas se multiplient, ce type d’écriture devient :
+
+- difficile à lire,
+
+- difficile à maintenir,
+
+- et potentiellement source d’erreurs.
+
+Plutôt que d’écrire de longues fonctions conditionnelles (ou pire, de cumuler des `replace`), il est souvent plus simple et plus lisible d’utiliser un dictionnaire de correspondance.
+
+Dans Lodex, ce rôle est parfaitement rempli par l’instruction `[env]`, qui permet de définir une table de valeurs réutilisable dans tout le pipeline.
+
+👉 On remplace alors une logique conditionnelle complexe par une simple opération de lookup dans un dictionnaire.
+
+On va donc commencer par définir notre table de correspondance à l’aide de `[env]`, sous la forme d’un dictionnaire clé → valeur :
+
+```js
+[env]
+path = oaStatus
+value = fix({ \
+  "gold":   "voie dorée", \
+  "green":  "voie verte", \
+  "bronze": "voie bronze", \
+  "hybrid": "voie hybride", \
+  "diamond": "voie diamant", \
+  "closed": "accès fermé" \
+})
+```
+
+Dans le bloc `[env]`, le paramètre `path` permet de donner un nom à notre table de correspondance (ou dictionnaire).
+Ce nom servira ensuite à y accéder n’importe où dans le pipeline.  
+
+On utilise ensuite `fix` pour définir une valeur fixe, ici un objet *JavaScript*.
+Chaque clé de cet objet correspond à une valeur présente dans le dataset, et chaque valeur associée correspond à la valeur de remplacement souhaitée.  
+
+Il ne reste plus qu'à appliquer cette table à nos données :
+
+```js
+[
+  {
+    "value": {
+      "entree": "gold"
+    }
+  },
+  {
+    "value": {
+      "entree": "green"
+    }
+  },
+  {
+    "value": {
+      "entree": "bronze"
+    }
+  }
+]
+```
+
+```js
+[assign]
+path = sortie
+value = get("value.entree").thru(status => env("oaStatus")[status] ?? "statut inconnu")
+```
+
+- `get("value.entree")` on récupère la valeur brute du dataset
+- `.thru(status => env("oaStatus")[status] || "statut inconnu")`
+  - on interroge le dictionnaire défini dans `[env]`
+  - si la clé existe, on récupère la valeur correspondante
+  - sinon, on renvoie une valeur par défaut ("statut inconnu")
+
+
+:point_down:
+
+```js
+[{
+    "value": {
+        "entree": "gold"
+    },
+    "sortie": "voie dorée"
+},
+{
+    "value": {
+        "entree": "green"
+    },
+    "sortie": "voie verte"
+},
+{
+    "value": {
+        "entree": ""
+    },
+    "sortie": "statut inconnu"
+}]
+```
+
+---
+
+### Remplacer une valeur en fonction d’un dictionnaire de correspondance via un fichier CSV distant  
+
+Il est possible de remplacer la valeur d’un champ à partir d’un dictionnaire de correspondance (ou table d'équivalence) stocké dans un fichier CSV distant.  
+
+Dans cet exemple, on souhaite remplacer les valeurs contenues dans une colonne *typeDeDocument* grâce au fichier CSV *testTable.csv*.
+
+```js
+[assign]
+path = value
+; Colonne Lodex à rechercher dans le dictionnaire
+value = get("value.typeDeDocument")
+
+[combine]
+path = value
+; URL vers un fichier CSV accessible via internet
+primer = http://mapping-tables.daf.intra.inist.fr/testTable.csv
+; Valeur par défaut si aucune correspondance n’est trouvée
+default = n/a
+
+[combine/URLStream]
+path = false
+
+[combine/CSVParse]
+; Séparateur du fichier CSV
+separator = fix(";")
+
+[combine/CSVObject]
+
+[combine/replace]
+; Identifiant de la ligne CSV
+path = id
+; Colonne du CSV utilisée pour la correspondance
+value = get("documentType")
+
+; Valeur retournée en cas de correspondance
+path = value
+value = get("homogenizedType")
+
+[assign]
+path = value
+; Extraction de la valeur finale après le combine
+value = get("value.value")
+```
 
 ## Transformations globales (dans le cadre d'un loader)
 
@@ -591,7 +736,7 @@ value = self().mapKeys((value, key) => \
 )
 ```
 
-- `mapKeys` pour itére sur toutes les clés d'un objet,
+- `mapKeys` pour itérer sur toutes les clés d'un objet,
 - `camelCase` qui applique la convention de nommage du même nom,
 - `deburr` pour enlever les accents,
 - `replace` avec une *regex* pour retirer la ponctuation ou caractères spéciaux.
