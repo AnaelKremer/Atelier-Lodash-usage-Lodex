@@ -216,7 +216,7 @@ value = get("value.countries").pull("FR")
 // Sortie : [{"value":{"countries":["IT","DE"]},"countriesWithoutFr":["IT","DE"]}]
 ```
 
-Dans Lodex, ceci ne pose pas de problème. Mais dans un loader cette fonction va retirer "FR" de notre nouveau champ créé **mais également du champ original "countries"**  
+Dans Lodex, ceci ne pose pas de problème. Mais dans un loader cette fonction va retirer "FR" de notre nouveau champ créé, **mais également du champ original "countries"**.  
 
 Il existe une fonction équivalente à `pull` et non mutante qui est `without` :
 
@@ -245,7 +245,7 @@ Adopter ces bonnes pratiques dès le départ permet d’écrire des scripts plus
 Voici les principales fonctions mutantes présentes dans cette documentation :  
 
 | Fonction mutante | Type   | Alternative non mutante  | 
-|------------------|--------|--------------------------|----------|
+|------------------|--------|--------------------------|
 | pull             | Array  | without                  |
 | pullAll          | Array  | without                  |
 | remove           | Array  | filter / reject          |
