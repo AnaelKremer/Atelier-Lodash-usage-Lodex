@@ -192,6 +192,34 @@ value = fix(new Date()) \
 
 ---
 
+### Extraire l’année depuis une date de publication hétérogène
+
+Dans certains jeux de données bibliographiques, le champ date de publication n’a malheureusement pas un format unique.
+On peut par exemple rencontrer :
+- "2023-10-25"
+- "09-07-1986"
+- "1986"
+- "July 1986"  
+
+Dans ce contexte, il n'est pas possible de s’appuyer sur un simple découpage de la chaîne avec `split` suivi d’un `first` ou `last` comme on peut le faire sur des données homogènes.  
+
+Pour ce faire on cherchera directement l'année, soit **quatre chiffres consécutifs**, à l'aide d'une expression régulière et de `match`.  
+
+
+```js
+[assign]
+path = value
+value = get("value.publicationDate") \
+  .thru(date => date.match(/[0-9]{4}/) ?? "aucune année trouvée") \
+  .toString()
+```
+
+- `.match(/[0-9]{4}/)` cherche la première occurence de quatre chiffres consécutifs
+- `?? "aucune année trouvée"` petite sécurité qui permet de retourner cette mention si aucune année nest trouvée
+- `.toString()` garantit une sortie homogène sous forme de chaîne (si certaines valeurs étaient en Number)
+
+---
+
 ### Construire un tableau à partir d’un champ et d'un autre champ transformé pour l'occasion
 
 Cas simple, on souhaite obtenir dans un tableau l'année de publication, la revue et l'éditeur d'une publication.
