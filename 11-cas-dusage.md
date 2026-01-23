@@ -404,46 +404,67 @@ value = get("value.entree").thru(status => env("oaStatus")[status] ?? "statut in
 
 ### Remplacer une valeur en fonction d’un dictionnaire de correspondance via un fichier CSV distant  
 
-Il est possible de remplacer la valeur d’un champ à partir d’un dictionnaire de correspondance (ou table d'équivalence) stocké dans un fichier CSV distant.  
+Si l'on doit utiliser une table de correspondance volumineuse, il est possible de remplacer la valeur d’un champ à partir d’un dictionnaire de correspondance (ou table d'équivalence) stocké dans un fichier CSV distant. Ce dernier doit être **hébergé en ligne** et **accessible publiquement via une URL** (sans authentification), idéalement en **accès direct** au fichier (lien de téléchargement / lien brut). 
 
 Dans cet exemple, on souhaite remplacer les valeurs contenues dans une colonne *typeDeDocument* grâce au fichier CSV *testTable.csv*.
+
+| typeDeDocument | 
+|----------------|
+| "Article"      |
+| "Art"          |
+
+testTable.csv
+documentType;homogenizedType
+Article;Journal Article
+Art ;Journal Article
+
+On créé un enrichissemnt dans Lodex et colle ce script :  
 
 ```js
 [assign]
 path = value
-; Colonne Lodex à rechercher dans le dictionnaire
 value = get("value.typeDeDocument")
+; On sélectionne notre colonne Lodex à rechercher dans le dictionnaire
 
 [combine]
 path = value
-; URL vers un fichier CSV accessible via internet
 primer = http://mapping-tables.daf.intra.inist.fr/testTable.csv
-; Valeur par défaut si aucune correspondance n’est trouvée
+; URL vers le fichier CSV accessible via internet
 default = n/a
+; Valeur par défaut si aucune correspondance n’est trouvée dans le dictionnaire
 
 [combine/URLStream]
+; Sert à récupérer le fichier distant et à l'injecter dans le sous flux
 path = false
+; Sans cette ligne, EZS tente une lecture JSON. Avec false on lui indique de récupérer le fichier tel quel pour le parser ensuite
 
 [combine/CSVParse]
-; Séparateur du fichier CSV
+; C'est ici que l'on parse notre fichier CSV
 separator = fix(";")
+; On précise le séparateur du fichier CSV pour qu'il soit correctement parsé
 
 [combine/CSVObject]
+; Cette instruction permet de transformer chaque ligne en objet
+; Les clés de l'objet correspondent à la 1ère ligne du CSV (les titres des colonnes donc)
+
 
 [combine/replace]
-; Identifiant de la ligne CSV
+; Avec cette instruction on construit le dictionnaire sous forme d'objet clé / valeur (id et value)
 path = id
-; Colonne du CSV utilisée pour la correspondance
+; On définit l'identifiant de la ligne CSV
 value = get("documentType")
+; Colonne du CSV utilisée pour la correspondance (l'id sera donc par exemple "Article")
 
-; Valeur retournée en cas de correspondance
 path = value
 value = get("homogenizedType")
+; On définit les valeurs à retourner en cas de correspondance ("Journal Article" das notre exemple)
+
+; Après combine on obtient donc des objets de type { "id": "Article", "value": "Journal Article" }
 
 [assign]
 path = value
-; Extraction de la valeur finale après le combine
 value = get("value.value")
+; Ce dernier bloc est facultatif, il permet de ne récupérer que le résultat final à savoir la chaîne "Journal Article"
 ```
 
 ## Transformations globales (dans le cadre d'un loader)
