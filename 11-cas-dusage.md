@@ -413,7 +413,7 @@ Dans cet exemple, on souhaite remplacer les valeurs contenues dans une colonne *
 | "Article"      |
 | "Art"          |
 
-testTable.csv  
+**testTable.csv**  
 documentType;homogenizedType  
 Article;Journal Article  
 Art ;Journal Article  
