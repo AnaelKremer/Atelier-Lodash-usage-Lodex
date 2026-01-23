@@ -215,7 +215,7 @@ value = get("value.publicationDate") \
 ```
 
 - `.match(/[0-9]{4}/)` cherche la première occurence de quatre chiffres consécutifs
-- `?? "aucune année trouvée"` petite sécurité qui permet de retourner cette mention si aucune année nest trouvée
+- `?? "aucune année trouvée"` petite sécurité qui permet de retourner cette mention si aucune année n'est trouvée
 - `.toString()` garantit une sortie homogène sous forme de chaîne (si certaines valeurs étaient en Number)
 
 ---
