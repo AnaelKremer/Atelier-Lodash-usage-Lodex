@@ -196,4 +196,61 @@ value = get('value.documentType') \
 
 Une transformation peut s'avérer complexe ou inexplicable à première vue en raison de la structure des données (champs absents, formats incohérents etc.). Un commentaire s'avère donc nécessaire dans ce cas. Mais il faut toujurs garder à l'esprit qu'un bon commentaire explique un **pourquoi** et pas juste ce que fait le code.  
 
+## Mise en garde sur les fonctions "mutantes"
+
+⚠️ Certaines fonctions Lodash **modifient directement** les tableaux ou objets sur lesquels elles s’appliquent.  
+On dit qu’elles sont mutantes. 
+
+Dans Lodex, en mode enrichissement, elles **ne peuvent pas modifier le jeu de données source**.  
+En revanche **dans un pipeline de transformation** (comme un loader ou des scipts exécutés localement), cela **peut provoquer des effets de bord** difficiles à détecter :  
+une valeur modifiée à un endroit peut impacter les étapes suivantes.
+
+Exemple : 
+On possède un tableau de codes iso, on souhaite créer un autre tableau où l'on retire la valeur "FR"
+
+```js
+[assign]
+path = countriesWithoutFr
+value = get("value.countries").pull("FR")
+// Entrée : [{"value":{"countries":["FR","IT","DE"]}}]
+// Sortie : [{"value":{"countries":["IT","DE"]},"countriesWithoutFr":["IT","DE"]}]
+```
+
+Dans Lodex, ceci ne pose pas de problème. Mais dans un loader cette fonction va retirer "FR" de notre nouveau champ créé **mais également du champ original "countries"**  
+
+Il existe une fonction équivalente à `pull` et non mutante qui est `without` :
+
+```js
+[assign]
+path = countriesWithoutFr
+value = get("value.countries").without("FR")
+// Entrée : [{"value":{"countries":["FR","IT","DE"]}}]
+// Sortie : [{"value":{"countries":["FR","IT","DE"]},"countriesWithoutFr":["IT","DE"]}]
+```
+
+Cependant il n'existe pas toujours de fonction équivalente à une fonction mutante, pour sécuriser la transformation il faut utiliser `cloneDeep`
+
+```js
+[assign]
+path = countriesWithoutFr
+value = get("value.countries").cloneDeep().pull("FR")
+// Entrée : [{"value":{"countries":["FR","IT","DE"]}}]
+// Sortie : [{"value":{"countries":["FR","IT","DE"]},"countriesWithoutFr":["IT","DE"]}]
+```
+
+Ainsi, il est préférable de prendre l'habitude d'utiliser les fonctions **non mutantes**, ou de **sécuriser explicitement** les fonctions mutantes lorsqu leur usage est nécessaire.  
+
+Adopter ces bonnes pratiques dès le départ permet d’écrire des scripts plus robustes, plus lisibles, et plus sûrs dans le cadre de traitements complexes ou évolutifs.  
+
+Voici les principales fonctions mutantes présentes dans cette documentation :  
+
+| Fonction mutante | Type   | Alternative non mutante  | 
+|------------------|--------|--------------------------|----------|
+| pull             | Array  | without                  |
+| pullAll          | Array  | without                  |
+| remove           | Array  | filter / reject          |
+| reverse          | Array  | slice().reverse()        |
+| set              | Object | cloneDeep + set          |
+
+
 👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/04-chaines-de-caracteres.md)
