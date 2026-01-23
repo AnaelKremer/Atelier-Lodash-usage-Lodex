@@ -413,12 +413,12 @@ Dans cet exemple, on souhaite remplacer les valeurs contenues dans une colonne *
 | "Article"      |
 | "Art"          |
 
-testTable.csv
-documentType;homogenizedType
-Article;Journal Article
-Art ;Journal Article
+testTable.csv  
+documentType;homogenizedType  
+Article;Journal Article  
+Art ;Journal Article  
 
-On créé un enrichissemnt dans Lodex et colle ce script :  
+On créé un enrichissement dans Lodex et colle ce script :  
 
 ```js
 [assign]
@@ -436,7 +436,8 @@ default = n/a
 [combine/URLStream]
 ; Sert à récupérer le fichier distant et à l'injecter dans le sous flux
 path = false
-; Sans cette ligne, EZS tente une lecture JSON. Avec false on lui indique de récupérer le fichier tel quel pour le parser ensuite
+; Sans cette ligne, EZS tente une lecture JSON.
+; Avec false on lui indique de récupérer le fichier tel quel pour le parser ensuite
 
 [combine/CSVParse]
 ; C'est ici que l'on parse notre fichier CSV
