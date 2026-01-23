@@ -60,9 +60,25 @@ value = get("value.title")
 
 Modifie ou crée une clé avec une nouvelle valeur.  
 
+> [!WARNING]  
+> **Fonction mutante** 
+> Cette fonction modifie la structure passée en argument. 
+> Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.
+
 ```js
-value = get("value").set("DOI", null)
-// → Sortie : "DOI": null
+value = get("value.entree").set("DOI", null)
+// Entrée : [{"value":{"entree":{"title":"Exemple"}}}]
+// Sortie : [{"value":{"entree":{"title":"Exemple","DOI":null}},"sortie":{"title":"Exemple","DOI":null}}]
+```
+
+L'objet initial entrée est également modifié.  
+
+✅ Alternative non mutante recommandée : `cloneDeep`
+
+```js
+value = get("value.entree").cloneDeep().set("DOI", null)
+// Entrée : [{"value":{"entree":{"title":"Exemple"}}}]
+// Sortie : [{"value":{"entree":{"title":"Exemple"}},"sortie":{"title":"Exemple","DOI":null}}]
 ```
 
 ## update  
