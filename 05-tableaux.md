@@ -113,30 +113,93 @@ value = get("value.entree").nth(1)
 
 ## pull
 
-Supprime certaines valeurs du tableau.
+Supprime une valeur d'un tableau.  
+
+> [!WARNING]  **Fonction mutante**  
+> Cette fonction modifie la structure passée en argument.  
+> Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée. 
 
 ```js
 value = get("value.entree").pull("A")
-// Entree : ["A", "B", "A", "C"] → Sortie : ["B", "C"]
+// Entree : [{"value":{"entree":["A","B"]}}]
+// Sortie : [{"value":{"entree":["B"]},"sortie":["B"]}]
+```
+
+✅ Alternative non mutante recommandée : `without`
+
+```js
+value = get("value.entree").without("A")
+// Entree : [{"value":{"entree":["A","B"]}}]
+// Sortie : [{"value":{"entree":["A","B"]},"sortie":["B"]}]
 ```
 
 ## pullAll
 
-Supprime plusieurs valeurs du tableau.
+Supprime plusieurs valeurs du tableau.  
+
+> [!WARNING]  **Fonction mutante**  
+> Cette fonction modifie la structure passée en argument.  
+> Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.
 
 ```js
 value = get("value.entree").pullAll(["B","C"])
-// Entree : ["A", "B", "C", "D"] → Sortie : ["A", "D"]
+// Entree : ["A", "B", "C", "D"]
+// Sortie : [{"value":{"entree":["A","D"]},"sortie":["A","D"]}]
+```
+
+✅ Alternative non mutante recommandée : `without`  
+
+```js
+value = get("value.entree").without("B","C")
+// Entree : ["A", "B", "C", "D"]
+// Sortie : [{"value":{"entree":["A","B","C","D"]},"sortie":["A","D"]}]
 ```
 
 ## remove
 
-> [!WARNING] 
-> Cette fonction est assez contre-intuitive, elle supprime tous les éléments qui satisfont une condition mais renvoie le tableau des éléments supprimés.
+Cette fonction est assez contre-intuitive, elle supprime tous les éléments qui satisfont une condition mais renvoie le tableau des éléments supprimés.   
+
+> [!WARNING]  **Fonction mutante**  
+> Cette fonction modifie la structure passée en argument.  
+> Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.  
 
 ```js
 value = get("value.entree").remove(item=>item.startsWith("B"))
 // Entree : ["ABCD", "BCDE", "CDEF", "DEFG"] → Sortie : ["BCDE"]
+```
+
+⚠️ Après l'appel à `remove`, le tableau d'origine devient :  
+`["ABCD", "CDEF", "DEFG"]`  
+
+✅ Alternative non mutante recommandée : `filter`  
+
+```js
+value = get("value.entree").filter(item => item.startsWith("B"))
+// Entree : [{"value":{"entree":["ABCD","BCDE","CDEF","DEFG"]}}]
+// Sortie : [{"value":{"entree":["ABCD","BCDE","CDEF","DEFG"]},"sortie":["BCDE"]}]
+```
+
+## reverse
+
+Inverse l'ordre des éléments d'un tableau.
+
+> [!WARNING]  **Fonction mutante**  
+> Cette fonction modifie la structure passée en argument.  
+> Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.  
+
+```js
+value = get("value.entree").reverse()
+// Entrée : ["A", "B", "C"] → Sortie : ["C", "B", "A"]
+```
+
+⚠️ Après l'appel à `reverse`, le tableau d'origine est lui aussi inversé.  
+
+✅ Alternative non mutante recommandée : `slice` puis `reverse`  
+
+```js
+value = get("value.entree").slice().reverse()
+// Entrée : [{"value":{"entree":["A","B","C"]}}]
+// Sortie : [{"value":{"entree":["A","B","C"]},"sortie":["C","B","A"]}]
 ```
 
 ## sort
@@ -148,14 +211,23 @@ value = get("value.entree").sort()
 // Entree : ["C", "Q", "F", "D"] → Sortie : ["C", "D", "F", "Q"]
 ```
 
-## reverse
+## without
 
-Inverse l'ordre des éléments.
+Renvoie un nouveau tableau en excluant une ou plusieurs valeurs données.  
+Contrairement à `pull` ou `pullAll`, `without` **ne modifie pas le tableau d’origine.**
 
 ```js
-value = get("value.entree").reverse()
-// Entrée : ["A", "B", "C"] → Sortie : ["C", "B", "A"]
+value = get("value.entree").without("B")
+// Entrée : ["A", "B", "C"] → Sortie : ["A", "C"]
 ```
+
+Pour exclure plusieurs valeurs : 
+
+```js
+value = get("value.entree").without("B", "C")
+// Entrée : ["A", "B", "C", "D"] → Sortie : ["A", "D"]
+```
+
 
 ## zip / unzip
 
