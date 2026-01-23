@@ -5,7 +5,7 @@ Dans Lodex, de nombreuses colonnes ou valeurs peuvent contenir des objets (paire
 Certaines fonctions ci-dessous sont exclusives aux objets, tandis que d'autres s'appliquent plus largement aux collections (tableaux ou objets). Cette feuille se concentre sur les fonctions spécifiques aux objets. Les fonctions applicables aux collections seront abordées [ici.]()
 
 > [!NOTE]  
-> Vous pouvez tester chaque *exemple* dans [EZS Playground](http://ezs-playground.daf.intra.inist.fr/). Ecrivez l'input de cette façon : 
+> Vous pouvez tester chaque *exemple* dans [EZS Playground](https://ezs-playground.lodex.inist.fr/). Ecrivez l'input de cette façon : 
 > ```json
 > [
 >   {

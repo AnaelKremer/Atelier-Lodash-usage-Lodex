@@ -5,7 +5,7 @@ Dans Lodex, beaucoup de colonnes contiennent des tableaux : listes d’auteurs, 
 Certaines fonctions sont dédiées exclusivement aux tableaux, tandis que d'autres s'appliquent plus largement aux collections (tableaux ou objets). Cette feuille se concentre sur les fonctions spécifiques aux tableaux. Les fonctions applicables aux collections seront abordées [ici.]()
 
 > [!NOTE]
-> Vous pouvez tester chaque *exemple* dans [EZS Playground](http://ezs-playground.daf.intra.inist.fr/). Ecrivez l'input de cette façon :  
+> Vous pouvez tester chaque *exemple* dans [EZS Playground](https://ezs-playground.lodex.inist.fr/). Ecrivez l'input de cette façon :  
 > ```json
 > [
 >   {

@@ -9,7 +9,7 @@ Les fonctions Lodash de cette catégorie permettent d’itérer, filtrer, transf
 
 
 > [!NOTE]
-> Vous pouvez tester chaque *exemple* dans [EZS Playground](http://ezs-playground.daf.intra.inist.fr/).  
+> Vous pouvez tester chaque *exemple* dans [EZS Playground](https://ezs-playground.lodex.inist.fr/).  
 > Utilisez l'input suivant :  
 > ```json
 > [

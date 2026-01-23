@@ -5,7 +5,7 @@ De nombreux champs sont constitués de simples chaînes de caractères. Qu’il 
 Cette section présente les principales fonctions Lodash utiles pour manipuler les chaînes de caractères.
 
 > [!NOTE]
-> Vous pouvez tester chaque *exemple* dans [EZS Playground](http://ezs-playground.daf.intra.inist.fr/). Ecrivez l'input de cette façon `[{ "value":{"entree":"Turing complete"}}]` (et changez la valeur de *entree*) puis collez ce script que vous adapterez.
+> Vous pouvez tester chaque *exemple* dans [EZS Playground](https://ezs-playground.lodex.inist.fr/). Ecrivez l'input de cette façon `[{ "value":{"entree":"Turing complete"}}]` (et changez la valeur de *entree*) puis collez ce script que vous adapterez.
 > 
 > ```js
 > [use]
