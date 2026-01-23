@@ -115,9 +115,10 @@ value = get("value.entree").nth(1)
 
 Supprime une valeur d'un tableau.  
 
-> [!WARNING]  **Fonction mutante** 
+> [!WARNING]  
+> **Fonction mutante** 
 > Cette fonction modifie la structure passée en argument. 
-> Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée. 
+> Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.
 
 ```js
 value = get("value.entree").pull("A")
@@ -137,7 +138,8 @@ value = get("value.entree").without("A")
 
 Supprime plusieurs valeurs du tableau.  
 
-> [!WARNING]  **Fonction mutante** 
+> [!WARNING]  
+> **Fonction mutante** 
 > Cette fonction modifie la structure passée en argument. 
 > Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.
 
@@ -159,7 +161,8 @@ value = get("value.entree").without("B","C")
 
 Cette fonction est assez contre-intuitive, elle supprime tous les éléments qui satisfont une condition mais renvoie le tableau des éléments supprimés.   
 
-> [!WARNING]  **Fonction mutante** 
+> [!WARNING]  
+> **Fonction mutante** 
 > Cette fonction modifie la structure passée en argument. 
 > Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.
 
@@ -183,7 +186,8 @@ value = get("value.entree").filter(item => item.startsWith("B"))
 
 Inverse l'ordre des éléments d'un tableau.
 
-> [!WARNING]  **Fonction mutante** 
+> [!WARNING]  
+> **Fonction mutante** 
 > Cette fonction modifie la structure passée en argument. 
 > Dans un pipeline, cela peut entraîner des effets de bord si la valeur est réutilisée.  
 
