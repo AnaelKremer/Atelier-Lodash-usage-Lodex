@@ -495,7 +495,6 @@ value = get("value.countryCode")
 [map]
 path = value
 ; Sert à traiter individuellement chaque valeur de la liste (chaque code ici)
-; Transforme ["FR","BE"] en [{value:"FR"},{value:"BE"}]
 
 [map/replace]
 path = tempkey
@@ -522,13 +521,81 @@ path = id
 value = get('From')
 path = value
 value = get('To')
-; Une fois le TSV parsé en objets JSON, la valeur de "From" est transformé en clé et celle de "To" en valeur ({"From": "FR", "To": "France"})
+; Une fois le TSV parsé en objets JSON, la valeur de "From" est transformé en clé
+; et celle de "To" en valeur ({"From": "FR", "To": "France"})
 
 ; On récupère donc ceci [{"tempkey":{"id":"BE","value":"Belgium"}},{"tempkey":{"id":"FR","value":"France"}}]
 
 [map/exchange]
 value = get('tempkey.value')
 ; Extraction de la valeur finale
+```
+---
+
+### Remplacer des valeurs en fonction d'un dictionnaire de correspondance via un fichier JSONL distant
+
+Après avoir vu l’utilisation de fichiers TSV comme tables de correspondance, nous allons maintenant nous intéresser au format JSONL (JSON Lines).  
+
+Le JSONL est particulièrement pratique dans l’écosystème Lodex, car :
+- chaque ligne est un objet JSON autonome
+- il est facilement lisible et traitable en streaming
+- Lodex exporte naturellement ses données au format JSONL, **ce qui permet de réutiliser directement les données d’un autre Lodex comme table de correspondance.**  
+
+**Cas d’usage : enrichir une notice contenant plusieurs RNSR avec les laboratoires associés**
+
+On dispose d’un premier Lodex qui joue le rôle de dictionnaire :
+- une colonne rnsr
+- une colonne laboratoires
+
+On exporte ces deux colonnes en JSONL (format d’export Lodex).
+Chaque ligne du JSONL correspondra donc à une entrée du dictionnaire.  
+
+Dans notre jeu de données (un second Lodex), chaque notice peut contenir plusieurs RNSR (un tableau de valeurs).
+Pour chaque notice, on voudra donc récupérer l’ensemble des laboratoires correspondant à chacun des RNSR.
+
+**Lodex à enrichir :**
+
+| codesRnsr                   | 
+|-----------------------------|
+| ["200918450V"]              |
+| ["199812866Y","200918450V"] |
+
+**tableRnsrLaboratoire.jsonl (export du 1er Lodex)**
+
+{"rnsr":"200918450V","laboratoire":"Institut des sciences de la Terre Paris"}
+{"rnsr":"199812866Y","laboratoire":"Laboratoire de géologie de l'Ecole Normale Supérieure"}
+
+```js
+[assign]
+path = value
+value = get("value.codesRnsr")
+
+[map]
+path = value
+
+[map/replace]
+path = tmpkey
+value = self()
+
+[map/combine]
+path = tmpkey
+primer = https://mapping-tables.daf.intra.inist.fr/tableRnsrLaboratoire.jsonl
+default = n/a
+
+[map/combine/URLStream]
+path = false
+
+[map/combine/unpack]
+; On utilise ici l'instruction unpack pour lire et traiter le fichier ligne par ligne
+
+[map/combine/replace]
+path = id
+value = get('rnsr')
+path = value
+value = get("laboratoire")
+
+[map/exchange]
+value = get("tmpkey.value")
 ```
 
 ## Transformations globales (dans le cadre d'un loader)
