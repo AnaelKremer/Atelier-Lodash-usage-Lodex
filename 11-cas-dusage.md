@@ -418,7 +418,7 @@ documentType;homogenizedType
 Article;Journal Article  
 Art ;Journal Article  
 
-On créé un enrichissement dans Lodex et colle ce script :  
+On crée un enrichissement dans Lodex et colle ce script :  
 
 ```js
 [assign]
@@ -428,7 +428,7 @@ value = get("value.typeDeDocument")
 
 [combine]
 path = value
-primer = http://mapping-tables.daf.intra.inist.fr/testTable.csv
+primer = https://mapping-tables.daf.intra.inist.fr/testTable.csv
 ; URL vers le fichier CSV accessible via internet
 default = n/a
 ; Valeur par défaut si aucune correspondance n’est trouvée dans le dictionnaire
@@ -458,14 +458,77 @@ value = get("documentType")
 
 path = value
 value = get("homogenizedType")
-; On définit les valeurs à retourner en cas de correspondance ("Journal Article" das notre exemple)
+; On définit les valeurs à retourner en cas de correspondance ("Journal Article" dans notre exemple)
 
 ; Après combine on obtient donc des objets de type { "id": "Article", "value": "Journal Article" }
 
+[exchange]
+value = get("value")
+; Ce dernier bloc est facultatif, il permet de ne récupérer que le résultat final à savoir la chaîne "Journal Article"
+```
+
+---
+
+### Remplacer des valeurs en fonction d’un dictionnaire de correspondance via un fichier TSV distant  
+
+Cet exemple illustre moins le changement de format (CSV → TSV) que la gestion des tableaux :  
+comment appliquer une table de correspondance distante à chaque valeur d’une liste en appliquant un traitement itératif.  
+
+On cherchera ici à verbaliser les données de la colonne *countryCode* à l'aide du fichier TSV *Pays_test.tsv*
+
+| countryCode | 
+|-------------|
+| ["BE","FR"] |
+| ["IT"]      |
+
+**Pays_test.tsv**
+From	To  
+BE	Belgium  
+FR	France  
+IT	Italy  
+
+```js
 [assign]
 path = value
-value = get("value.value")
-; Ce dernier bloc est facultatif, il permet de ne récupérer que le résultat final à savoir la chaîne "Journal Article"
+value = get("value.countryCode")
+
+[map]
+path = value
+; Sert à traiter individuellement chaque valeur de la liste (chaque code ici)
+; Transforme ["FR","BE"] en [{value:"FR"},{value:"BE"}]
+
+[map/replace]
+path = tempkey
+value = self()
+; Création d'une clé temporaire pour stocker la valeur actuelle
+
+[map/combine]
+path = tempkey
+primer = https://mapping-tables.daf.intra.inist.fr/Pays_test.tsv
+; URL vers un fichier TSV accessible via internet
+default = n/a
+
+[map/combine/URLStream]
+path = false
+
+[map/combine/CSVParse]
+separator = fix("\t")
+; On précise ici que le séparateur est une tabulation
+
+[map/combine/CSVObject]
+
+[map/combine/replace]
+path = id
+value = get('From')
+path = value
+value = get('To')
+; Une fois le TSV parsé en objets JSON, la valeur de "From" est transformé en clé et celle de "To" en valeur ({"From": "FR", "To": "France"})
+
+; On récupère donc ceci [{"tempkey":{"id":"BE","value":"Belgium"}},{"tempkey":{"id":"FR","value":"France"}}]
+
+[map/exchange]
+value = get('tempkey.value')
+; Extraction de la valeur finale
 ```
 
 ## Transformations globales (dans le cadre d'un loader)
@@ -474,7 +537,7 @@ value = get("value.value")
   
 Il peut être utile, pour retrouver certaines données, d'avoir un corpus numéroté. Pour cela on peut utiliser la fonction `uniqueId` et customiser notre identifiant pour mieux s'adapter à nos besoin.  
 
-Ici par exemple, pour un corpus de donnée de plusieurs centaines de milliers de documents, on créé un champ *line* à 6 chiffres :
+Ici par exemple, pour un corpus de donnée de plusieurs centaines de milliers de documents, on crée un champ *line* à 6 chiffres :
 
 ```json
 [ 
@@ -1166,7 +1229,7 @@ Les données sont maintenant agrégées mais il faut encore reconstruire l'objet
 On renomme donc les clés pour récupérer les noms explicites.  
 
 - On change donc le nom de la clé `id` en `affiliation`
-- On créé une clé `doi` où l'on récupère toutes les valeurs des champs `id`, eux mêmes contenus dans `value`.
+- On crée une clé `doi` où l'on récupère toutes les valeurs des champs `id`, eux mêmes contenus dans `value`.
 
 ```js
 [exchange]
