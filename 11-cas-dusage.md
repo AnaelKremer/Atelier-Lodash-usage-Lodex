@@ -548,22 +548,22 @@ On dispose d’un premier Lodex qui joue le rôle de dictionnaire :
 - une colonne laboratoires
 
 On exporte ces deux colonnes en JSONL (format d’export Lodex).
-Chaque ligne du JSONL correspondra donc à une entrée du dictionnaire.  
+Chaque ligne du JSONL correspondra donc à une entrée du dictionnaire :  
+
+**tableRnsrLaboratoire.jsonl**
+
+{"rnsr":"200918450V","laboratoire":"Institut des sciences de la Terre Paris"}
+{"rnsr":"199812866Y","laboratoire":"Laboratoire de géologie de l'Ecole Normale Supérieure"}
 
 Dans notre jeu de données (un second Lodex), chaque notice peut contenir plusieurs RNSR (un tableau de valeurs).
 Pour chaque notice, on voudra donc récupérer l’ensemble des laboratoires correspondant à chacun des RNSR.
-
-**Lodex à enrichir :**
 
 | codesRnsr                   | 
 |-----------------------------|
 | ["200918450V"]              |
 | ["199812866Y","200918450V"] |
 
-**tableRnsrLaboratoire.jsonl (export du 1er Lodex)**
-
-{"rnsr":"200918450V","laboratoire":"Institut des sciences de la Terre Paris"}
-{"rnsr":"199812866Y","laboratoire":"Laboratoire de géologie de l'Ecole Normale Supérieure"}
+:point_down:
 
 ```js
 [assign]
