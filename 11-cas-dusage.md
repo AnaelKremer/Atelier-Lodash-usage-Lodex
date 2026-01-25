@@ -681,7 +681,6 @@ name = homogeniseKeywords
 filter = fix({id: self.value})
 ; On filtre pour ne récupérer que la partie du JSON associée à la notice
 
-
 [expand/aggregate]
 
 [exchange]
