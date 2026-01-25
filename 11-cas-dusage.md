@@ -626,6 +626,74 @@ value = get("laboratoire")
 value = get("tmpkey.value")
 ```
 
+---
+
+### Importer des données pré-calculées dans le dataset
+
+Dans Lodex, certains traitements peuvent être exécutés **en dehors du dataset principal**, sous forme de **pré-calculs**.  
+Ces pré-calculs sont stockés séparément et ne modifient pas directement les notices du jeu de données.  
+
+Certains pré-calculs produisent des résultats globaux à l'échelle du corpus, d'autres sont **liés aux notices** et renvoient donc explicitement les identifiants (id) des documents concernés.  
+
+Pour ce dernier cas, il est possible de récupérer ces résultats via un enrichissement afin de les injecter dans le dataset.  
+
+Cela permet de les exploiter ensuite comme n'importe quelle autre colonne : 
+- champs de ressource
+- facettes
+- graphiques divers  
+
+**Structure des résultats de pré-calcul**  
+
+Les résultats d'un pré-calcul sont des **objets JSON** ayant la forme suivante :  
+
+```js
+{
+  "id": "uid:/iSZ2QaTPJ",
+  "value": [
+    "Security",
+    "methodology",
+    "mobile devices",
+    "wide variety",
+    "constraints"
+  ],
+  "lodexStamp":{
+    "importedDate":"Sun Jan 25 2026",
+    "precomputedId":"69767dc39bfb77f07861fffd",
+    "webServiceURL":"https://data-homogenise.services.istex.fr/v1/homogenise?sid=lodex"}
+}
+```
+
+Afin de récupérer les résultats stockés dans `value` on écrira ce script dans un enrichissement :  
+
+```js
+[assign]
+path = value
+value = get("id")
+; On remplace la valeur courante par l’identifiant unique de chaque notice 
+; C’est cette clé qui permet de retrouver les données pré-calculées correspondantes.
+
+[expand]
+path = value
+
+[expand/precomputedSelect]
+name = homogeniseKeywords
+; On indique ici la source à interroger, soit le nom que l'on a attribué au pré-calcul
+filter = fix({id: self.value})
+; On filtre pour ne récupérer que la partie du JSON associée à la notice
+
+
+[expand/aggregate]
+
+[exchange]
+value = get("value")
+; Enfin, on ne conserve que les résultats stockés dans la clé value du précalcul
+```
+
+> [!NOTE]
+> Il est possible de se passer du dernier bloc `[exchange]`.  
+> Dans ce cas, l’enrichissement renverra les **objets JSON complets** issus du pré-calcul (tels que présentés plus haut),  
+> et non uniquement la valeur extraite.
+
 ## Transformations globales (dans le cadre d'un loader)
 
 ### Numéroter les lignes de son dataset
