@@ -991,6 +991,55 @@ value = self().mapKeys((value, key) => \
 
 ---
 
+### Normaliser un dataset issu d'un parsing XML
+
+Il peut arriver que certaines sources de données produisent des champs **structurés sous forme d’objets**, plutôt que des valeurs simples.  
+C’est notamment le cas lorsque des données issues de formats riches (comme le XML) sont converties en JSON : le contenu textuel et les métadonnées associées (langue, type, etc.) sont alors séparés.  
+
+On peut par exemple rencontrer des champs de la forme :  
+
+```JSON
+{
+  "source": "HAL",
+  "title": {
+    "type": "string",
+    "xmlLang": "fr",
+    "value": "bla bla bla"
+  },
+  "year": {
+    "type": "number",
+    "value": 2023
+  }
+}
+```
+
+Dans Lodex, ce niveau de structuration est souvent inutile, il ajoute de la complexité et augmente le volume de données à stocker.  
+On peut facilement restructurer l'intégralité du jeu de données via ce script :
+
+```js
+[exchange]
+value = self().mapValues(v => _.get(v, 'value', v))
+```
+
+- On utilise `[exchange]` pour remplacer tout l'objet d'origine
+- On pointe sur `self` pour manipuler l'objet complet
+- `mapValues` va appliquer une transformation à **chaque valeur**, clé par clé
+- `_.get(v, 'value', v)` 
+  - Si la valeur du champ est un objet et qu’il possède une propriété *value*, on retourne la valeur associée
+  - Si la valeur du champ est déjà une valeur simple (string, nombre) on la retourne telle quelle
+
+On obtient alors :
+
+```JSON
+{
+  "source": "HAL",
+  "title": "bla bla bla",
+  "year": 2023
+}
+```
+
+---
+
 ### Transformer les valeurs de type chaînes de caractères de plusieurs colonnes
 
 On peut transformer les valeurs de plusieurs colonnes à l'aide `mapValues` et `[exchange]` en sélectionnant les colonnes à transformer :
