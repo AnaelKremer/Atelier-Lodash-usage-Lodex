@@ -685,13 +685,131 @@ filter = fix({id: self.value})
 
 [exchange]
 value = get("value")
-; Enfin, on ne conserve que les résultats stockés dans la clé value du précalcul
+; Enfin, on ne conserve que les résultats stockés dans la clé value du pré-calcul
 ```
 
 > [!NOTE]
 > Il est possible de se passer du dernier bloc `[exchange]`.  
 > Dans ce cas, l’enrichissement renverra les **objets JSON complets** issus du pré-calcul (tels que présentés plus haut),  
 > et non uniquement la valeur extraite.
+
+---
+
+### Tronquer les titres issus d'un pré-calcul topRefExtract
+
+Le pré-calcul topRefExtract produit initialement un graphe au format GEXF, utilisé pour la visualisation, ce graphe est ensuite traduit en JSON comme cet exemple :  
+
+```JSON
+    {
+        "id": "https://doi.org/10.1098/rspb.2000.1204",
+        "value": {
+            "label": "Fragile transmission cycles of tick-borne encephalitis virus may be disrupted by predicted climate change",
+            "viz$color": {
+                "r": "0",
+                "g": "0",
+                "b": "255",
+                "a": "0.8"
+            },
+            "viz$size": {
+                "value": "50.0"
+            },
+            "targets": [
+                {
+                    "id": "https://doi.org/10.1126/science.289.5485.1763"
+                }
+            ]
+        },
+        "attributes": {
+            "count": "0",
+            "statut": "citant",
+            "title": "Fragile transmission cycles of tick-borne encephalitis virus may be disrupted by predicted climate change"
+        },
+        "lodexStamp": {
+            "importedDate": "Fri Jan 30 2026",
+            "precomputedId": "697c63e6e9d4b0e5e69d3a6b",
+            "webServiceURL": "https://data-topcitation.services.istex.fr/v1/topcitation?nbCitations=4&sid=lodex"
+        }
+    }
+```
+
+Pour des raisons d’affichage du graphe, les titres des documents contenus dans le champ `label` de `value` peuvent s’avérer trop longs.  
+Afin d’améliorer la lisibilité du graphe, il est possible de tronquer ces titres.  
+
+Le graphe est construit à partir des données contenues dans les clés `id` et `value` des objets issus du pré-calcul.  
+Il est donc nécessaire de reconstruire un objet `value` similaire à celui produit par le pré-calcul, en ne modifiant que le champ `label` (le titre du document). Les autres propriétés de `value` sont reprises telles quelles afin de préserver la structure et les métriques utilisées par le graphe
+
+Pour ce faire, on crée donc un enrichissement en mode avancé en sélectionnant comme source de données notre pré-calcul, puis on applique ce script :  
+
+```js
+[assign]
+path = value
+value = get("value.value").thru(obj => \
+  ({ \
+    ...obj, \
+    label: ( \
+      typeof obj.label === "string" && obj.label.length > 35 \
+        ? _.truncate(obj.label, { length: 35 }) \
+        : obj.label \
+    ) \
+  }) \
+)
+```
+
+- `...obj` garantit que toutes les propriétés de l’objet value sont conservées
+- `typeof obj.label === "string" && obj.label.length > 35` **si** la valeur de label est une chaîne de caractèreset **et si** sa longueur est supérieure à 35 caractères
+- `_.truncate(obj.label, { length: 35 })` alors on applique une troncature (qui ajoute automatiquement `...` à la fin de la chaîne)
+
+On obtient alors notre nouvel objet :
+
+```JSON
+    {
+        "id": "https://doi.org/10.1098/rspb.2000.1204",
+        "value": {
+            "label": "Fragile transmission cycles of tick-borne encephalitis virus may be disrupted by predicted climate change",
+            "viz$color": {
+                "r": "0",
+                "g": "0",
+                "b": "255",
+                "a": "0.8"
+            },
+            "viz$size": {
+                "value": "50.0"
+            },
+            "targets": [
+                {
+                    "id": "https://doi.org/10.1126/science.289.5485.1763"
+                }
+            ]
+        },
+        "attributes": {
+            "count": "0",
+            "statut": "citant",
+            "title": "Fragile transmission cycles of tick-borne encephalitis virus may be disrupted by predicted climate change"
+        },
+        "lodexStamp": {
+            "importedDate": "Fri Jan 30 2026",
+            "precomputedId": "697c5509e9d4b0e5e69d3a68",
+            "webServiceURL": "https://data-topcitation.services.istex.fr/v1/topcitation?nbCitations=4&sid=lodex"
+        },
+        "enrichedValue": {
+            "label": "Fragile transmission cycles of t...",
+            "viz$color": {
+                "r": "0",
+                "g": "0",
+                "b": "255",
+                "a": "0.8"
+            },
+            "viz$size": {
+                "value": "50.0"
+            },
+            "targets": [
+                {
+                    "id": "https://doi.org/10.1126/science.289.5485.1763"
+                }
+            ]
+        }
+    }
+    ```
 
 ## Transformations globales (dans le cadre d'un loader)
 
