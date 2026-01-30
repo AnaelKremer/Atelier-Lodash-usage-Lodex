@@ -809,7 +809,7 @@ On obtient alors notre nouvel objet :
             ]
         }
     }
-    ```
+```
 
 ## Transformations globales (dans le cadre d'un loader)
 
