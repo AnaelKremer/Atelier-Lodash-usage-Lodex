@@ -1181,7 +1181,7 @@ Reconstruit l’objet final après les transformations suivantes :
 `_.omitBy(data, (v, k) => /^(Affiliation|Ind Structure)\(\d+\)$/.test(k))`  
 Va supprimer, après les instructions suivantes, les colonnes intermédiaires comme Affiliation(2), Affiliation(3) à partir d'une regex :  
 
-`_.pickBy((v, k) => /^Affiliation(\(\d+\))?$/.test(k))`
+`_.pickBy((v, k) => /^Affiliation(\(\d+\))?$/.test(k))`  
 Cette instruction sélectionne toutes les clés correspondant au motif :
 
 - Affiliation
