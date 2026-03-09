@@ -1109,6 +1109,97 @@ value = self().mapKeys((value, key) => \
 
 ---
 
+### Regrouper des colonnes
+
+Dans certains jeux de données, des informations peuvent être réparties en plusieurs colonnes.  
+Par exemple lorsqu'un auteur a plusieurs affiliation, on va retrouver chaque affiliation dans une colonne dédiée (`"Affiliation", "Affiliation (2)"... `).  
+Ce type de structure apparaît souvent dans les exports où le nombre d’occurrences n’est pas connu à l’avance. 
+
+Si l'on peut concaténer ces colonnes, il faudrait alors écrire une opération concat pour chaque champ supplémentaire. Cette approche devient rapidement lourde et suppose surtout de connaître à l’avance le nombre maximal de colonnes présentes dans le jeu de données.  
+
+Or, dans la pratique, ce nombre peut varier selon les notices et les sources de données. Il est donc préférable d’utiliser une méthode plus générique permettant de regrouper automatiquement toutes les colonnes correspondant à un même motif (par exemple Affiliation, Affiliation(2), Affiliation(3), etc.), puis de regrouper leurs valeurs dans un seul tableau.  
+
+Le script suivant illustre cette approche en regroupant automatiquement les colonnes Affiliation et Ind Structure, quel que soit le nombre de variantes présentes dans le dataset.  
+
+```JSON
+[{
+  "Title": "Article",
+  "Affiliation": "CNRS",
+  "Affiliation(2)": "Université de Bordeaux",
+  "Affiliation(78)": "CEA",  
+  "Ind Structure": 123,
+  "Ind Structure(2)": 456,
+  "Ind Structure(78)": 789
+}]
+```
+
+```js
+[exchange]
+value = self().thru(data => \
+  _.assign({}, \
+    _.omitBy(data, (v, k) => /^(Affiliation|Ind Structure)\(\d+\)$/.test(k)), \
+    { \
+      Affiliation: _.chain(data) \
+        .pickBy((v, k) => /^Affiliation(\(\d+\))?$/.test(k)) \
+        .values() \
+        .without(null, undefined) \
+        .value(), \
+      "Ind Structure": _.chain(data) \
+        .pickBy((v, k) => /^Ind Structure(\(\d+\))?$/.test(k)) \
+        .values() \
+        .without(null, undefined) \
+        .value() \
+    } \
+  ) \
+)
+```
+
+On obtient désormais :
+
+```JSON
+[{
+    "Title": "Article",
+    "Affiliation": [
+        "CNRS",
+        "Université de Bordeaux",
+        "CEA"
+    ],
+    "Ind Structure": [
+        123,
+        456,
+        789
+    ]
+}]
+```
+
+`value = self().thru(data => ...)`  
+On récupère l’objet courant (`self()`) et on le passe à une fonction de transformation.  
+
+`_.assign({}, ...)`  
+Reconstruit l’objet final après les transformations suivantes : 
+
+`_.omitBy(data, (v, k) => /^(Affiliation|Ind Structure)\(\d+\)$/.test(k))`
+Va supprimer, après les instructions suivantes, les colonnes intermédiaires comme Affiliation(2), Affiliation(3) à partir d'une regex :  
+
+`_.pickBy((v, k) => /^Affiliation(\(\d+\))?$/.test(k))`
+Cette instruction sélectionne toutes les clés correspondant au motif :
+
+- Affiliation
+- Affiliation(2)
+- Affiliation(3)
+- ...
+
+`.values()`  
+On récupère ici les valeurs de toutes ces colonnes.  
+
+`.without(null, undefined)`  
+Supprime les valeurs vides.  
+
+`.value()`  
+Clotûre la chaîne de traitements débutée par `.chain()`
+
+---
+
 ### Normaliser un dataset issu d'un parsing XML
 
 Il peut arriver que certaines sources de données produisent des champs **structurés sous forme d’objets**, plutôt que des valeurs simples.  
