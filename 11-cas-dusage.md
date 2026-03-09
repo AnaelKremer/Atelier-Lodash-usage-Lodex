@@ -1178,7 +1178,7 @@ On récupère l’objet courant (`self()`) et on le passe à une fonction de tra
 `_.assign({}, ...)`  
 Reconstruit l’objet final après les transformations suivantes : 
 
-`_.omitBy(data, (v, k) => /^(Affiliation|Ind Structure)\(\d+\)$/.test(k))`
+`_.omitBy(data, (v, k) => /^(Affiliation|Ind Structure)\(\d+\)$/.test(k))`  
 Va supprimer, après les instructions suivantes, les colonnes intermédiaires comme Affiliation(2), Affiliation(3) à partir d'une regex :  
 
 `_.pickBy((v, k) => /^Affiliation(\(\d+\))?$/.test(k))`
