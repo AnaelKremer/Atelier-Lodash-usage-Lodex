@@ -47,7 +47,8 @@ Concatène des tableaux ou des valeurs au tableau existant.
 ```js
 value = get("value.entree").concat(self.value.entree2)
 // Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["A", "B", "A", "C"]
-```
+```  
+
 ## compact
 
 Supprime toutes les valeurs falsy (`false`, `null`, `0`, `""`, `undefined`, `NaN`) d’un tableau.
@@ -55,7 +56,31 @@ Supprime toutes les valeurs falsy (`false`, `null`, `0`, `""`, `undefined`, `NaN
 ```js
 value = get("value.entree").compact()
 // Entree : ["A", null, "", "B", false] → Sortie : ["A", "B"]
-```
+```  
+
+## drop
+
+Supprime les *n* premiers éléments d’un tableau.  
+
+```js
+value = get("value.entree").drop()
+// Entree : [1, 2, 3] → Sortie : [2, 3]
+
+value = get("value.entree").drop(2)
+// Entree : [1, 2, 3] → Sortie : [3]
+```  
+
+## dropRight
+
+Supprime les *n* premiers éléments d’un tableau.  
+
+```js
+value = get("value.entree").dropRight()
+// Entree : [1, 2, 3] → Sortie : [1, 2]
+
+value = get("value.entree").dropRight(2)
+// Entree : [1, 2, 3] → Sortie : [1]
+```  
 
 ## uniq
 
