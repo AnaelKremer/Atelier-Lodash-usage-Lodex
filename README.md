@@ -13,7 +13,6 @@
 9. [Autres fonctions utiles](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/09-autres-fonctions.md)
 10. [Traitements avancés dans un loader](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/10-loader.md)
 11. [Scripts avancés et cas d'usage](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/11-cas-dusage.md)
-12. [Pour allez plus loin](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/12-ressources.md)
 
 ---
 
