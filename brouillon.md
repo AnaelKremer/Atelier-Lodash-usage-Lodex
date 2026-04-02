@@ -1,21 +1,21 @@
-# Transformation de données en objets Lodex (MongoDB)
+# Transformation de données en objets LODEX (MongoDB)
 
 ## Introduction
 
-Cette section présente comment un fichier de données structurées est lu, transformé, puis intégré dans Lodex.  
+Cette section présente comment un fichier de données structurées est lu, transformé, puis intégré dans LODEX.  
 
-Quel que soit le format d’origine (CSV, JSON, etc.), les données suivent un processus de transformation qui permet de passer d’un ensemble de lignes ou d’objets à une structure adaptée au modèle de données de Lodex.  
+Quel que soit le format d’origine (CSV, JSON, etc.), les données suivent un processus de transformation qui permet de passer d’un ensemble de lignes ou d’objets à une structure adaptée au modèle de données de LODEX.  
 
 Ce processus repose sur plusieurs étapes :  
 
 - la lecture des données source
 - leur transformation en objets manipulables
 - leur éventuelle restructuration dans le loader
-- puis leur insertion dans Lodex sous forme de documents stockés dans MongoDB.  
+- puis leur insertion dans LODEX sous forme de documents stockés dans MongoDB.  
 
-On obtient ainsi des objets homogènes, composés de paires clé-valeur, qui peuvent être exploités efficacement dans l’interface Lodex.  
+On obtient ainsi des objets homogènes, composés de paires clé-valeur, qui peuvent être exploités efficacement dans l’interface LODEX.  
 
-## Du CSV à l’objet Lodex
+## Du CSV à l’objet LODEX
 
 Prenons comme exemple un fichier CSV :  
 
@@ -228,23 +228,24 @@ indent = true
 
 
 
-## Structuration pour Lodex
+## Structuration pour LODEX
 
-Une fois les données transformées et enrichies dans le loader, elles doivent être adaptées au modèle de données de Lodex afin de pouvoir être stockées et exploitées.
+Une fois les données transformées et enrichies dans le loader, elles doivent être adaptées au modèle de données de LODEX afin de pouvoir être stockées et exploitées.
 
 #### Ajout d’un identifiant logique (`uri`)
 
-Chaque objet doit contenir une clé `uri`, qui permet d’identifier la ressource dans Lodex.
+Chaque objet doit contenir une clé `uri`, qui permet d’identifier la ressource dans LODEX.
 
 ```ini
 [assign]
 path = uri
 value = get("doi")
+```
 
-### Dans Lodex / MongoDB
+### Dans LODEX / MongoDB
 
-Lors de l’insertion dans la base MongoDB utilisée par Lodex, un identifiant technique `_id` est ajouté automatiquement.  
-Les données importées restent stockées dans la clé `value`, tandis que la clé `uri` permet d’identifier logiquement la ressource dans Lodex.
+Lors de l’insertion dans la base MongoDB utilisée par LODEX, un identifiant technique `_id` est ajouté automatiquement.  
+Les données importées restent stockées dans la clé `value`, tandis que la clé `uri` permet d’identifier logiquement la ressource dans LODEX.
 
 ```json
 {
@@ -261,9 +262,9 @@ Les données importées restent stockées dans la clé `value`, tandis que la cl
 
 ### Résumé
 
-Le passage du CSV à Lodex peut être résumé ainsi :
+Le passage du CSV à LODEX peut être résumé ainsi :
 
 1. le fichier CSV est lu ligne par ligne ;
 2. chaque ligne est transformée en objet JSON ;
 3. le loader réorganise éventuellement les données ;
-4. Lodex insère l’objet dans MongoDB en ajoutant un identifiant technique `_id`.
+4. LODEX insère l’objet dans MongoDB en ajoutant un identifiant technique `_id`.
