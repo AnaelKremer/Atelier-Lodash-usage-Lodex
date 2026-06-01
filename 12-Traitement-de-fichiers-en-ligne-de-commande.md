@@ -220,4 +220,223 @@ ezs loaderAggregate.ini
 agregation.jsonl
 ```
 
-Cette approche est particulièrement utile pour agréger des snapshots, fusionner des exports successifs ou reconstruire un jeu de données consolidé à partir de plusieurs fichiers JSONL.
+## Cas avancé : agréger les résultats de plusieurs requêtes OpenAlex
+
+Dans cet exemple, on souhaite lancer deux requêtes OpenAlex proches, puis fusionner leurs résultats.
+
+L'objectif est de :
+
+- récupérer les résultats de chaque requête séparément
+- concaténer les fichiers obtenus
+- dédoublonner les publications à partir de leur `uri`
+- conserver une seule ligne par publication
+- **garder dans le champ `query` la liste des requêtes ayant retourné cette publication**
+
+### 1. Préparer les fichiers de requêtes
+
+Chaque requête OpenAlex est enregistrée dans un fichier texte séparé.
+
+Par exemple :
+
+#### `oa1.txt`
+
+```text
+?filter=publication_year:2026&search.title_and_abstract=open+science
+```
+
+#### `oa2.txt`
+
+```text
+?filter=publication_year:2026&type=book-chapter&search.title_and_abstract=open+science
+```
+
+### 2. Exécuter le loader OpenAlex sur chaque requête
+
+Chaque fichier de requête est ensuite envoyé au loader OpenAlex.
+
+```bash
+cat oa1.txt | ezs loaderOpenAlexV2.ini > oa1.jsonl
+cat oa2.txt | ezs loaderOpenAlexV2.ini > oa2.jsonl
+```
+
+On obtient alors deux fichiers JSONL :
+
+```text
+oa1.jsonl
+oa2.jsonl
+```
+
+Chaque fichier contient les publications retournées par la requête correspondante.
+
+Le loader OpenAlex ajoute notamment :
+
+- une `uri`, construite à partir de l'identifiant OpenAlex
+- un champ `query`, qui conserve la requête utilisée
+
+### 3. Pourquoi ne pas utiliser simplement `dedupe` ?
+
+Le loader OpenAlex construit une URI à partir de l'identifiant OpenAlex.
+
+Par exemple :
+
+```json
+{
+  "id": "https://openalex.org/W7132051972",
+  "uri": "uid:/W7132051972"
+}
+```
+
+Ainsi, si une même publication est retournée par les deux requêtes, elle aura la même `uri` dans `oa1.jsonl` et dans `oa2.jsonl`.
+
+On pourrait donc concaténer les fichiers puis supprimer les doublons avec :
+
+```ini
+[dedupe]
+ignore = true
+```
+
+Cependant, cette méthode conserverait uniquement la dernière notice rencontrée, celle-ci écrasant la précédente.
+
+On ne saurait donc plus si une publication provient uniquement de la première requête, uniquement de la seconde, ou des deux.
+
+L'objectif du loader d'agrégation est donc de dédoublonner les notices tout en conservant cette information de provenance.
+
+### 4. Exemple de notices avant agrégation
+
+#### Dans `oa1.jsonl`
+
+```json
+{
+  "id":"https://openalex.org/W7132051972",
+  "title":"Open science for better research",
+  "publication_year":"2026",
+  "uri":"uid:/W7132051972",
+  "query":"?filter=publication_year:2026&search.title_and_abstract=open+science"
+}
+```
+
+#### Dans `oa2.jsonl`
+
+```json
+{
+  "id":"https://openalex.org/W7132051972",
+  "title":"Open science for better research",
+  "publication_year":"2026",
+  "uri":"uid:/W7132051972",
+  "query":"?filter=publication_year:2026&type=book-chapter&search.title_and_abstract=open+science"
+}
+```
+
+### 5. Concaténer les résultats et appliquer le loader d'agrégation
+
+On concatène ensuite les deux fichiers JSONL et on applique le loader d'agrégation.
+
+```bash
+cat oa1.jsonl oa2.jsonl | ezs loaderAgregationOpenAlex.ini > oaAgrege.jsonl
+```
+
+Le fichier `oaAgrege.jsonl` contiendra une seule ligne par publication.
+
+### 6. Loader `loaderAgregationOpenAlex.ini`
+
+```ini
+append = pack
+label = json-lines
+
+[use]
+plugin = basics
+plugin = analytics
+
+[unpack]
+
+[replace]
+path = id
+value = get("uri")
+
+path = value
+value = self()
+
+[aggregate]
+
+[exchange]
+value = self().thru(data => \
+  _.assign({}, \
+    _.mapValues(_.head(data.value), (v, k) => \
+      k === "query" \
+        ? _.chain(data.value).map(k).uniq().value() \
+        : v \
+    ) \
+  ) \
+)
+```
+
+### 7. Explication du loader
+
+La première étape prépare l'agrégation :
+
+```ini
+[replace]
+path = id
+value = get("uri")
+
+path = value
+value = self()
+```
+
+Ici :
+
+- `id` devient la clé de regroupement
+- on utilise `uri` car elle identifie de manière unique une publication OpenAlex
+- `value` contient la notice complète
+
+L'instruction suivante :
+
+```ini
+[aggregate]
+```
+
+regroupe toutes les notices possédant la même URI.
+
+Pour notre exemple, les deux notices précédentes sont alors réunies dans un même groupe.
+
+La dernière étape reconstruit une seule notice :
+
+```ini
+[exchange]
+value = self().thru(data => \
+  _.assign({}, \
+    _.mapValues(_.head(data.value), (v, k) => \
+      k === "query" \
+        ? _.chain(data.value).map(k).value() \
+        : v \
+    ) \
+  ) \
+)
+```
+
+Le traitement fonctionne de la façon suivante :
+
+1. `_.head(data.value)` récupère la première notice du groupe.
+2. `_.mapValues(...)` parcourt tous les champs de cette notice.
+3. Pour tous les champs sauf `query`, la première valeur rencontrée est conservée.
+4. Pour le champ `query`, toutes les valeurs du groupe sont récupérées.
+5. `_.assign({}, ...)` reconstruit une nouvelle notice.
+
+### 8. Résultat obtenu
+
+Après agrégation, la publication n'apparaît plus qu'une seule fois :
+
+```json
+{
+  "id":"https://openalex.org/W7132051972",
+  "title":"Open science for better research",
+  "publication_year":"2026",
+  "uri":"uid:/W7132051972",
+  "query":[
+    "?filter=publication_year:2026&search.title_and_abstract=open+science",
+    "?filter=publication_year:2026&type=book-chapter&search.title_and_abstract=open+science"
+  ]
+}
+```
+
+Le champ `query` permet maintenant de savoir que cette publication a été retrouvée par les deux requêtes.
