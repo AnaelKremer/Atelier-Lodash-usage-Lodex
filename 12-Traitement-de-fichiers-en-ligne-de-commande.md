@@ -194,7 +194,7 @@ fin2026-05.jsonl
 fin2026-06.jsonl
 ```
 
-La commande suivante concatène tous les fichiers commençant par `fin` puis applique un loader EZS :
+La commande suivante concatène tous les fichiers commençant par `fin` puis applique un loader :
 
 ```bash
 cat fin*.jsonl | ezs loaderAggregate.ini > agregation.jsonl
@@ -202,10 +202,10 @@ cat fin*.jsonl | ezs loaderAggregate.ini > agregation.jsonl
 
 Cette commande :
 
-1. sélectionne tous les fichiers correspondant à `fin*.jsonl` ;
-2. concatène leur contenu ;
-3. transmet le résultat au loader `loaderAggregate.ini` ;
-4. enregistre le résultat dans `agregation.jsonl`.
+1. sélectionne tous les fichiers correspondant à `fin*.jsonl`
+2. concatène leur contenu
+3. transmet le résultat au loader `loaderAggregate.ini`
+4. enregistre le résultat dans `agregation.jsonl`
 
 ```text
 fin*.jsonl
