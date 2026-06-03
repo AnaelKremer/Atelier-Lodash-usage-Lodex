@@ -1200,6 +1200,172 @@ Clotûre la chaîne de traitements débutée par `.chain()`
 
 ---
 
+### Éclater une colonne multivaluée en plusieurs colonnes
+
+Dans certains jeux de données, une information peut être regroupée dans une seule colonne sous forme de liste de valeurs.
+
+C’est par exemple le cas lorsqu’un champ `Affiliation` contient plusieurs affiliations dans un tableau :
+
+```JSON
+[{
+  "Affiliation": [
+    "CNRS",
+    "Université de Bordeaux",
+    "INRAE"
+  ]
+}]
+```
+
+Dans certains cas, on peut souhaiter faire l’opération inverse du regroupement de colonnes : créer automatiquement autant de colonnes qu’il y a de valeurs dans le champ multivalué.
+
+On veut donc transformer :
+
+```JSON
+[{
+  "Affiliation": [
+    "CNRS",
+    "Université de Bordeaux",
+    "INRAE"
+  ]
+}]
+```
+
+en :
+
+```JSON
+[{
+  "Affiliation": "CNRS",
+  "Affiliation(2)": "Université de Bordeaux",
+  "Affiliation(3)": "INRAE"
+}]
+```
+
+Le script suivant permet de créer automatiquement les colonnes `Affiliation`, `Affiliation(2)`, `Affiliation(3)`, etc., sans connaître à l’avance le nombre de valeurs présentes dans le champ.
+
+```js
+[exchange]
+value = self().thru(data => \
+  _.assign({}, \
+    _.omit(data, "Affiliation"), \
+    _.chain(data.Affiliation || []) \
+      .castArray() \
+      .without(null, undefined, "") \
+      .map((value, index) => [ \
+        index === 0 ? "Affiliation" : "Affiliation(" + (index + 1) + ")", \
+        value \
+      ]) \
+      .fromPairs() \
+      .value() \
+  ) \
+)
+```
+
+`value = self().thru(data => ...)`
+On récupère l’objet courant (`self()`) et on le passe à une fonction de transformation.
+
+`_.assign({}, ...)`
+Reconstruit l’objet final après les transformations suivantes.
+
+`_.omit(data, "Affiliation")`
+Conserve toutes les colonnes de la notice, à l’exception de `Affiliation`. Cette colonne est supprimée temporairement afin d’être reconstruite sous la forme de plusieurs colonnes (`Affiliation`, `Affiliation(2)`, `Affiliation(3)`, etc.).
+
+`_.chain(data.Affiliation || [])`
+Démarre une chaîne de traitements Lodash sur le contenu de la colonne `Affiliation`. Le `|| []` permet d’utiliser un tableau vide si le champ `Affiliation` est absent.
+
+`.castArray()`
+S’assure que la valeur traitée est bien un tableau. Si la valeur n’est pas un tableau, elle est transformée en tableau contenant une seule valeur.
+
+`.without(null, undefined, "")`
+Supprime les valeurs vides.
+
+`.map((value, index) => [...])`
+Parcourt chaque valeur du tableau et crée une paire composée :
+
+* du nom de la colonne à créer
+* de la valeur à placer dans cette colonne
+
+Par exemple :
+
+```js
+[
+  "CNRS",
+  "Université de Bordeaux",
+  "INRAE"
+]
+```
+
+devient :
+
+```js
+[
+  ["Affiliation", "CNRS"],
+  ["Affiliation(2)", "Université de Bordeaux"],
+  ["Affiliation(3)", "INRAE"]
+]
+```
+
+`index === 0 ? "Affiliation" : "Affiliation(" + (index + 1) + ")"`
+Permet de nommer la première colonne `Affiliation`, puis les suivantes `Affiliation(2)`, `Affiliation(3)`, etc.
+
+`.fromPairs()`
+Transforme la liste de paires en objet :
+
+
+```JSON
+{
+  "Affiliation": "CNRS",
+  "Affiliation(2)": "Université de Bordeaux",
+  "Affiliation(3)": "INRAE"
+}
+```
+
+`.value()`
+Clôture la chaîne de traitements débutée par `.chain()`.
+
+---
+
+#### Variante avec une chaîne de caractères séparée par `;`
+
+Dans d’autres jeux de données, les valeurs ne sont pas stockées dans un tableau, mais dans une chaîne de caractères contenant un séparateur.
+
+Par exemple :
+
+```JSON
+[{
+  "Affiliation": "CNRS;Université de Bordeaux;INRAE"
+}]
+```
+
+Dans ce cas, il suffit de remplacer `.castArray()` par `.split(";")`.
+
+```js
+[exchange]
+value = self().thru(data => \
+  _.assign({}, \
+    _.omit(data, "Affiliation"), \
+    _.chain(data.Affiliation || "") \
+      .split(";") \
+      .map(value => _.trim(value)) \
+      .without(null, undefined, "") \
+      .map((value, index) => [ \
+        index === 0 ? "Affiliation" : "Affiliation(" + (index + 1) + ")", \
+        value \
+      ]) \
+      .fromPairs() \
+      .value() \
+  ) \
+)
+```
+
+On peut ajouter :
+`.map(value => _.trim(value))`
+Supprime les espaces inutiles avant et après chaque valeur.
+
+Le reste du traitement est identique : une fois la chaîne transformée en liste de valeurs, le script crée automatiquement les colonnes `Affiliation`, `Affiliation(2)`, `Affiliation(3)`, etc.
+
+---
+
+
 ### Normaliser un dataset issu d'un parsing XML
 
 Il peut arriver que certaines sources de données produisent des champs **structurés sous forme d’objets**, plutôt que des valeurs simples.  
