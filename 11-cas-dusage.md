@@ -1207,30 +1207,12 @@ Dans certains jeux de données, une information peut être regroupée dans une s
 C’est par exemple le cas lorsqu’un champ `Affiliation` contient plusieurs affiliations dans un tableau :
 
 ```JSON
-[{
-  "Affiliation": [
-    "CNRS",
-    "Université de Bordeaux",
-    "INRAE"
-  ]
-}]
+[{"Affiliation": ["CNRS","Université de Bordeaux","INRAE"]}]
 ```
 
 Dans certains cas, on peut souhaiter faire l’opération inverse du regroupement de colonnes : créer automatiquement autant de colonnes qu’il y a de valeurs dans le champ multivalué.
 
-On veut donc transformer :
-
-```JSON
-[{
-  "Affiliation": [
-    "CNRS",
-    "Université de Bordeaux",
-    "INRAE"
-  ]
-}]
-```
-
-en :
+On veut donc avoir :
 
 ```JSON
 [{
@@ -1238,6 +1220,16 @@ en :
   "Affiliation(2)": "Université de Bordeaux",
   "Affiliation(3)": "INRAE"
 }]
+```
+
+Prenons cet exemple avec plus de cas de figure :
+
+```JSON
+[{"Affiliation":["CNRS","Université de Bordeaux","INRAE"]},
+{"Affiliation":["CNRS"]},
+{"Affiliation":["Université de Lorraine","CNRS","Université de Lorraine"]},
+{"Affiliation":[]},
+{"Affiliation":["CNRS",null,"","INRIA"]}]
 ```
 
 Le script suivant permet de créer automatiquement les colonnes `Affiliation`, `Affiliation(2)`, `Affiliation(3)`, etc., sans connaître à l’avance le nombre de valeurs présentes dans le champ.
@@ -1321,6 +1313,28 @@ Transforme la liste de paires en objet :
 
 `.value()`
 Clôture la chaîne de traitements débutée par `.chain()`.
+
+On obtient donc :
+
+```JSON
+[{
+    "Affiliation": "CNRS",
+    "Affiliation(2)": "Université de Bordeaux",
+    "Affiliation(3)": "INRAE"
+},
+{
+    "Affiliation": "CNRS"
+},
+{
+    "Affiliation": "Université de Lorraine",
+    "Affiliation(2)": "CNRS"
+},
+{},
+{
+    "Affiliation": "CNRS",
+    "Affiliation(2)": "INRIA"
+}]
+```
 
 ---
 
