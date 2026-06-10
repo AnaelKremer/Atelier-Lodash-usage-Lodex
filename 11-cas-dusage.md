@@ -1617,6 +1617,149 @@ value = self().mapValues((value, key) => \
 
 ---
 
+### Générer automatiquement un lot de colonnes à partir d’une même règle de transformation
+
+Dans les exemples précédents, nous avons vu qu’il était possible de modifier plusieurs colonnes en une seule opération, en appliquant une transformation uniquement à certains champs.  
+
+Ici, le besoin est légèrement différent : on ne souhaite pas modifier les colonnes existantes, mais créer de nouvelles colonnes à partir de plusieurs champs d’origine.    
+Les colonnes initiales sont conservées, et une nouvelle version transformée est ajoutée pour chacune d’elles.  
+
+Cette méthode est utile lorsqu’on veut garder la donnée source intacte tout en produisant des champs nettoyés ou adaptés à un traitement ultérieur.  
+
+Prenons un exemple inspiré d’un cas réel dans lequel une même opération de nettoyage devait être appliquée à plus d’une dizaine de colonnes.
+Afin de simplifier la démonstration, nous limiterons ici l’exemple à seulement trois champs, mais le principe reste exactement le même quel que soit le nombre de colonnes concernées:  
+
+```json
+[
+  {
+    "fr_domainAllCodeLabel": "Mathématiques\\,Informatique",
+    "authIdHasPrimaryStructure": "CNRS\\,Université de Lorraine",
+    "title_s": "Titre\\, de l'article"
+  }
+]
+```
+
+On souhaite créer pour chacun de ces champs une nouvelle colonne préfixée par `Nettoyage`, dans laquelle les séquences `\,` sont remplacées par le caractère `#`.  
+
+Le script suivant permet de générer automatiquement ces nouvelles colonnes :  
+
+```js
+[exchange]
+value = self().thru(data => \
+  _.assign({}, \
+    data, \
+    _.chain([ \
+      "fr_domainAllCodeLabel", \
+      "authIdHasPrimaryStructure", \
+      "title_s" \
+    ]) \
+      .map(field => [ \
+        "Nettoyage" + field, \
+        (_.get(data, field, "") || "").replace(/\\,/g, "#") \
+      ]) \
+      .fromPairs() \
+      .value() \
+  ) \
+)
+```
+
+Résultat :
+
+```json
+[
+  {
+    "fr_domainAllCodeLabel": "Mathématiques\\,Informatique",
+    "authIdHasPrimaryStructure": "CNRS\\,Université de Lorraine",
+    "title_s": "Titre\\, de l'article",
+    "Nettoyagefr_domainAllCodeLabel": "Mathématiques#Informatique",
+    "NettoyageauthIdHasPrimaryStructure": "CNRS#Université de Lorraine",
+    "Nettoyagetitle_s": "Titre# de l'article"
+  }
+]
+```
+
+`_.chain([...])`
+
+Démarre une chaîne de traitements sur la liste des champs à transformer :
+
+```js
+[
+  "fr_domainAllCodeLabel",
+  "authIdHasPrimaryStructure",
+  "title_s"
+]
+```
+
+`_.map(field => [...])`
+
+Parcourt chaque nom de champ et crée une paire contenant :
+
+* le nom de la nouvelle colonne
+* la valeur transformée.
+
+Par exemple :
+
+```js
+[
+  [
+    "Nettoyagefr_domainAllCodeLabel",
+    "Mathématiques#Informatique"
+  ],
+  [
+    "NettoyageauthIdHasPrimaryStructure",
+    "CNRS#Université de Lorraine"
+  ]
+]
+```
+
+`"Nettoyage" + field`
+
+Construit dynamiquement le nom du nouveau champ en ajoutant le préfixe `Nettoyage` devant le nom du champ d'origine.
+
+```txt
+fr_domainAllCodeLabel     → Nettoyagefr_domainAllCodeLabel
+authIdHasPrimaryStructure → NettoyageauthIdHasPrimaryStructure
+title_s                   → Nettoyagetitle_s
+```
+
+`_.get(data, field, "")`
+
+Récupère la valeur du champ courant.
+
+Si le champ n'existe pas dans la notice, une chaîne vide est utilisée à la place afin d'éviter les erreurs.
+
+`replace(/\\,/g, "#")`
+
+Applique la transformation souhaitée à la valeur.
+
+Dans cet exemple, toutes les occurrences de `\,` sont remplacées par le caractère `#`.
+
+`.fromPairs()`
+
+Transforme la liste de paires produite par `map()` en objet.
+
+Par exemple :
+
+```js
+[
+  ["Nettoyagefr_domainAllCodeLabel", "Mathématiques#Informatique"],
+  ["NettoyageauthIdHasPrimaryStructure", "CNRS#Université de Lorraine"]
+]
+```
+
+devient :
+
+```json
+{
+  "Nettoyagefr_domainAllCodeLabel": "Mathématiques#Informatique",
+  "NettoyageauthIdHasPrimaryStructure": "CNRS#Université de Lorraine"
+}
+```
+
+Cette approche est particulièrement utile lorsqu'il faut créer un grand nombre de colonnes calculées à partir d'une même règle de transformation. Il suffit alors d'ajouter ou de retirer des noms de champs dans la liste passée à `_.chain()`.
+
+---
+
 ### Trier les lignes du dataset en fonction d'un champ
 
 On souhaite, par exemple, réorganiser son dataset selon le `nom` et par ordre alphabétique.
