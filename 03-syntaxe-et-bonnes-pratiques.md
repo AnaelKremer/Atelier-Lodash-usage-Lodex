@@ -106,24 +106,31 @@ path = allKeywords
 value = get('keywordsAuthor').concat(self.keywordsMesh)
 ```
 
-Loader
+```text
+                Loader
 
-{
-  "title": "...",
-  "authors": [...]
-}
-
-           ↓
-
-Enrichissement avancé
-
-{
-  "id": "...",
-  "value": {
-    "title": "...",
-    "authors": [...]
-  }
-}
+┌──────────────────────────────────┐
+│ {                                │
+│   "title": "...",                │
+│   "authors": [...],              │
+│   "year": 2025                   │
+│ }                                │
+└──────────────────────────────────┘
+                 │
+                 │ Ouverture d'un
+                 │ enrichissement avancé
+                 ▼
+┌──────────────────────────────────┐
+│ {                                │
+│   "id": "xxxxxxxx",              │
+│   "value": {                     │
+│     "title": "...",              │
+│     "authors": [...],            │
+│     "year": 2025                 │
+│   }                              │
+│ }                                │
+└──────────────────────────────────┘
+```
 
 ### À retenir
 
