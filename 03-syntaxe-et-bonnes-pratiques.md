@@ -3,45 +3,140 @@
 Avant même d’écrire ses premières transformations dans Lodex, il est essentiel de comprendre quelques notions clés.  
 Cette section revient sur les concepts fondamentaux qui régissent la logique des enrichissements, et donne quelques bases pour adopter les bons réflexes dès le départ.
 
-## Les fondamentaux de value et self
+## Les fondamentaux de `value` et `self`
 
-Les enrichissements ou traitements de données peuvent se faire dans Lodex ou dans un Loader à l’import d’un jeu de données. La syntaxe à employer est légèrement différente selon que l’on écrit des fonctions dans l’un ou dans l’autre.  
-Dans un Loader, pour créer une nouvelle colonne, on utilise l’instruction `[assign]`, suivie du nom de la colonne dans `path`, puis de la ou des valeurs que l’on souhaite transformer dans `value`.
+Les transformations de données peuvent être réalisées aussi bien dans un **loader** que dans un **enrichissement avancé** de Lodex. Les fonctions Lodash utilisées sont les mêmes, mais les données manipulées n'ont pas exactement la même structure.
 
-```js
+### Dans un loader
+
+Dans un loader, chaque objet du jeu de données est traité directement.
+
+Par exemple, avec la notice suivante :
+
+```json
+{
+  "keywordsAuthor": [
+    "OpenAlex"
+  ],
+  "keywordsMesh": [
+    "Bibliométrie"
+  ]
+}
+```
+
+on peut écrire :
+
+```ini
 [assign]
 path = allKeywords
 value = get('keywordsAuthor').concat(self.keywordsMesh)
 ```
 
-Dans Lodex en revanche, c’est le nom de l’enrichissement qui fait office de nom de colonne. On assigne systématiquement `value` à `path`, enfin on préfixera toujours le nom du champ à récupérer par `value.`.
+Ici, `keywordsAuthor` et `keywordsMesh` sont directement des propriétés de l'objet courant.
 
-```js
+---
+
+### Dans un enrichissement avancé
+
+Lorsqu'un enrichissement avancé est exécuté dans Lodex, chaque notice est automatiquement encapsulée dans une structure contenant un identifiant et une propriété `value`.
+
+La même notice devient donc :
+
+```json
+{
+  "id": "12345",
+  "value": {
+    "keywordsAuthor": [
+      "OpenAlex"
+    ],
+    "keywordsMesh": [
+      "Bibliométrie"
+    ]
+  }
+}
+```
+
+Les champs du jeu de données se trouvent désormais dans `value`.
+
+Pour créer un enrichissement, on écrit donc :
+
+```ini
 [assign]
 path = value
 value = get('value.keywordsAuthor')
 ```
 
-Le terme `value` désigne ici non pas une valeur, mais le dataset complet ! Ainsi *value.keywordsAuthor* désigne le chemin, à savoir le champ *keywordsAuthor* contenu dans le dataset (les points caractérisent une imbrication).
+Le `path = value` ne désigne pas une colonne appelée `value`. Il indique simplement à Lodex que le résultat du calcul doit être placé dans la colonne correspondant au nom de l'enrichissement.
 
-Cela signifie que dans le contexte de notre colonne, nous avons importé l’intégralité du dataset par le biais de `get('value')`, que nous avons écrasé par le seul champ *keywordsAuthor*.
-Autrement dit, au moment où Lodex exécute cette instruction, `value` devient égal à *keywordsAuthor*.  
+---
 
-C’est pourquoi lorsque l’on souhaite concaténer un autre champ on ne peut plus écrire simplement `concat('value.keywordsMesh')`, value ne contenant plus que les mots-clés d’auteurs.  
+### Pourquoi utiliser `self` ?
 
-Il faut dans ce cas utiliser `self` (et enlever les quotes par la même occasion).
+Lorsqu'une expression est évaluée, la valeur courante est progressivement remplacée par le résultat du calcul.
 
-```js
+Par exemple :
+
+```ini
+[assign]
+path = value
+value = get('value.keywordsAuthor')
+```
+
+À partir de ce moment, la valeur courante correspond uniquement au contenu de `keywordsAuthor`.
+
+Si l'on souhaite accéder à un autre champ de la notice, il faut repartir de l'objet initial grâce à `self`.
+
+```ini
 [assign]
 path = value
 value = get('value.keywordsAuthor').concat(self.value.keywordsMesh)
 ```
 
-`self` est ici une référence constante à l’objet initial, `self.value` permet donc de ré-interroger l’intégralité du dataset tel qu’il est avant la création de la nouvelle colonne en cours.
+`self` est une référence permanente à la notice telle qu'elle était avant le début de la transformation.
 
-En conclusion
-- `value` fait référence à la **valeur courante** que vous êtes en train de transformer.
-- `self.value` permet de **revenir à l’objet de départ**, tel qu’il était avant la transformation.
+Dans un enrichissement avancé :
+
+- `self.value.keywordsAuthor` désigne le champ `keywordsAuthor` de la notice
+
+Dans un loader, la propriété `value` n'existe pas. On écrira donc simplement :
+
+```ini
+[assign]
+path = allKeywords
+value = get('keywordsAuthor').concat(self.keywordsMesh)
+```
+
+Loader
+
+{
+  "title": "...",
+  "authors": [...]
+}
+
+           ↓
+
+Enrichissement avancé
+
+{
+  "id": "...",
+  "value": {
+    "title": "...",
+    "authors": [...]
+  }
+}
+
+### À retenir
+
+La principale différence entre un loader et un enrichissement avancé ne vient pas de Lodash, mais de la structure des données manipulées.
+
+Dans un loader, chaque notice est traitée directement.
+
+Dans un enrichissement avancé, Lodex encapsule automatiquement chaque notice dans un objet contenant :
+
+- un identifiant (`id`) ;
+- les données de la notice dans la propriété `value`.
+
+C'est cette encapsulation qui explique pourquoi les chemins commencent par `value.` dans les enrichissements avancés, alors qu'ils sont directement accessibles dans un loader.
 
 ---
 
