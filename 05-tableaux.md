@@ -60,7 +60,7 @@ value = get("value.entree").compact()
 
 ## drop
 
-Supprime les *n* premiers éléments d’un tableau.  
+Supprime *n* éléments d’un tableau depuis le début.  
 
 ```js
 value = get("value.entree").drop()
@@ -72,7 +72,7 @@ value = get("value.entree").drop(2)
 
 ## dropRight
 
-Supprime les *n* premiers éléments d’un tableau.  
+Supprime *n* éléments d’un tableau depuis la fin.
 
 ```js
 value = get("value.entree").dropRight()
