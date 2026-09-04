@@ -811,6 +811,8 @@ On obtient alors notre nouvel objet :
     }
 ```
 
+---
+
 ### Structurer une chaîne de caractères pour distinguer un libellé et une catégorie
 
 Il peut être utile de restructurer une chaîne de caractères afin de faire apparaître explicitement une **catégorie** associée à un libellé.
@@ -966,6 +968,7 @@ Le premier élément peut être utilisé comme **libellé** du graphique, tandis
 
 > **À adapter :** les valeurs recherchées (`Positif` et `Négatif`) sont sensibles à la casse. Si votre corpus contient `positif`, `NEGATIF` ou toute autre variante, adaptez simplement la liste utilisée dans `_.includes()`.
 
+---
 
 ### Regrouper des valeurs numériques par ordre de grandeur
 
