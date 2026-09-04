@@ -811,6 +811,216 @@ On obtient alors notre nouvel objet :
     }
 ```
 
+### Structurer une chaîne de caractères pour distinguer un libellé et une catégorie
+
+Il peut être utile de restructurer une chaîne de caractères afin de faire apparaître explicitement une **catégorie** associée à un libellé.
+
+Par exemple, dans un corpus, certaines valeurs peuvent se terminer par `Positif` ou `Négatif` :
+
+```json
+[
+  { "entree": "Financement Négatif" },
+  { "entree": "Reconnaissance Positif" },
+  { "entree": "Politique RH Négatif" },
+  { "entree": "International" }
+]
+```
+
+On peut souhaiter transformer ces valeurs selon une structure commune de la forme :
+
+```text
+libellé : catégorie
+```
+
+On obtiendra ainsi :
+
+```json
+[
+  {
+    "entree": "Financement Négatif",
+    "sortie": "Financement : négatif"
+  },
+  {
+    "entree": "Reconnaissance Positif",
+    "sortie": "Reconnaissance : positif"
+  },
+  {
+    "entree": "Politique RH Négatif",
+    "sortie": "Politique RH : négatif"
+  },
+  {
+    "entree": "International",
+    "sortie": "International : ni positif ni négatif"
+  }
+]
+```
+
+Cette structure est particulièrement utile lorsqu'un même champ contient à la fois une information descriptive et une catégorie exploitable dans un graphique ou une facette.
+
+
+```ini
+[assign]
+path = sortie
+value = get("value.entree") \
+  .split(" ") \
+  .thru(words => \
+    _.includes(["Positif", "Négatif"], _.last(words)) \
+      ? [ \
+          _.initial(words).join(" "), \
+          _.last(words) == "Positif" ? "positif" : "négatif" \
+        ].join(" : ") \
+      : [ \
+          words.join(" "), \
+          "ni positif ni négatif" \
+        ].join(" : ") \
+  )
+```
+
+
+Le script repose sur quelques fonctions Lodash très utiles pour manipuler des chaînes de caractères.
+
+* `split(" ")` découpe la chaîne en un tableau de mots
+* `thru()` permet d'appliquer un traitement personnalisé sur ce tableau
+* `_.last()` récupère le dernier mot
+* `_.includes()` vérifie si ce mot correspond à une catégorie connue
+* `_.initial()` récupère tous les mots sauf le dernier afin de reconstruire le libellé
+
+
+La première étape consiste à transformer la chaîne en tableau :
+
+```js
+get("value.entree").split(" ")
+```
+
+| Chaîne                 | Tableau obtenu                   |
+| ---------------------- | -------------------------------- |
+| `Financement Négatif`  | `["Financement", "Négatif"]`     |
+| `Politique RH Négatif` | `["Politique", "RH", "Négatif"]` |
+
+
+Le dernier mot est récupéré avec :
+
+```js
+_.last(words)
+```
+
+| Tableau                         | Dernier élément |
+| ------------------------------- | --------------- |
+| `["Financement", "Négatif"]`    | `Négatif`       |
+| `["Reconnaissance", "Positif"]` | `Positif`       |
+
+On vérifie ensuite si ce mot appartient aux catégories recherchées :
+
+```js
+_.includes(["Positif", "Négatif"], _.last(words))
+```
+
+Lorsque la catégorie est présente, tous les autres mots sont conservés :
+
+```js
+_.initial(words).join(" ")
+```
+
+| Tableau                          | Libellé obtenu |
+| -------------------------------- | -------------- |
+| `["Politique", "RH", "Négatif"]` | `Politique RH` |
+| `["Financement", "Négatif"]`     | `Financement`  |
+
+Le libellé et la catégorie sont ensuite réunis :
+
+```js
+[
+  _.initial(words).join(" "),
+  _.last(words) == "Positif" ? "positif" : "négatif"
+].join(" : ")
+```
+
+Ce qui produit :
+
+| Entrée                   | Sortie                     |
+| ------------------------ | -------------------------- |
+| `Financement Négatif`    | `Financement : négatif`    |
+| `Reconnaissance Positif` | `Reconnaissance : positif` |
+
+Si la chaîne ne se termine ni par `Positif` ni par `Négatif`, le libellé est conservé et une catégorie par défaut est ajoutée :
+
+```js
+[
+  words.join(" "),
+  "ni positif ni négatif"
+].join(" : ")
+```
+
+| Entrée          | Sortie                                  |
+| --------------- | --------------------------------------- |
+| `International` | `International : ni positif ni négatif` |
+
+Une fois les valeurs structurées, Vega-Lite peut récupérer indépendamment le libellé et la catégorie :
+
+```js
+split(datum._id, " : ")[0]
+split(datum._id, " : ")[1]
+```
+
+Le premier élément peut être utilisé comme **libellé** du graphique, tandis que le second peut alimenter un **sélecteur**, une **couleur** ou une **facette**.
+
+> **À adapter :** les valeurs recherchées (`Positif` et `Négatif`) sont sensibles à la casse. Si votre corpus contient `positif`, `NEGATIF` ou toute autre variante, adaptez simplement la liste utilisée dans `_.includes()`.
+
+
+### Regrouper des valeurs numériques par ordre de grandeur
+
+Lorsque les valeurs d'un champ numérique présentent de très grands écarts, il peut être utile de les regrouper automatiquement par **ordre de grandeur**.
+
+Cette transformation permet par exemple d'obtenir les catégories suivantes :
+
+* `0`
+* `1 à 9`
+* `10 à 99`
+* `100 à 999`
+* `1 000 à 9 999`
+* `10 000 à 99 999`
+
+La borne inférieure de chaque intervalle correspond à une puissance de 10. La borne supérieure correspond à la puissance de 10 suivante, moins 1.
+
+Par exemple, la valeur `357` appartient à l'intervalle `100 à 999`, tandis que la valeur `12 450` appartient à l'intervalle `10 000 à 99 999`.
+
+```ini
+[assign]
+path = value
+value = get("value.dataset") \
+  .toNumber() \
+  .thru(v => v === 0 \
+    ? "0" \
+    : Math.pow(10, Math.floor(Math.log10(v))) \
+      + " à " \
+      + (Math.pow(10, Math.floor(Math.log10(v)) + 1) - 1) \
+  )
+```
+
+* `get("value.dataset")` récupère la valeur du champ `dataset`
+* `.toNumber()` convertit la valeur en nombre
+* `.thru()` permet d'appliquer un traitement personnalisé à cette valeur
+* Si la valeur est égale à `0`, le script retourne directement `"0"`
+* `Math.log10(v)` détermine l'ordre de grandeur de la valeur
+* `Math.floor()` retient la puissance de 10 immédiatement inférieure
+* `Math.pow()` permet de calculer les bornes inférieure et supérieure de l'intervalle
+
+**Exemples**
+
+| Valeur initiale | Valeur obtenue    |
+| --------------: | :---------------- |
+|             `0` | `0`               |
+|             `4` | `1 à 9`           |
+|            `27` | `10 à 99`         |
+|           `357` | `100 à 999`       |
+|         `2 450` | `1 000 à 9 999`   |
+|        `12 450` | `10 000 à 99 999` |
+
+> **À adapter :** remplacez `value.dataset` par le chemin du champ numérique que vous souhaitez traiter.
+
+Ce type de regroupement est particulièrement utile pour créer des facettes ou des graphiques lorsque les valeurs sont très dispersées et que l'on souhaite les comparer sans définir manuellement chaque intervalle.
+
+
 ## Transformations globales (dans le cadre d'un loader)
 
 ### Numéroter les lignes de son dataset
