@@ -47,7 +47,9 @@ Concatène des tableaux ou des valeurs au tableau existant.
 ```js
 value = get("value.entree").concat(self.value.entree2)
 // Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["A", "B", "A", "C"]
-```  
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgXCJCXCJdLFxuICAgICAgIFwiZW50cmVlMlwiOiBbXCJBXCIsIFwiQ1wiXVxuICAgICB9XG4gICB9XG4gXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bYXNzaWduXVxucGF0aCA9IHNvcnRpZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikuY29uY2F0KHNlbGYudmFsdWUuZW50cmVlMilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
 
 ## compact
 
@@ -57,6 +59,8 @@ Supprime toutes les valeurs falsy (`false`, `null`, `0`, `""`, `undefined`, `NaN
 value = get("value.entree").compact()
 // Entree : ["A", null, "", "B", false] → Sortie : ["A", "B"]
 ```  
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgbnVsbCwgXCJcIiwgXCJCXCIsIGZhbHNlXVxuICAgICB9XG4gICB9XG4gXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bYXNzaWduXVxucGF0aCA9IHNvcnRpZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikuY29tcGFjdCgpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICJ9)
 
 ## drop
 
@@ -70,6 +74,8 @@ value = get("value.entree").drop(2)
 // Entree : [1, 2, 3] → Sortie : [3]
 ```  
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFsxLDIsM11cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllMVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikuZHJvcCgpXG5cblxucGF0aCA9IHNvcnRpZTJcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLmRyb3AoMilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
+
 ## dropRight
 
 Supprime *n* éléments d’un tableau depuis la fin.
@@ -82,6 +88,8 @@ value = get("value.entree").dropRight(2)
 // Entree : [1, 2, 3] → Sortie : [1]
 ```  
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFsxLDIsM11cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllMVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikuZHJvcFJpZ2h0KClcblxuXG5wYXRoID0gc29ydGllMlxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikuZHJvcFJpZ2h0KDIpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICJ9)
+
 ## uniq
 
 Supprime les doublons dans un tableau.
@@ -90,6 +98,8 @@ Supprime les doublons dans un tableau.
 value = get("value.entree").uniq()
 // Entree : ["A", "B", "A", "C"] → Sortie : ["A", "B", "C"]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFsxLDIsM11cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllMVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikuZHJvcFJpZ2h0KClcblxuXG5wYXRoID0gc29ydGllMlxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikuZHJvcFJpZ2h0KDIpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICJ9)
 
 ## uniqBy
 
@@ -111,6 +121,8 @@ value = get("value.entree").head()
 // Entree : ["A", "B", "C"] → Sortie : ["A"]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgXCJCXCIsIFwiQ1wiXVxuICAgICB9XG4gICB9XG4gXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLmhlYWQoKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
+
 ## last
 
 Renvoie le dernier élément d’un tableau.
@@ -119,6 +131,8 @@ Renvoie le dernier élément d’un tableau.
 value = get("value.entree").last()
 // Entree : ["A", "B", "C"] → Sortie : ["C"]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgXCJCXCIsIFwiQ1wiXVxuICAgICB9XG4gICB9XG4gXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLmxhc3QoKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
 
 ## flatten
 
@@ -129,6 +143,8 @@ value = get("value.entree").flatten()
 // Entree : [[1, 2], [3]] → Sortie : [1, 2, 3]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtbMSwgMl0sIFszXV1cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS5mbGF0dGVuKClcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
+
 ## flattenDeep
 
 Aplati récursivement un tableau **à tous** les niveaux.
@@ -138,6 +154,8 @@ value = get("value.entree").flattenDeep()
 // Entree : [1, [2, [3, [4]]]] → Sortie : [1, 2, 3, 4]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFsxLCBbMiwgWzMsIFs0XV1dXVxuICAgICB9XG4gICB9XG4gXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLmZsYXR0ZW5EZWVwKClcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
+
 ## nth
 
 Renvoie l’élément à la position `n`.
@@ -146,6 +164,8 @@ Renvoie l’élément à la position `n`.
 value = get("value.entree").nth(1)
 // Entree : ["A", "B", "C"] → Sortie : ["B"]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgXCJCXCIsIFwiQ1wiXVxuICAgICB9XG4gICB9XG4gXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLm50aCgxKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
 
 ## pull
 
@@ -170,6 +190,8 @@ value = get("value.entree").without("A")
 // Sortie : [{"value":{"entree":["A","B"]},"sortie":["B"]}]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgXCJCXCJdXG4gICAgIH1cbiAgIH1cbiBdIiwic2NyaXB0IjoiIyBFWlMgc2NyaXB0XG5bdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cbltyZXBsYWNlXVxucGF0aCA9IHNvcnRpZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikud2l0aG91dChcIkFcIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
+
 ## pullAll
 
 Supprime plusieurs valeurs du tableau.  
@@ -192,6 +214,8 @@ value = get("value.entree").without("B","C")
 // Entree : ["A", "B", "C", "D"]
 // Sortie : [{"value":{"entree":["A","B","C","D"]},"sortie":["A","D"]}]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgXCJCXCIsIFwiQ1wiLCBcIkRcIl1cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS53aXRob3V0KFwiQlwiLFwiQ1wiKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
 
 ## remove
 
@@ -218,6 +242,8 @@ value = get("value.entree").filter(item => item.startsWith("B"))
 // Sortie : [{"value":{"entree":["ABCD","BCDE","CDEF","DEFG"]},"sortie":["BCDE"]}]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFCQ0RcIixcbiAgICAgICAgICAgICAgICAgICAgICAgXCJCQ0RFXCIsXG4gICAgICAgICAgICAgICAgICAgICAgIFwiQ0RFRlwiLFxuICAgICAgICAgICAgICAgICAgICAgICBcIkRFRkdcIl1cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS5maWx0ZXIoaXRlbSA9PiBpdGVtLnN0YXJ0c1dpdGgoXCJCXCIpKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAgICJ9)
+
 ## reverse
 
 Inverse l'ordre des éléments d'un tableau.
@@ -242,6 +268,8 @@ value = get("value.entree").slice().reverse()
 // Sortie : [{"value":{"entree":["A","B","C"]},"sortie":["C","B","A"]}]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIixcIkJcIixcIkNcIl1cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW2Fzc2lnbl1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnNsaWNlKCkucmV2ZXJzZSgpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICAgIn0=)
+
 ## sort
 
 Trie un tableau (attention : tri alphabétique ou par code Unicode). Pour trier des nombres voir les fonctions avancées.
@@ -250,6 +278,8 @@ Trie un tableau (attention : tri alphabétique ou par code Unicode). Pour trier 
 value = get("value.entree").sort()
 // Entree : ["C", "Q", "F", "D"] → Sortie : ["C", "D", "F", "Q"]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkNcIiwgXCJRXCIsIFwiRlwiLCBcIkRcIl1cbiAgICAgfVxuICAgfVxuIF0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW2Fzc2lnbl1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnNvcnQoKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAgICJ9)
 
 ## without
 
@@ -268,6 +298,7 @@ value = get("value.entree").without("B", "C")
 // Entrée : ["A", "B", "C", "D"] → Sortie : ["A", "D"]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IiBbXG4gICB7XG4gICAgIFwidmFsdWVcIjoge1xuICAgICAgIFwiZW50cmVlXCI6IFtcIkFcIiwgXCJCXCIsIFwiQ1wiXVxuICAgICB9XG4gICB9XG4gXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bYXNzaWduXVxucGF0aCA9IHNvcnRpZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5lbnRyZWVcIikud2l0aG91dChcIkFcIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgICAifQ==)
 
 ## zip / unzip
 
@@ -278,9 +309,13 @@ value = zip(self.value.entree,self.value.entree2)
 // Peut aussi s'écrire value = get("value.entree").zip(self.value.entree2)
 // Entree : ["Niels Bohr", "Albert Einstein"] Entree2 : ["Danemark", "Allemagne"] → Sortie : [["Niels Bohr","Danemark"],["Albert Einstein","Allemagne"]]
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiTmllbHMgQm9oclwiLCBcIkFsYmVydCBFaW5zdGVpblwiXSxcbiAgICAgIFwiZW50cmVlMlwiOiBbXCJEYW5lbWFya1wiLCBcIkFsbGVtYWduZVwiXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gemlwKHNlbGYudmFsdWUuZW50cmVlLHNlbGYudmFsdWUuZW50cmVlMilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgICAifQ==)
+
 value = get("value.entree").unzip()
 // Entree : [["Niels Bohr","Danemark"],["Albert Einstein","Allemagne"]] → Sortie : [["Niels Bohr","Albert Einstein"],["Danemark","Allemagne"]]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1tcIk5pZWxzIEJvaHJcIixcIkRhbmVtYXJrXCJdLFtcIkFsYmVydCBFaW5zdGVpblwiLFwiQWxsZW1hZ25lXCJdXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnVuemlwKClcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgICAifQ==)
 
 ## fromPairs
 
@@ -291,6 +326,8 @@ value = get("value.entree").fromPairs()
 // Entree : [["Niels Bohr","Danemark"],["Albert Einstein","Allemagne"]] → Sortie : {"Niels Bohr":"Danemark","Albert Einstein":"Allemagne"}
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1tcIk5pZWxzIEJvaHJcIixcIkRhbmVtYXJrXCJdLFtcIkFsYmVydCBFaW5zdGVpblwiLFwiQWxsZW1hZ25lXCJdXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLmZyb21QYWlycygpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICAgIn0=)
+
 ## difference
 
 Renvoie les éléments présents dans le premier tableau mais pas dans les suivants.
@@ -299,6 +336,8 @@ Renvoie les éléments présents dans le premier tableau mais pas dans les suiva
 value = get("value.entree").difference(self.value.entree2)
 // Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["B"]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIl0sXG4gICAgICBcImVudHJlZTJcIjogW1wiQVwiLCBcIkNcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS5kaWZmZXJlbmNlKHNlbGYudmFsdWUuZW50cmVlMilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgICAifQ==)
 
 ## intersection
 
@@ -309,6 +348,8 @@ value = get("value.entree").intersection(self.value.entree2)
 // Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["A"]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIl0sXG4gICAgICBcImVudHJlZTJcIjogW1wiQVwiLCBcIkNcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS5pbnRlcnNlY3Rpb24oc2VsZi52YWx1ZS5lbnRyZWUyKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAgICJ9)
+
 ## xor
 
 Renvoie les éléments **exclusifs** à chaque tableau (présents dans un seul).
@@ -317,6 +358,8 @@ Renvoie les éléments **exclusifs** à chaque tableau (présents dans un seul).
 value = get("value.entree").xor(self.value.entree2)
 // Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["B", "C"]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIl0sXG4gICAgICBcImVudHJlZTJcIjogW1wiQVwiLCBcIkNcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS54b3Ioc2VsZi52YWx1ZS5lbnRyZWUyKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAgICJ9)
 
 ## union
 
@@ -327,6 +370,8 @@ value = get("value.entree").union(self.value.entree2)
 // Entree : ["A", "B"] Entree2 : ["A", "C"] → Sortie : ["A", "B", "C"]
 ```
 
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIl0sXG4gICAgICBcImVudHJlZTJcIjogW1wiQVwiLCBcIkNcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS51bmlvbihzZWxmLnZhbHVlLmVudHJlZTIpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICAgIn0=)
+
 ## slice
 
 Extrait une partie d’un tableau à partir d’un index de début jusqu’à (mais sans inclure) un index de fin.
@@ -335,5 +380,7 @@ Extrait une partie d’un tableau à partir d’un index de début jusqu’à (m
 value = get("value.entree").slice(2)
 // Entree : ["A", "B", "C", "D"] → Sortie : ["C","D"]
 ```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIiwgXCJDXCIsIFwiRFwiXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnNsaWNlKDIpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICAgIn0=)
 
 👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/06-objets.md)
