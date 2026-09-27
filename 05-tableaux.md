@@ -91,6 +91,17 @@ value = get("value.entree").uniq()
 // Entree : ["A", "B", "A", "C"] → Sortie : ["A", "B", "C"]
 ```
 
+## uniqBy
+
+Supprime les doublons dans un tableau d’objets selon une propriété donnée.
+
+```js
+value = get("value.entree").uniqBy("ppn")
+// Entree : [{"nom":"École A","ppn":"123"},{"nom":"École B","ppn":"123"},{"nom":"École C","ppn":"456"}] → Sortie : [{"nom":"École A","ppn":"123"},{"nom":"École C","ppn":"456"}]
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1xuICAgICAgICB7XCJub21cIjpcIsljb2xlIEFcIixcInBwblwiOlwiMTIzXCJ9LFxuICAgICAgICB7XCJub21cIjpcIsljb2xlIEJcIixcInBwblwiOlwiMTIzXCJ9LFxuICAgICAgICB7XCJub21cIjpcIsljb2xlIENcIixcInBwblwiOlwiNDU2XCJ9XG4gICAgICBdXG4gICAgfVxuICB9XG5dIiwic2NyaXB0IjoiIyBFWlMgc2NyaXB0XG5bdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cblthc3NpZ25dXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS51bmlxQnkoXCJwcG5cIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5baWRlbnRpZnldXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
+
 ## first / head
 
 Renvoie le premier élément d’un tableau.
