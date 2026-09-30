@@ -61,6 +61,53 @@ value = get("value.entree").thru(valeur => Object.prototype.toString.call(valeur
 
 ---
 
+## cloneDeep
+
+Crée une copie indépendante d’un objet, y compris de ses objets et tableaux imbriqués.
+
+```js
+path = original
+value = get("value").cloneDeep()
+
+path = copie
+value = get("value").cloneDeep()
+
+path = copie.authors[0].fullname
+value = fix("Auteur modifié")
+```
+
+La modification effectuée dans `copie` ne modifie pas `original` :
+
+```js
+original.authors[0].fullname
+// "Hartmut Rosa"
+
+copie.authors[0].fullname
+// "Auteur modifié"
+```
+
+`cloneDeep` est particulièrement utile avant une opération qui modifie un objet, comme `assign`, lorsque l’on souhaite préserver les données d’origine.
+
+> [!NOTE]
+> Sans `cloneDeep`, plusieurs propriétés peuvent faire référence au même objet imbriqué. Une modification effectuée depuis l’une d’elles peut alors être visible depuis l’autre.
+>
+> ```js
+> path = original
+> value = get("value")
+>
+> path = copie
+> value = get("value")
+>
+> path = copie.authors[0].fullname
+> value = fix("Auteur modifié")
+> ```
+>
+> Dans ce cas, la modification peut également être retrouvée dans `original`, car `original` et `copie` partagent les mêmes données imbriquées.
+>
+> [Tester le comportement sans cloneDeep dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJ0aXRsZVwiOiBcIk1vdXZlbWVudCBoaXN0b3JpcXVlIGV0IGhpc3RvaXJlIHN1c3BlbmR1ZVwiLFxuICAgICAgXCJ5ZWFyXCI6IDIwMTIsXG4gICAgICBcInNvdXJjZVwiOiBcIlZpbmd0aehtZSBTaehjbGUgUmV2dWUgZCBoaXN0b2lyZVwiLFxuICAgICAgXCJhdXRob3JzXCI6IFtcbiAgICAgICAge1xuICAgICAgICAgIFwiZm9yZW5hbWVcIjogXCJIYXJ0bXV0XCIsXG4gICAgICAgICAgXCJzdXJuYW1lXCI6IFwiUm9zYVwiLFxuICAgICAgICAgIFwiZnVsbG5hbWVcIjogXCJIYXJ0bXV0IFJvc2FcIlxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIkpvaGFublwiLFxuICAgICAgICAgIFwic3VybmFtZVwiOiBcIkNoYXBvdXRvdFwiLFxuICAgICAgICAgIFwiZnVsbG5hbWVcIjogXCJKb2hhbm4gQ2hhcG91dG90XCJcbiAgICAgICAgfVxuICAgICAgXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBvcmlnaW5hbFxudmFsdWUgPSBnZXQoXCJ2YWx1ZVwiKVxuXG5wYXRoID0gY29waWVcbnZhbHVlID0gZ2V0KFwidmFsdWVcIilcblxucGF0aCA9IGNvcGllLmF1dGhvcnNbMF0uZnVsbG5hbWVcbnZhbHVlID0gZml4KFwiQXV0ZXVyIG1vZGlmaelcIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
+
+[Tester cloneDeep dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJ0aXRsZVwiOiBcIk1vdXZlbWVudCBoaXN0b3JpcXVlIGV0IGhpc3RvaXJlIHN1c3BlbmR1ZVwiLFxuICAgICAgXCJ5ZWFyXCI6IDIwMTIsXG4gICAgICBcInNvdXJjZVwiOiBcIlZpbmd0aehtZSBTaehjbGUgUmV2dWUgZCBoaXN0b2lyZVwiLFxuICAgICAgXCJhdXRob3JzXCI6IFtcbiAgICAgICAge1xuICAgICAgICAgIFwiZm9yZW5hbWVcIjogXCJIYXJ0bXV0XCIsXG4gICAgICAgICAgXCJzdXJuYW1lXCI6IFwiUm9zYVwiLFxuICAgICAgICAgIFwiZnVsbG5hbWVcIjogXCJIYXJ0bXV0IFJvc2FcIlxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIkpvaGFublwiLFxuICAgICAgICAgIFwic3VybmFtZVwiOiBcIkNoYXBvdXRvdFwiLFxuICAgICAgICAgIFwiZnVsbG5hbWVcIjogXCJKb2hhbm4gQ2hhcG91dG90XCJcbiAgICAgICAgfVxuICAgICAgXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBvcmlnaW5hbFxudmFsdWUgPSBnZXQoXCJ2YWx1ZVwiKS5jbG9uZURlZXAoKVxuXG5wYXRoID0gY29waWVcbnZhbHVlID0gZ2V0KFwidmFsdWVcIikuY2xvbmVEZWVwKClcblxucGF0aCA9IGNvcGllLmF1dGhvcnNbMF0uZnVsbG5hbWVcbnZhbHVlID0gZml4KFwiQXV0ZXVyIG1vZGlmaelcIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
+
 ## isString  
 
 Teste si la valeur est une chaîne de caractères.  

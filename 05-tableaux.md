@@ -339,6 +339,17 @@ value = get("value.entree").difference(self.value.entree2)
 
 [Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIl0sXG4gICAgICBcImVudHJlZTJcIjogW1wiQVwiLCBcIkNcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS5kaWZmZXJlbmNlKHNlbGYudmFsdWUuZW50cmVlMilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgICAifQ==)
 
+## differenceBy
+
+Retourne les éléments du premier tableau qui ne sont pas présents dans le second, en comparant les objets selon une propriété donnée.
+
+```js
+value = get("value.entree").differenceBy(self.value.entree2, "ppn")
+// Entree : [{"nom":"École A","ppn":"123"},{"nom":"École B","ppn":"456"},{"nom":"École C","ppn":"789"}] Entree2 : [{"nom":"Autre nom pour B","ppn":"456"}] → Sortie : [{"nom":"École A","ppn":"123"},{"nom":"École C","ppn":"789"}]
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1xuICAgICAgICB7XCJub21cIjogXCLJY29sZSBBXCIsIFwicHBuXCI6IFwiMTIzXCJ9LFxuICAgICAgICB7XCJub21cIjogXCLJY29sZSBCXCIsIFwicHBuXCI6IFwiNDU2XCJ9LFxuICAgICAgICB7XCJub21cIjogXCLJY29sZSBDXCIsIFwicHBuXCI6IFwiNzg5XCJ9XG4gICAgICBdLFxuICAgICAgXCJlbnRyZWUyXCI6IFtcbiAgICAgICAge1wibm9tXCI6IFwiQXV0cmUgbm9tIHBvdXIgQlwiLCBcInBwblwiOiBcIjQ1NlwifVxuICAgICAgXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLmRpZmZlcmVuY2VCeShzZWxmLnZhbHVlLmVudHJlZTIsIFwicHBuXCIpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICJ9)
+
 ## intersection
 
 Renvoie les éléments communs à plusieurs tableaux.
@@ -349,6 +360,17 @@ value = get("value.entree").intersection(self.value.entree2)
 ```
 
 [Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIl0sXG4gICAgICBcImVudHJlZTJcIjogW1wiQVwiLCBcIkNcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS5pbnRlcnNlY3Rpb24oc2VsZi52YWx1ZS5lbnRyZWUyKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAgICJ9)
+
+## intersectionBy
+
+Retourne les éléments communs à deux tableaux d’objets, en les comparant selon une propriété donnée.
+
+```js
+value = get("value.entree").intersectionBy(self.value.entree2, "ppn")
+// Entree : [{"nom":"École A","ppn":"123"},{"nom":"École B","ppn":"456"},{"nom":"École C","ppn":"789"}] Entree2 : [{"nom":"Autre nom pour B","ppn":"456"}] → Sortie : [{"nom":"École B","ppn":"456"}]
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1xuICAgICAgICB7XCJub21cIjogXCLJY29sZSBBXCIsIFwicHBuXCI6IFwiMTIzXCJ9LFxuICAgICAgICB7XCJub21cIjogXCLJY29sZSBCXCIsIFwicHBuXCI6IFwiNDU2XCJ9LFxuICAgICAgICB7XCJub21cIjogXCLJY29sZSBDXCIsIFwicHBuXCI6IFwiNzg5XCJ9XG4gICAgICBdLFxuICAgICAgXCJlbnRyZWUyXCI6IFtcbiAgICAgICAge1wibm9tXCI6IFwiQXV0cmUgbm9tIHBvdXIgQlwiLCBcInBwblwiOiBcIjQ1NlwifVxuICAgICAgXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLmludGVyc2VjdGlvbkJ5KHNlbGYudmFsdWUuZW50cmVlMiwgXCJwcG5cIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
 
 ## xor
 
@@ -372,6 +394,17 @@ value = get("value.entree").union(self.value.entree2)
 
 [Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIl0sXG4gICAgICBcImVudHJlZTJcIjogW1wiQVwiLCBcIkNcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS51bmlvbihzZWxmLnZhbHVlLmVudHJlZTIpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICAgIn0=)
 
+## unionBy
+
+Fusionne deux tableaux d’objets en supprimant les doublons selon une propriété donnée.
+
+```js
+value = get("value.entree").unionBy(self.value.entree2, "ppn")
+// Entree : [{"nom":"École A","ppn":"123"},{"nom":"École B","ppn":"456"},{"nom":"École C","ppn":"789"}] Entree2 : [{"nom":"Autre nom pour B","ppn":"456"},{"nom":"École D","ppn":"999"}] → Sortie : [{"nom":"École A","ppn":"123"},{"nom":"École B","ppn":"456"},{"nom":"École C","ppn":"789"},{"nom":"École D","ppn":"999"}]
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1xuICAgICAgICB7XCJub21cIjogXCLJY29sZSBBXCIsIFwicHBuXCI6IFwiMTIzXCJ9LFxuICAgICAgICB7XCJub21cIjogXCLJY29sZSBCXCIsIFwicHBuXCI6IFwiNDU2XCJ9LFxuICAgICAgICB7XCJub21cIjogXCLJY29sZSBDXCIsIFwicHBuXCI6IFwiNzg5XCJ9XG4gICAgICBdLFxuICAgICAgXCJlbnRyZWUyXCI6IFtcbiAgICAgICAge1wibm9tXCI6IFwiQXV0cmUgbm9tIHBvdXIgQlwiLCBcInBwblwiOiBcIjQ1NlwifSxcbiAgICAgICAge1wibm9tXCI6IFwiyWNvbGUgRFwiLCBcInBwblwiOiBcIjk5OVwifVxuICAgICAgXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnVuaW9uQnkoc2VsZi52YWx1ZS5lbnRyZWUyLCBcInBwblwiKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
+
 ## slice
 
 Extrait une partie d’un tableau à partir d’un index de début jusqu’à (mais sans inclure) un index de fin.
@@ -382,5 +415,59 @@ value = get("value.entree").slice(2)
 ```
 
 [Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIiwgXCJDXCIsIFwiRFwiXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnNsaWNlKDIpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICAgIn0=)
+
+## take
+
+Récupère les *n* premiers éléments d’un tableau. Sans valeur précisée, `take()` récupère uniquement le premier élément.
+
+```js
+value = get("value.entree").take(3)
+// Entree : ["A", "B", "C", "D", "E"] → Sortie : ["A", "B", "C"]
+
+value = get("value.entree").take()
+// Entree : ["A", "B", "C", "D", "E"] → Sortie : ["A"]
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIiwgXCJDXCIsIFwiRFwiLCBcIkVcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS50YWtlKDMpXG5cbnBhdGggPSBzb3J0aWUyXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS50YWtlKClcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
+
+## takeRight
+
+Récupère les *n* derniers éléments d’un tableau. Sans valeur précisée, `takeRight()` récupère uniquement le dernier élément.
+
+```js
+value = get("value.entree").takeRight(3)
+// Entree : ["A", "B", "C", "D", "E"] → Sortie : ["C", "D", "E"]
+
+value = get("value.entree").takeRight()
+// Entree : ["A", "B", "C", "D", "E"] → Sortie : ["E"]
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiQVwiLCBcIkJcIiwgXCJDXCIsIFwiRFwiLCBcIkVcIl1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS50YWtlUmlnaHQoMylcblxucGF0aCA9IHNvcnRpZTJcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnRha2VSaWdodCgpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICJ9)
+
+## takeWhile
+
+Récupère les éléments depuis le début d’un tableau tant qu’une condition est vérifiée. La lecture s’arrête dès que la condition n’est plus satisfaite.
+
+```js
+value = get("value.entree").takeWhile(item => item.annee >= 2024)
+// Entree : [{"annee":2026,"titre":"Document A"},{"annee":2025,"titre":"Document B"},{"annee":2024,"titre":"Document C"},{"annee":2020,"titre":"Document D"},{"annee":2025,"titre":"Document E"}] → Sortie : [{"annee":2026,"titre":"Document A"},{"annee":2025,"titre":"Document B"},{"annee":2024,"titre":"Document C"}]
+```
+
+Contrairement à `filter`, `takeWhile` s’arrête au premier élément qui ne respecte pas la condition. Ici, le document E n’est donc pas récupéré, même si son année est supérieure ou égale à 2024.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1xuICAgICAgICB7XCJhbm5lZVwiOiAyMDI2LCBcInRpdHJlXCI6IFwiRG9jdW1lbnQgQVwifSxcbiAgICAgICAge1wiYW5uZWVcIjogMjAyNSwgXCJ0aXRyZVwiOiBcIkRvY3VtZW50IEJcIn0sXG4gICAgICAgIHtcImFubmVlXCI6IDIwMjQsIFwidGl0cmVcIjogXCJEb2N1bWVudCBDXCJ9LFxuICAgICAgICB7XCJhbm5lZVwiOiAyMDIwLCBcInRpdHJlXCI6IFwiRG9jdW1lbnQgRFwifSxcbiAgICAgICAge1wiYW5uZWVcIjogMjAyNSwgXCJ0aXRyZVwiOiBcIkRvY3VtZW50IEVcIn1cbiAgICAgIF1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS50YWtlV2hpbGUoaXRlbSA9PiBpdGVtLmFubmVlID49IDIwMjQpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICJ9)
+
+## dropWhile
+
+Supprime les éléments depuis le début d’un tableau tant qu’une condition est vérifiée. La suppression s’arrête dès que la condition n’est plus satisfaite.
+
+```js
+value = get("value.entree").dropWhile(item => item.annee >= 2024)
+// Entree : [{"annee":2026,"titre":"Document A"},{"annee":2025,"titre":"Document B"},{"annee":2024,"titre":"Document C"},{"annee":2020,"titre":"Document D"},{"annee":2025,"titre":"Document E"}] → Sortie : [{"annee":2020,"titre":"Document D"},{"annee":2025,"titre":"Document E"}]
+```
+
+Contrairement à `filter`, `dropWhile` s’arrête au premier élément qui ne respecte pas la condition. Ici, dès que l’année 2020 est rencontrée, tous les éléments suivants sont conservés, y compris le document E dont l’année est 2025.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1xuICAgICAgICB7XCJhbm5lZVwiOiAyMDI2LCBcInRpdHJlXCI6IFwiRG9jdW1lbnQgQVwifSxcbiAgICAgICAge1wiYW5uZWVcIjogMjAyNSwgXCJ0aXRyZVwiOiBcIkRvY3VtZW50IEJcIn0sXG4gICAgICAgIHtcImFubmVlXCI6IDIwMjQsIFwidGl0cmVcIjogXCJEb2N1bWVudCBDXCJ9LFxuICAgICAgICB7XCJhbm5lZVwiOiAyMDIwLCBcInRpdHJlXCI6IFwiRG9jdW1lbnQgRFwifSxcbiAgICAgICAge1wiYW5uZWVcIjogMjAyNSwgXCJ0aXRyZVwiOiBcIkRvY3VtZW50IEVcIn1cbiAgICAgIF1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiIjIEVaUyBzY3JpcHRcblt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gc29ydGllXG52YWx1ZSA9IGdldChcInZhbHVlLmVudHJlZVwiKS5kcm9wV2hpbGUoaXRlbSA9PiBpdGVtLmFubmVlID49IDIwMjQpXG5cbltkZWJ1Z11cbnRleHQgPSBiZWZvcmUgZ2VuZXJhdGluZyBhbiBpZGVudGlmaWVyIHBlciBvYmplY3RcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlXG4gICJ9)
 
 👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/06-objets.md)

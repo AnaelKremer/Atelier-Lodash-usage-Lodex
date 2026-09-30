@@ -273,4 +273,56 @@ Ce qui donne :
 3 + 3 → 6  
 6 + 4 → 10  
 
+## keyBy
+
+Transforme un tableau d’objets en un objet en utilisant la valeur d’une propriété comme clé.
+
+```js
+value = get("value.authors").keyBy("surname")
+// Entree : [{"fullname":"Denis Maurel","surname":"Maurel"},{"fullname":"Enza Morale","surname":"Morale"}, ...]
+// Sortie : {"Maurel":{"fullname":"Denis Maurel","surname":"Maurel", ...},"Morale":{"fullname":"Enza Morale","surname":"Morale", ...}, ...}
+```
+
+Les valeurs de la propriété `surname` deviennent ici les clés du nouvel objet.
+
+> [!WARNING]
+> La propriété utilisée comme clé doit idéalement contenir des valeurs uniques. Si plusieurs éléments possèdent la même valeur, `keyBy` ne conserve que le dernier élément rencontré pour cette clé.
+>
+> Par exemple :
+>
+> ```js
+> value = get("value.authors").keyBy("rnsr")
+> ```
+>
+> Dans cet exemple, Enza Morale, Nicolas Thouvenin, Patrice Ringot et Angel Turri possèdent tous le RNSR `198822446E`. Seul le dernier auteur rencontré, Angel Turri, est conservé sous cette clé.
+>
+> ```json
+> {
+>   "198822446E": {
+>     "fullname": "Angel Turri",
+>     "forename": "Angel",
+>     "surname": "Turri",
+>     "rnsr": ["198822446E"]
+>   }
+> }
+> ```
+>
+> [Tester ce cas dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJ0aXRsZVwiOiBcIklzdGV4OiBBIERhdGFiYXNlIG9mIFR3ZW50eSBNaWxsaW9uIFNjaWVudGlmaWMgUGFwZXJzXCIsXG4gICAgICBcInllYXJcIjogMjAxOSxcbiAgICAgIFwic291cmNlXCI6IFwiSW5mb3JtYXRpb25cIixcbiAgICAgIFwicHVibGlzaGVyXCI6IFwiTURQSVwiLFxuICAgICAgXCJhdXRob3JzXCI6IFtcbiAgICAgICAge1xuICAgICAgICAgIFwiZnVsbG5hbWVcIjogXCJEZW5pcyBNYXVyZWxcIixcbiAgICAgICAgICBcImZvcmVuYW1lXCI6IFwiRGVuaXNcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJNYXVyZWxcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMjAxMjIwMjU0VFwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIkVuemEgTW9yYWxlXCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIkVuemFcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJNb3JhbGVcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIk5pY29sYXMgVGhvdXZlbmluXCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIk5pY29sYXNcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJUaG91dmVuaW5cIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIlBhdHJpY2UgUmluZ290XCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIlBhdHJpY2VcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJSaW5nb3RcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIkFuZ2VsIFR1cnJpXCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIkFuZ2VsXCIsXG4gICAgICAgICAgXCJzdXJuYW1lXCI6IFwiVHVycmlcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9XG4gICAgICBdXG4gICAgfVxuICB9XG5dIiwic2NyaXB0IjoiIyBFWlMgc2NyaXB0XG5bdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cbltyZXBsYWNlXVxucGF0aCA9IHNvcnRpZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5hdXRob3JzXCIpLmtleUJ5KFwicm5zclwiKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlIn0=)
+
+## partition
+
+Sépare une collection en deux groupes selon une condition. Le premier groupe contient les éléments qui respectent la condition, le second ceux qui ne la respectent pas.
+
+```js
+value = get("value.authors").partition(auteur => auteur.rnsr.includes("198822446E"))
+// Entree : tableau des auteurs
+// Sortie : [[auteurs ayant le RNSR "198822446E"], [autres auteurs]]
+```
+
+Dans cet exemple, le premier tableau contient Enza Morale, Nicolas Thouvenin, Patrice Ringot et Angel Turri. Le second contient Denis Maurel.
+
+Contrairement à `filter`, qui ne conserve que les éléments correspondant à la condition, `partition` conserve tous les éléments et les répartit en deux groupes.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJ0aXRsZVwiOiBcIklzdGV4OiBBIERhdGFiYXNlIG9mIFR3ZW50eSBNaWxsaW9uIFNjaWVudGlmaWMgUGFwZXJzXCIsXG4gICAgICBcInllYXJcIjogMjAxOSxcbiAgICAgIFwic291cmNlXCI6IFwiSW5mb3JtYXRpb25cIixcbiAgICAgIFwicHVibGlzaGVyXCI6IFwiTURQSVwiLFxuICAgICAgXCJhdXRob3JzXCI6IFtcbiAgICAgICAge1xuICAgICAgICAgIFwiZnVsbG5hbWVcIjogXCJEZW5pcyBNYXVyZWxcIixcbiAgICAgICAgICBcImZvcmVuYW1lXCI6IFwiRGVuaXNcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJNYXVyZWxcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMjAxMjIwMjU0VFwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIkVuemEgTW9yYWxlXCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIkVuemFcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJNb3JhbGVcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIk5pY29sYXMgVGhvdXZlbmluXCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIk5pY29sYXNcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJUaG91dmVuaW5cIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIlBhdHJpY2UgUmluZ290XCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIlBhdHJpY2VcIixcbiAgICAgICAgICBcInN1cm5hbWVcIjogXCJSaW5nb3RcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJmdWxsbmFtZVwiOiBcIkFuZ2VsIFR1cnJpXCIsXG4gICAgICAgICAgXCJmb3JlbmFtZVwiOiBcIkFuZ2VsXCIsXG4gICAgICAgICAgXCJzdXJuYW1lXCI6IFwiVHVycmlcIixcbiAgICAgICAgICBcInJuc3JcIjogW1wiMTk4ODIyNDQ2RVwiXVxuICAgICAgICB9XG4gICAgICBdXG4gICAgfVxuICB9XG5dIiwic2NyaXB0IjoiIyBFWlMgc2NyaXB0XG5bdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cbltyZXBsYWNlXVxucGF0aCA9IHNvcnRpZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5hdXRob3JzXCIpLnBhcnRpdGlvbihhdXRldXIgPT4gYXV0ZXVyLnJuc3IuaW5jbHVkZXMoXCIxOTg4MjI0NDZFXCIpKVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlIn0=)
+
 👉 [Chapitre suivant](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/08-fonctions-sur-les-types-lang.md)
