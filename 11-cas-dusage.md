@@ -970,6 +970,69 @@ Le premier élément peut être utilisé comme **libellé** du graphique, tandis
 
 ---
 
+### Créer un champ booléen indiquant la présence de certaines valeurs
+
+On peut créer un champ booléen indiquant si une ou plusieurs valeurs recherchées sont présentes dans une donnée.
+
+Dans cet exemple, on cherche si `VAL A` ou `VAL B` est présente :
+
+```ini
+[assign]
+path = contientAouB
+value = get('value').castArray().some(v => ['VAL A', 'VAL B'].includes(v))
+```
+
+Le champ `contientAouB` contiendra alors `true` si au moins une des valeurs recherchées est présente, et `false` dans le cas contraire.
+
+L'utilisation de `castArray()` permet d'appliquer le même traitement que la donnée soit une valeur simple ou un tableau.
+
+Par exemple :
+
+```json
+["VAL A", "VAL C"]
+```
+
+renverra :
+
+```json
+true
+```
+
+alors que :
+
+```json
+["VAL C", "VAL D"]
+```
+
+renverra :
+
+```json
+false
+```
+
+---
+
+#### Variante avec une expression régulière
+
+On peut également vérifier si au moins une des valeurs respecte une expression régulière :
+
+```ini
+[assign]
+path = contientPresqueMIL
+value = get('value').castArray().some(v => String(v).search(/mil[aeiuo]+/i) !== -1)
+```
+
+Le champ `contientPresqueMIL` contiendra une valeur booléenne indiquant si au moins une des valeurs respecte l'expression régulière `/mil[aeiuo]+/i`.
+
+Ici :
+
+- `castArray()` permet de travailler indifféremment avec une valeur simple ou un tableau ;
+- `some()` renvoie `true` dès qu'au moins un élément satisfait la condition ;
+- `String(v)` s'assure que la valeur testée est une chaîne de caractères ;
+- `search()` recherche le motif défini par l'expression régulière et renvoie `-1` lorsqu'il n'est pas trouvé.
+
+---
+
 ### Regrouper des valeurs numériques par ordre de grandeur
 
 Lorsque les valeurs d'un champ numérique présentent de très grands écarts, il peut être utile de les regrouper automatiquement par **ordre de grandeur**.
@@ -1022,6 +1085,856 @@ value = get("value.dataset") \
 > **À adapter :** remplacez `value.dataset` par le chemin du champ numérique que vous souhaitez traiter.
 
 Ce type de regroupement est particulièrement utile pour créer des facettes ou des graphiques lorsque les valeurs sont très dispersées et que l'on souhaite les comparer sans définir manuellement chaque intervalle.
+
+---
+
+### Sélectionner certaines valeurs avant de lancer un enrichissement
+
+Lorsqu'un enrichissement repose sur une colonne dont certaines valeurs sont absentes ou inutilisables, il est préférable de **ne pas envoyer ces valeurs au web service**.
+
+Prenons l'exemple d'un corpus de 100 000 notices dont seulement 50 000 possèdent un DOI.  
+Les autres notices contiennent une chaîne vide `""`.
+
+Si l'on lance directement l'enrichissement sur la colonne `DOI`, les valeurs vides seront également envoyées au web service. Celui-ci effectuera donc inutilement des requêtes qui ne pourront pas produire de résultat.
+
+On peut éviter ces traitements en utilisant l'instruction `[remove]` avant l'appel au web service :
+
+```ini
+[remove]
+test = get("value.DOI").isEqual("")
+```
+
+`[remove]` retire ici du flux d'enrichissement toutes les notices dont le champ `DOI` contient une chaîne vide.
+
+Seules les notices possédant un DOI poursuivent alors le traitement et sont envoyées au web service.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJ0aXRsZVwiOiBcIkFydGljbGUgQVwiLFxuICAgICAgXCJET0lcIjogXCIxMC4xMDAwL2FydGljbGUtYVwiXG4gICAgfVxuICB9LFxuICB7XG4gICAgXCJ2YWx1ZVwiOiB7XG4gICAgICBcInRpdGxlXCI6IFwiQXJ0aWNsZSBCXCIsXG4gICAgICBcIkRPSVwiOiBcIlwiXG4gICAgfVxuICB9LFxuICB7XG4gICAgXCJ2YWx1ZVwiOiB7XG4gICAgICBcInRpdGxlXCI6IFwiQXJ0aWNsZSBDXCIsXG4gICAgICBcIkRPSVwiOiBcIjEwLjEwMDAvYXJ0aWNsZS1jXCJcbiAgICB9XG4gIH0sXG4gIHtcbiAgICBcInZhbHVlXCI6IHtcbiAgICAgIFwidGl0bGVcIjogXCJBcnRpY2xlIERcIixcbiAgICAgIFwiRE9JXCI6IFwiXCJcbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiJbdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cbltyZW1vdmVdXG50ZXN0ID0gZ2V0KFwidmFsdWUuRE9JXCIpLmlzRXF1YWwoXCJcIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWUifQ==)
+
+> [!NOTE]
+> Dans le contexte d'un **enrichissement**, `[remove]` permet d'écarter certaines valeurs du traitement en cours.
+>
+> Dans le contexte d'un **loader**, la même instruction agit sur le flux de données et peut donc supprimer des lignes entières avant leur import dans Lodex.
+
+Il est également possible d'inverser la condition avec le paramètre `reverse`.
+
+```ini
+[remove]
+test = get("value.DOI").isEqual("")
+reverse = true
+```
+
+Dans ce cas, le comportement est inversé : seules les notices répondant à la condition poursuivent le traitement.
+
+Cette technique permet notamment de limiter les appels inutiles à un web service et peut être adaptée à d'autres conditions que la présence d'une chaîne vide.
+
+---
+
+### Effectuer un second enrichissement uniquement sur les données manquantes
+
+Après un premier enrichissement, certaines ressources peuvent avoir obtenu une réponse tandis que d'autres n'ont retourné aucun résultat.
+
+Par exemple, la colonne `PremierEnrich` contient un objet lorsque l'enrichissement a réussi et la valeur `"n/a"` lorsqu'aucune correspondance n'a été trouvée.
+
+Si l'on souhaite effectuer un second enrichissement à partir d'une autre donnée, il est inutile de réinterroger les ressources pour lesquelles le premier enrichissement a déjà réussi.
+
+On peut utiliser `[remove]` pour retirer du flux les ressources dont `PremierEnrich` contient déjà un objet :
+
+```ini
+[remove]
+test = get("value.PremierEnrich").isObject()
+
+[assign]
+path = value
+value = get("value.AdressePostale")
+```
+
+`isObject()` teste ici si le premier enrichissement a retourné un objet.
+
+Les ressources pour lesquelles c'est le cas sont retirées du flux par `[remove]`. Il ne reste donc que celles pour lesquelles le premier enrichissement a échoué.
+
+`[assign]` remplace ensuite `value` par la valeur de `AdressePostale`, qui pourra être envoyée au second service d'enrichissement.
+
+Par exemple :
+
+```json
+[
+  {
+    "value": {
+      "PremierEnrich": {"code": "UMR7503"},
+      "AdressePostale": "Nancy"
+    }
+  },
+  {
+    "value": {
+      "PremierEnrich": "n/a",
+      "AdressePostale": "Paris"
+    }
+  }
+]
+```
+
+donne :
+
+```json
+[
+  {
+    "value": "Paris"
+  }
+]
+```
+
+Seule la ressource qui n'avait pas obtenu de résultat lors du premier enrichissement poursuit donc le traitement.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJQcmVtaWVyRW5yaWNoXCI6IHtcImNvZGVcIjogXCJVTVI3NTAzXCJ9LFxuICAgICAgXCJBZHJlc3NlUG9zdGFsZVwiOiBcIk5hbmN5XCJcbiAgICB9XG4gIH0sXG4gIHtcbiAgICBcInZhbHVlXCI6IHtcbiAgICAgIFwiUHJlbWllckVucmljaFwiOiBcIm4vYVwiLFxuICAgICAgXCJBZHJlc3NlUG9zdGFsZVwiOiBcIlBhcmlzXCJcbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiJbdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cbltyZW1vdmVdXG50ZXN0ID0gZ2V0KFwidmFsdWUuUHJlbWllckVucmljaFwiKS5pc09iamVjdCgpXG5cblthc3NpZ25dXG5wYXRoID0gdmFsdWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuQWRyZXNzZVBvc3RhbGVcIilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWUifQ==)
+
+> [!TIP]
+> Cette méthode peut également être utilisée lorsqu'on ajoute de nouvelles données à un corpus déjà enrichi : elle permet de ne lancer l'enrichissement que sur les ressources qui ne disposent pas encore d'un résultat.
+
+---
+
+### Importer et traiter des annotations dans le dataset
+
+Sur un corpus soumis à des annotations, il est possible d'importer les annotations dans le dataset afin de réaliser différents traitements sur les ressources annotées.
+
+Il faut tout d'abord :
+
+1. exporter les annotations depuis l'onglet **Annotations** ;
+2. importer ce même fichier depuis l'onglet **Données** ;
+3. sélectionner le loader **JSON - Fichier d'annotations**.
+
+> [!NOTE]
+> La colonne `annotations` n'est pas nécessairement visible dans Lodex, car toutes les ressources ne possèdent pas forcément une annotation. Les annotations sont néanmoins bien importées dans MongoDB.
+
+#### Compter le nombre d'annotations d'une ressource
+
+On peut commencer par déterminer quelles ressources ont été annotées et compter le nombre d'annotations associées à chacune d'elles.
+
+Par exemple, pour créer un champ `nombreAnnotations` :
+
+```ini
+[assign]
+path = value
+value = get("value.annotations").size()
+```
+
+`size()` retourne ici le nombre d'éléments contenus dans le tableau `annotations`.
+
+Cette information peut ensuite être utilisée pour effectuer différents traitements, notamment pour déterminer si une demande de suppression constitue l'unique annotation d'une ressource.
+
+---
+
+#### Identifier les ressources dont la suppression est demandée
+
+On peut ensuite examiner les valeurs `proposedValue` des annotations afin d'identifier les ressources pour lesquelles un annotateur a demandé la suppression :
+
+```ini
+[assign]
+path = value
+value = get("value.annotations") \
+  .flatMap("proposedValue") \
+  .filter(val => val != null) \
+  .map(val => (val === "OUI, je souhaite que cette ressource soit supprimée de ce jeu de données" && self.value.nombreAnnotations === 1) ? "Oui, la ressource peut être supprimée" : (val === "OUI, je souhaite que cette ressource soit supprimée de ce jeu de données" && self.value.nombreAnnotations > 1) ? "Attention il y a plusieurs annotations" : "") \
+  .join("")
+```
+
+Le traitement :
+
+- récupère les valeurs `proposedValue` avec `flatMap()` ;
+- élimine les valeurs `null` avec `filter()` ;
+- recherche la demande de suppression avec `map()` ;
+- vérifie le nombre total d'annotations grâce à `self.value.nombreAnnotations` ;
+- rassemble enfin le résultat avec `join("")`.
+
+Deux situations sont distinguées :
+
+- si la demande de suppression constitue **l'unique annotation**, la valeur `"Oui, la ressource peut être supprimée"` est produite ;
+- si la ressource possède **plusieurs annotations**, la valeur `"Attention il y a plusieurs annotations"` est produite afin d'éviter une suppression automatique sans vérification.
+
+Il est ensuite possible de filtrer les ressources portant la première valeur afin de supprimer uniquement celles pour lesquelles la demande de suppression est sans ambiguïté.
+
+---
+
+### Lancer un web service uniquement sur les lignes respectant certaines conditions
+
+Lors d'un enrichissement, il peut être utile de n'appeler un web service que pour les ressources qui respectent certaines conditions.
+
+Dans cet exemple, le web service **TEEFT** est utilisé pour extraire des termes à partir du champ `abstract`, mais uniquement lorsque :
+
+- la ressource possède un résumé ;
+- la langue indiquée dans `language` est `fr` ou `en`.
+
+Les ressources qui ne respectent pas ces conditions reçoivent la valeur `"n/a"`.
+
+On commence par vérifier que la langue est bien `fr` ou `en` :
+
+```ini
+[use]
+plugin = basics
+
+[swing]
+test = get("value.language").thru(lang => _.includes(["fr","en"], lang))
+reverse = true
+size = 10
+
+[swing/assign]
+path = value
+value = n/a
+```
+
+`thru()` permet ici de tester si la langue appartient à la liste `["fr","en"]`.
+
+Avec `reverse = true`, les ressources dont la langue n'appartient pas à cette liste sont dirigées vers `[swing/assign]` et prennent la valeur `"n/a"`.
+
+On vérifie ensuite que le résumé n'est pas vide :
+
+```ini
+[swing]
+test = get("value.abstract").isEmpty()
+size = 10
+
+[swing/assign]
+path = value
+value = n/a
+```
+
+Les ressources possédant une langue autorisée et un résumé peuvent alors être orientées vers le service correspondant à leur langue.
+
+Pour les résumés en français :
+
+```ini
+[swing]
+test = get("value.language").isEqual("fr")
+size = 10
+
+[swing/assign]
+path = value
+value = update("value.abstract", (item) => { try { return JSON.parse(item); } catch { return item; } }).get("value.abstract")
+
+[swing/URLConnect]
+url = https://terms-extraction.services.istex.fr/v2/teeft/fr
+timeout = 3600000
+noerror = false
+retries = 2
+```
+
+Pour les résumés en anglais :
+
+```ini
+[swing]
+test = get("value.language").isEqual("en")
+size = 10
+
+[swing/assign]
+path = value
+value = update("value.abstract", (item) => { try { return JSON.parse(item); } catch { return item; } }).get("value.abstract")
+
+[swing/URLConnect]
+url = https://terms-extraction.services.istex.fr/v2/teeft/en
+timeout = 3600000
+noerror = false
+retries = 2
+```
+
+Le script complet permet ainsi de distinguer trois situations :
+
+- langue `fr` et résumé présent → appel du service TEEFT français ;
+- langue `en` et résumé présent → appel du service TEEFT anglais ;
+- autre langue ou résumé vide → aucun appel à TEEFT et valeur `"n/a"`.
+
+> [!TIP]
+> Ce principe n'est pas propre à TEEFT. L'enchaînement `[swing]` / `[swing/assign]` peut être utilisé pour conditionner l'appel à d'autres web services à partir d'une ou plusieurs valeurs du dataset. Il permet notamment d'éviter des requêtes inutiles et d'orienter les données vers des services différents selon leur contenu.
+
+[Tester le filtrage conditionnel dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJsYW5ndWFnZVwiOiBcImZyXCIsXG4gICAgICBcImFic3RyYWN0XCI6IFwiVW4gculzdW3pXCJcbiAgICB9XG4gIH0sXG4gIHtcbiAgICBcInZhbHVlXCI6IHtcbiAgICAgIFwibGFuZ3VhZ2VcIjogXCJkZVwiLFxuICAgICAgXCJhYnN0cmFjdFwiOiBcIkVpbiBBYnN0cmFjdFwiXG4gICAgfVxuICB9LFxuICB7XG4gICAgXCJ2YWx1ZVwiOiB7XG4gICAgICBcImxhbmd1YWdlXCI6IFwiZW5cIixcbiAgICAgIFwiYWJzdHJhY3RcIjogXCJcIlxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6Ilt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3N3aW5nXVxudGVzdCA9IGdldChcInZhbHVlLmxhbmd1YWdlXCIpLnRocnUobGFuZyA9PiBfLmluY2x1ZGVzKFtcImZyXCIsXCJlblwiXSwgbGFuZykpXG5yZXZlcnNlID0gdHJ1ZVxuc2l6ZSA9IDEwXG5cbltzd2luZy9hc3NpZ25dXG5wYXRoID0gdmFsdWVcbnZhbHVlID0gbi9hXG5cbltzd2luZ11cbnRlc3QgPSBnZXQoXCJ2YWx1ZS5hYnN0cmFjdFwiKS5pc0VtcHR5KClcbnNpemUgPSAxMFxuXG5bc3dpbmcvYXNzaWduXVxucGF0aCA9IHZhbHVlXG52YWx1ZSA9IG4vYVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
+
+---
+
+### Créer des URI distinctes pour chaque ressource
+
+L'instruction `[identify]` permet d'ajouter automatiquement un identifiant distinct à chaque ressource.
+
+```ini
+[identify]
+```
+
+Par exemple :
+
+```json
+[
+  {
+    "value": "Article A"
+  },
+  {
+    "value": "Article B"
+  }
+]
+```
+
+devient :
+
+```json
+[
+  {
+    "value": "Article A",
+    "uri": "uid:/..."
+  },
+  {
+    "value": "Article B",
+    "uri": "uid:/..."
+  }
+]
+```
+
+Chaque ressource reçoit ainsi une propriété `uri` contenant un identifiant de type `uid:/...`.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjogXCJBcnRpY2xlIEFcIlxuICB9LFxuICB7XG4gICAgXCJ2YWx1ZVwiOiBcIkFydGljbGUgQlwiXG4gIH0sXG4gIHtcbiAgICBcInZhbHVlXCI6IFwiQXJ0aWNsZSBDXCJcbiAgfVxuXSIsInNjcmlwdCI6Ilt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW2lkZW50aWZ5XVxuXG5bZGVidWddXG50ZXh0ID0gYmVmb3JlIGdlbmVyYXRpbmcgYW4gaWRlbnRpZmllciBwZXIgb2JqZWN0XG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
+
+> [!WARNING]
+> Dans Lodex, les valeurs de `uri` doivent être distinctes. Elles servent à identifier les ressources ; des URI dupliquées peuvent empêcher certaines opérations.
+
+---
+
+### Ajouter un identifiant pérenne de type ARK
+
+```ini
+[assign]
+path = value
+value = get('value.uri')
+
+[expand]
+size = 10
+path=value
+
+[expand/URLConnect]
+url = https://ark-tools.services.istex.fr/v1/67375/stamp?subpublisher=XXX
+```
+
+Ces instructions vont attribuer un identifiant pérenne à chaque ligne.
+
+`XXX` est à remplacer par le code du `subpublisher` approprié et enregistré dans le registre de l'Inist : http://inist-registry.ark.inist.fr/
+
+> [!WARNING]
+> Chaque identifiant ARK créé par ce web service est créé uniquement une seule fois. S'il n'est pas utilisé, l'identifiant est perdu.
+
+> [!TIP]
+> Pour remplacer l'UID attribué automatiquement par Lodex, il suffit de créer un enrichissement nommé `uri`.
+
+---
+
+### Remplacer des UID par des identifiants ARK
+
+```ini
+[assign]
+path = value
+value = get('value.uri')
+
+[swing]
+test = get('value').startsWith('uid:/')
+
+[swing/expand]
+size = 10
+path = value
+
+[swing/expand/URLConnect]
+url = https://ark-tools.services.istex.fr/v1/67375/stamp?subpublisher=XXX
+```
+
+Ces instructions vont attribuer un identifiant pérenne à chaque ligne si et seulement si elle possède un UID comme URI.
+
+`XXX` est à remplacer par le code du `subpublisher` approprié et enregistré dans le registre de l'Inist : http://inist-registry.ark.inist.fr/
+
+> [!WARNING]
+> Chaque identifiant ARK créé par ce web service est créé uniquement une seule fois. S'il n'est pas utilisé, l'identifiant est perdu.
+
+> [!TIP]
+> Pour remplacer l'UID attribué automatiquement par Lodex, il suffit de créer un enrichissement nommé `uri`.
+
+---
+
+### Créer une colonne en s’assurant que toutes les lignes contiennent un tableau (même vide)
+
+```ini
+[assign]
+path = value
+value = get("value.Entités nommées (Unitex).placeName", [])
+```
+
+Ces instructions créent une colonne à partir du sous-champ `placeName` de la colonne `Entités nommées (Unitex)`. S'il n’y a pas de valeur, le tableau sera vide.
+
+---
+
+### Créer un objet par défaut pour toutes les lignes qui contiennent la valeur `n/a`
+
+Il peut être utile de remplacer une valeur `n/a` par un objet structuré afin de conserver un format homogène dans une colonne.
+
+```ini
+[assign]
+path = value
+value = get("value.loterre")
+
+[swing]
+test = get('value').isEqual('n/a')
+
+[swing/replace]
+path = value.information
+value = Aucune réponse
+```
+
+Pour toutes les lignes contenant `n/a`, on obtient alors :
+
+```json
+{
+  "information": "Aucune réponse"
+}
+```
+
+Les lignes contenant déjà une autre valeur sont conservées telles quelles.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJsb3RlcnJlXCI6IFwibi9hXCJcbiAgICB9XG4gIH0sXG4gIHtcbiAgICBcInZhbHVlXCI6IHtcbiAgICAgIFwibG90ZXJyZVwiOiB7XG4gICAgICAgIFwiaWRcIjogXCJodHRwOi8vZGF0YS5sb3RlcnJlLmZyL2FyazovNjczNzUvLi4uXCIsXG4gICAgICAgIFwibGFiZWxcIjogXCJTY2llbmNlIG91dmVydGVcIlxuICAgICAgfVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6Ilt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW2Fzc2lnbl1cbnBhdGggPSB2YWx1ZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5sb3RlcnJlXCIpXG5cbltzd2luZ11cbnRlc3QgPSBnZXQoJ3ZhbHVlJykuaXNFcXVhbCgnbi9hJylcblxuW3N3aW5nL3JlcGxhY2VdXG5wYXRoID0gdmFsdWUuaW5mb3JtYXRpb25cbnZhbHVlID0gQXVjdW5lIHLpcG9uc2VcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlIn0=)
+
+---
+
+### Récupérer dans une liste d’objets deux valeurs simples
+
+Il est possible de simplifier une liste d’objets en ne conservant que certaines propriétés de chaque objet.
+
+```ini
+[assign]
+path = value
+value = get('value.concepts loterre').map(item => _.pick(item, ['prefLabel@en', 'about']))
+```
+
+Ces instructions créent une colonne à partir d’une liste d’objets en simplifiant chaque objet pour ne garder que deux champs différents.
+
+Dans cet exemple, seules les propriétés `prefLabel@en` et `about` sont conservées. Les autres champs de chaque objet sont ignorés.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJjb25jZXB0cyBsb3RlcnJlXCI6IFtcbiAgICAgICAge1xuICAgICAgICAgIFwicHJlZkxhYmVsQGVuXCI6IFwiT3BlbiBzY2llbmNlXCIsXG4gICAgICAgICAgXCJwcmVmTGFiZWxAZnJcIjogXCJTY2llbmNlIG91dmVydGVcIixcbiAgICAgICAgICBcImFib3V0XCI6IFwiaHR0cDovL2RhdGEubG90ZXJyZS5mci9hcms6LzY3Mzc1L0FCQ1wiLFxuICAgICAgICAgIFwidHlwZVwiOiBcIkNvbmNlcHRcIlxuICAgICAgICB9LFxuICAgICAgICB7XG4gICAgICAgICAgXCJwcmVmTGFiZWxAZW5cIjogXCJSZXNlYXJjaCBkYXRhXCIsXG4gICAgICAgICAgXCJwcmVmTGFiZWxAZnJcIjogXCJEb25u6WVzIGRlIHJlY2hlcmNoZVwiLFxuICAgICAgICAgIFwiYWJvdXRcIjogXCJodHRwOi8vZGF0YS5sb3RlcnJlLmZyL2FyazovNjczNzUvREVGXCIsXG4gICAgICAgICAgXCJ0eXBlXCI6IFwiQ29uY2VwdFwiXG4gICAgICAgIH1cbiAgICAgIF1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiJbdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cblthc3NpZ25dXG5wYXRoID0gdmFsdWVcbnZhbHVlID0gZ2V0KCd2YWx1ZS5jb25jZXB0cyBsb3RlcnJlJykubWFwKGl0ZW0gPT4gXy5waWNrKGl0ZW0sIFsncHJlZkxhYmVsQGVuJywgJ2Fib3V0J10pKVxuXG5bZHVtcF1cbmluZGVudCA9IHRydWUifQ==)
+
+---
+
+### Récupérer une valeur dans une liste de listes d’objets
+
+Lorsque des données sont imbriquées dans plusieurs listes d’objets, on peut enchaîner `map` et `flatten` pour atteindre les valeurs recherchées.
+
+Par exemple, chaque auteur peut posséder une liste d’affiliations, chaque affiliation contenant elle-même une adresse.
+
+```ini
+[replace]
+path = lesAdresses
+value = get('auteurs').map('affiliations').flatten().map('address')
+```
+
+Le premier `map('affiliations')` récupère les listes d’affiliations de chaque auteur.  
+`flatten()` les rassemble ensuite dans une seule liste.  
+Le dernier `map('address')` récupère enfin l’adresse de chaque affiliation.
+
+On obtient par exemple :
+
+```json
+{
+  "lesAdresses": [
+    "Nancy",
+    "Paris",
+    "Strasbourg"
+  ]
+}
+```
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwiYXV0ZXVyc1wiOiBbXG4gICAgICB7XG4gICAgICAgIFwibmFtZVwiOiBcIkFsaWNlIE1hcnRpblwiLFxuICAgICAgICBcImFmZmlsaWF0aW9uc1wiOiBbXG4gICAgICAgICAge1xuICAgICAgICAgICAgXCJuYW1lXCI6IFwiVW5pdmVyc2l06SBkZSBMb3JyYWluZVwiLFxuICAgICAgICAgICAgXCJhZGRyZXNzXCI6IFwiTmFuY3lcIlxuICAgICAgICAgIH0sXG4gICAgICAgICAge1xuICAgICAgICAgICAgXCJuYW1lXCI6IFwiQ05SU1wiLFxuICAgICAgICAgICAgXCJhZGRyZXNzXCI6IFwiUGFyaXNcIlxuICAgICAgICAgIH1cbiAgICAgICAgXVxuICAgICAgfSxcbiAgICAgIHtcbiAgICAgICAgXCJuYW1lXCI6IFwiSmVhbiBEdXBvbnRcIixcbiAgICAgICAgXCJhZmZpbGlhdGlvbnNcIjogW1xuICAgICAgICAgIHtcbiAgICAgICAgICAgIFwibmFtZVwiOiBcIlVuaXZlcnNpdOkgZGUgU3RyYXNib3VyZ1wiLFxuICAgICAgICAgICAgXCJhZGRyZXNzXCI6IFwiU3RyYXNib3VyZ1wiXG4gICAgICAgICAgfVxuICAgICAgICBdXG4gICAgICB9XG4gICAgXVxuICB9XG5dIiwic2NyaXB0IjoiW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBsZXNBZHJlc3Nlc1xudmFsdWUgPSBnZXQoJ2F1dGV1cnMnKS5tYXAoJ2FmZmlsaWF0aW9ucycpLmZsYXR0ZW4oKS5tYXAoJ2FkZHJlc3MnKVxuXG5bZHVtcF1cbmluZGVudCA9IHRydWUifQ==)
+
+---
+
+### Transformer une liste d’objets en liste de valeurs simples
+
+Il est possible de transformer chaque objet d'une liste en une valeur simple construite à partir de plusieurs de ses propriétés.
+
+Cette méthode peut notamment être utile pour **préparer des données hiérarchiques**, en associant dans une même valeur un rang, un niveau ou un code à une autre information.
+
+```ini
+[assign]
+path = value
+value = get("value.Catégories").map((categorie) => `${categorie.rang}-${categorie.code.value}`)
+```
+
+Par exemple :
+
+```json
+[
+  {
+    "rang": 1,
+    "code": {
+      "value": "SHS"
+    }
+  },
+  {
+    "rang": 2,
+    "code": {
+      "value": "INFO"
+    }
+  }
+]
+```
+
+devient :
+
+```json
+[
+  "1-SHS",
+  "2-INFO"
+]
+```
+
+Chaque objet est ainsi transformé en une chaîne composée ici des propriétés `rang` et `code.value`. Les autres propriétés éventuelles de l'objet sont ignorées.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJDYXTpZ29yaWVzXCI6IFtcbiAgICAgICAge1xuICAgICAgICAgIFwicmFuZ1wiOiAxLFxuICAgICAgICAgIFwiY29kZVwiOiB7XG4gICAgICAgICAgICBcInZhbHVlXCI6IFwiU0hTXCJcbiAgICAgICAgICB9XG4gICAgICAgIH0sXG4gICAgICAgIHtcbiAgICAgICAgICBcInJhbmdcIjogMixcbiAgICAgICAgICBcImNvZGVcIjoge1xuICAgICAgICAgICAgXCJ2YWx1ZVwiOiBcIklORk9cIlxuICAgICAgICAgIH1cbiAgICAgICAgfVxuICAgICAgXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6Ilt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gdmFsdWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuQ2F06Wdvcmllc1wiKS5tYXAoKGNhdGVnb3JpZSkgPT4gYCR7Y2F0ZWdvcmllLnJhbmd9LSR7Y2F0ZWdvcmllLmNvZGUudmFsdWV9YClcblxuW2R1bXBdXG5pbmRlbnQgPSB0cnVlIn0=)
+
+#### Variante : générer automatiquement le rang
+
+Si le rang n'est pas présent dans les données, il peut être calculé directement à partir de la position de chaque objet dans le tableau :
+
+```ini
+[assign]
+path = value
+value = get("value.Domaines").map((domaine, i) => `${i+1} - ${domaine.code.value}`)
+```
+
+Ici, `i` correspond à l'index de l'élément dans le tableau. Comme les index commencent à `0`, on utilise `i + 1` pour obtenir une numérotation commençant à `1`.
+
+On peut ainsi obtenir :
+
+```json
+[
+  "1 - SHS",
+  "2 - INFO"
+]
+```
+
+Cette variante est particulièrement pratique lorsque **l'ordre des éléments du tableau porte lui-même l'information hiérarchique**.
+
+---
+
+### Exclure d’un tableau les valeurs commençant par une chaîne donnée
+
+Il est possible de filtrer un tableau de chaînes de caractères en fonction du début de chaque valeur.
+
+Par exemple, un champ contenant des affiliations peut également contenir par erreur des adresses e-mail. On peut supprimer toutes les valeurs commençant par `E-mail` :
+
+```ini
+[assign]
+path = value
+value = get("value.affiliations").filter(value => !value.startsWith("E-mail"))
+```
+
+Par exemple :
+
+```json
+[
+  "Université de Lorraine",
+  "E-mail : jean.dupont@example.fr",
+  "CNRS",
+  "E-mail : alice.martin@example.fr",
+  "Université de Strasbourg"
+]
+```
+
+devient :
+
+```json
+[
+  "Université de Lorraine",
+  "CNRS",
+  "Université de Strasbourg"
+]
+```
+
+`filter()` parcourt les valeurs du tableau et `startsWith("E-mail")` vérifie si chaque chaîne commence par `E-mail`.
+
+L'opérateur `!` inverse le résultat du test : seules les valeurs **ne commençant pas** par `E-mail` sont conservées.
+
+> `startsWith()` teste uniquement le début de la chaîne. Une valeur contenant `E-mail` à un autre emplacement ne sera donc pas exclue.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJhZmZpbGlhdGlvbnNcIjogW1xuICAgICAgICBcIlVuaXZlcnNpdOkgZGUgTG9ycmFpbmVcIixcbiAgICAgICAgXCJFLW1haWwgOiBqZWFuLmR1cG9udEBleGFtcGxlLmZyXCIsXG4gICAgICAgIFwiQ05SU1wiLFxuICAgICAgICBcIkUtbWFpbCA6IGFsaWNlLm1hcnRpbkBleGFtcGxlLmZyXCIsXG4gICAgICAgIFwiVW5pdmVyc2l06SBkZSBTdHJhc2JvdXJnXCJcbiAgICAgIF1cbiAgICB9XG4gIH1cbl0iLCJzY3JpcHQiOiJbdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cbltyZXBsYWNlXVxucGF0aCA9IHZhbHVlXG52YWx1ZSA9IGdldChcInZhbHVlLmFmZmlsaWF0aW9uc1wiKS5maWx0ZXIodmFsdWUgPT4gIXZhbHVlLnN0YXJ0c1dpdGgoXCJFLW1haWxcIikpXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
+
+---
+
+### Inverser des éléments dans des chaînes de caractères
+
+Il est possible de combiner plusieurs fonctions pour modifier des chaînes de caractères contenues dans un tableau.
+
+Par exemple, pour transformer des noms d'auteurs écrits sous la forme `Nom, Prénom` en `Prénom, Nom` :
+
+```ini
+[assign]
+path = value
+value = get("value.auteurs").map(x => x.split(", ").reverse().join(", "))
+```
+
+Par exemple :
+
+```json
+[
+  "Durand, Jacques",
+  "Dubois, Daniel"
+]
+```
+
+devient :
+
+```json
+[
+  "Jacques, Durand",
+  "Daniel, Dubois"
+]
+```
+
+Le traitement est appliqué à chaque valeur du tableau avec `map()` :
+
+- `split(", ")` transforme chaque chaîne en tableau ;
+- `reverse()` inverse l'ordre des éléments ;
+- `join(", ")` reconstruit la chaîne de caractères.
+
+Cette combinaison peut notamment être utile pour **normaliser la forme des noms de personnes** dans un jeu de données.
+
+### Convertir une chaîne JSON en objet et inversement
+
+Il arrive qu'une structure JSON soit stockée dans Lodex sous la forme d'une simple chaîne de caractères. À l'inverse, il peut être nécessaire de transformer un objet ou un tableau en chaîne JSON.
+
+JavaScript fournit deux fonctions complémentaires pour effectuer ces conversions :
+
+- `JSON.parse` : chaîne JSON → objet ou tableau
+- `JSON.stringify` : objet ou tableau → chaîne JSON
+
+#### Transformer une chaîne JSON en objet avec `JSON.parse`
+
+Par exemple :
+
+```json
+{
+  "jsonValue": "{\"title\":\"Mon document\",\"year\":2026,\"openAccess\":true}"
+}
+```
+
+La valeur de `jsonValue` ressemble à un objet JSON, mais il s'agit en réalité d'une chaîne de caractères.
+
+```ini
+[assign]
+path = value
+value = get('value.jsonValue').thru(JSON.parse)
+```
+
+On obtient :
+
+```json
+{
+  "title": "Mon document",
+  "year": 2026,
+  "openAccess": true
+}
+```
+
+`get('value.jsonValue')` récupère la chaîne, puis `thru(JSON.parse)` la désérialise pour obtenir une véritable structure exploitable.
+
+> La chaîne doit contenir du JSON valide. Dans le cas contraire, `JSON.parse` provoquera une erreur.
+
+[Tester JSON.parse dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJqc29uVmFsdWVcIjogXCJ7XFxcInRpdGxlXFxcIjpcXFwiTW9uIGRvY3VtZW50XFxcIixcXFwieWVhclxcXCI6MjAyNixcXFwib3BlbkFjY2Vzc1xcXCI6dHJ1ZX1cIlxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6Ilt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gdmFsdWVcbnZhbHVlID0gZ2V0KCd2YWx1ZS5qc29uVmFsdWUnKS50aHJ1KEpTT04ucGFyc2UpXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
+
+#### Transformer un objet en chaîne JSON avec `JSON.stringify`
+
+À l'inverse, si `jsonValue` contient un véritable objet :
+
+```json
+{
+  "jsonValue": {
+    "title": "Mon document",
+    "year": 2026,
+    "openAccess": true,
+    "authors": [
+      "Alice Martin",
+      "Jean Dupont"
+    ]
+  }
+}
+```
+
+on peut le sérialiser :
+
+```ini
+[assign]
+path = value
+value = get('value.jsonValue').thru(JSON.stringify)
+```
+
+La structure devient alors une chaîne JSON :
+
+```text
+{"title":"Mon document","year":2026,"openAccess":true,"authors":["Alice Martin","Jean Dupont"]}
+```
+
+Cette fois, `thru(JSON.stringify)` effectue donc l'opération inverse de `JSON.parse`.
+
+En résumé :
+
+```text
+objet / tableau
+      ↓
+ JSON.stringify
+      ↓
+  chaîne JSON
+      ↓
+   JSON.parse
+      ↓
+objet / tableau
+```
+
+[Tester JSON.stringify dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJqc29uVmFsdWVcIjoge1xuICAgICAgICBcInRpdGxlXCI6IFwiTW9uIGRvY3VtZW50XCIsXG4gICAgICAgIFwieWVhclwiOiAyMDI2LFxuICAgICAgICBcIm9wZW5BY2Nlc3NcIjogdHJ1ZSxcbiAgICAgICAgXCJhdXRob3JzXCI6IFtcbiAgICAgICAgICBcIkFsaWNlIE1hcnRpblwiLFxuICAgICAgICAgIFwiSmVhbiBEdXBvbnRcIlxuICAgICAgICBdXG4gICAgICB9XG4gICAgfVxuICB9XG5dIiwic2NyaXB0IjoiW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSB2YWx1ZVxudmFsdWUgPSBnZXQoJ3ZhbHVlLmpzb25WYWx1ZScpLnRocnUoSlNPTi5zdHJpbmdpZnkpXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
+
+---
+
+### Créer un objet avec des propriétés issues de différentes colonnes
+
+Il est possible de construire un nouvel objet en regroupant des valeurs provenant de plusieurs colonnes.
+
+Par exemple, on dispose de deux champs contenant chacun des informations différentes :
+
+```json
+{
+  "istex": {
+    "ark": "ark:/67375/WNG-NVGLRQV3-C"
+  },
+  "conditor": {
+    "sourceUidChain": "!hal$hal-03566649!"
+  }
+}
+```
+
+On peut créer un nouvel objet avec `fix({})` :
+
+```ini
+[assign]
+path = value
+value = fix({ \
+  ark: self.value.istex.ark, \
+  sourceUidChain: self.value.conditor.sourceUidChain \
+})
+```
+
+On obtient :
+
+```json
+{
+  "ark": "ark:/67375/WNG-NVGLRQV3-C",
+  "sourceUidChain": "!hal$hal-03566649!"
+}
+```
+
+`fix({})` permet ici de définir la structure du nouvel objet.
+
+Les propriétés `ark` et `sourceUidChain` correspondent aux noms que l'on souhaite donner aux propriétés du nouvel objet, tandis que `self.value.istex.ark` et `self.value.conditor.sourceUidChain` permettent de récupérer dynamiquement les valeurs dans les colonnes d'origine.
+
+Cette méthode est notamment utile pour **regrouper dans une même structure des informations provenant de plusieurs champs ou de plusieurs enrichissements**.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJpc3RleFwiOiB7XG4gICAgICAgIFwiYXJrXCI6IFwiYXJrOi82NzM3NS9XTkctTlZHTFJRVjMtQ1wiXG4gICAgICB9LFxuICAgICAgXCJjb25kaXRvclwiOiB7XG4gICAgICAgIFwic291cmNlVWlkQ2hhaW5cIjogXCIhaGFsJGhhbC0wMzU2NjY0OSFcIlxuICAgICAgfVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6Ilt1c2VdXG5wbHVnaW4gPSBiYXNpY3NcblxuW0pTT05QYXJzZV1cbnNlcGFyYXRvciA9ICpcblxuW3JlcGxhY2VdXG5wYXRoID0gdmFsdWVcbnZhbHVlID0gZml4KHsgXFxcbiAgYXJrOiBzZWxmLnZhbHVlLmlzdGV4LmFyaywgXFxcbiAgc291cmNlVWlkQ2hhaW46IHNlbGYudmFsdWUuY29uZGl0b3Iuc291cmNlVWlkQ2hhaW4gXFxcbn0pXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
+
+---
+
+### Réduire plusieurs informations à une seule valeur
+
+Dans certains cas, plusieurs informations permettent de déterminer une seule valeur synthétique.
+
+On souhaite ici déterminer si un document est disponible dans **Istex**, dans **Conditor**, dans les deux bases ou dans aucune.
+
+```ini
+[assign]
+path = value
+value = fix({ \
+  ark: self.value.EnrichIstex.ark, \
+  sourceUidChain: self.value.EnrichConditor['business/sourceUidChain'] \
+}).reduce((result, value, index, collection) => { \
+  if(collection.ark && !collection.sourceUidChain){return "Istex"} \
+  if(collection.ark && collection.sourceUidChain){return "Istex & Conditor"} \
+  if(!collection.ark && collection.sourceUidChain){return "Conditor"} \
+  return result \
+}, "Aucune Base")
+```
+
+`reduce` permet ici de ramener les informations contenues dans l'objet à une seule valeur :
+
+- si `ark` existe mais pas `sourceUidChain` → `"Istex"`
+- si `ark` et `sourceUidChain` existent → `"Istex & Conditor"`
+- si `sourceUidChain` existe mais pas `ark` → `"Conditor"`
+- si aucune des deux valeurs n'existe → `"Aucune Base"`
+
+`"Aucune Base"` est la valeur initiale de l'accumulateur `result`. Elle est conservée lorsqu'aucune des conditions précédentes n'est satisfaite.
+
+Cette approche permet ainsi de **produire une information synthétique à partir de plusieurs propriétés d'un objet**.
+
+---
+
+### Réduire une collection à un tableau de valeurs spécifiques
+
+Dans cet exemple, on dispose d'une matrice dans laquelle chaque tableau contient un **RNSR** en première position, suivi d'un ou plusieurs instituts.
+
+Par exemple :
+
+```json
+[
+  ["200918450V", "INSU", "INSHS"],
+  ["199812866Y", "INSB"],
+  ["201220345A", "INSHS"],
+  ["200512345B", "INS2I", "INSIS"],
+  ["201998765C", "INEE", "INSHS"]
+]
+```
+
+On souhaite récupérer uniquement les RNSR associés à l'institut `INSHS`.
+
+```ini
+[assign]
+path = value
+value = get("value.MatriceRnsrInstituts").reduce((result, item) => { \
+  if (item.slice(1).some(element => element === "INSHS")) { \
+    result.push(item[0]) \
+  } \
+  return result \
+}, [])
+```
+
+On obtient :
+
+```json
+[
+  "200918450V",
+  "201220345A",
+  "201998765C"
+]
+```
+
+`reduce` parcourt ici chacun des tableaux de la matrice et construit progressivement un nouveau tableau.
+
+`[]` correspond à l'accumulateur de départ : le tableau dans lequel seront ajoutés les RNSR correspondant à notre condition.
+
+```js
+item.slice(1)
+```
+
+permet d'ignorer le premier élément du tableau, qui contient le RNSR, afin de ne parcourir que les instituts.
+
+```js
+.some(element => element === "INSHS")
+```
+
+vérifie si au moins l'un de ces instituts correspond à `INSHS`.
+
+Lorsque la condition est satisfaite :
+
+```js
+result.push(item[0])
+```
+
+ajoute à l'accumulateur le premier élément du tableau, c'est-à-dire le RNSR correspondant.
+
+Ce cas montre ainsi comment utiliser `reduce` pour **parcourir une structure complexe, sélectionner certains éléments et construire progressivement un nouveau tableau de résultats**.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJNYXRyaWNlUm5zckluc3RpdHV0c1wiOiBbXG4gICAgICAgIFtcIjIwMDkxODQ1MFZcIiwgXCJJTlNVXCIsIFwiSU5TSFNcIl0sXG4gICAgICAgIFtcIjE5OTgxMjg2NllcIiwgXCJJTlNCXCJdLFxuICAgICAgICBbXCIyMDEyMjAzNDVBXCIsIFwiSU5TSFNcIl0sXG4gICAgICAgIFtcIjIwMDUxMjM0NUJcIiwgXCJJTlMySVwiLCBcIklOU0lTXCJdLFxuICAgICAgICBbXCIyMDE5OTg3NjVDXCIsIFwiSU5FRVwiLCBcIklOU0hTXCJdXG4gICAgICBdXG4gICAgfVxuICB9XG5dIiwic2NyaXB0IjoiW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSB2YWx1ZVxudmFsdWUgPSBnZXQoXCJ2YWx1ZS5NYXRyaWNlUm5zckluc3RpdHV0c1wiKS5yZWR1Y2UoKHJlc3VsdCwgaXRlbSkgPT4geyBcXFxuICBpZiAoaXRlbS5zbGljZSgxKS5zb21lKGVsZW1lbnQgPT4gZWxlbWVudCA9PT0gXCJJTlNIU1wiKSkgeyBcXFxuICAgIHJlc3VsdC5wdXNoKGl0ZW1bMF0pIFxcXG4gIH0gXFxcbiAgcmV0dXJuIHJlc3VsdCBcXFxufSwgW10pXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
 
 
 ## Transformations globales (dans le cadre d'un loader)

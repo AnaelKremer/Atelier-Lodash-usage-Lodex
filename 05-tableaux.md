@@ -302,20 +302,54 @@ value = get("value.entree").without("B", "C")
 
 ## zip / unzip
 
-Associe les éléments de plusieurs tableaux entre eux (zip), ou inverse l’opération (unzip).
+Associe les éléments de plusieurs tableaux entre eux (`zip`), ou inverse l’opération (`unzip`).
 
 ```js
 value = zip(self.value.entree,self.value.entree2)
 // Peut aussi s'écrire value = get("value.entree").zip(self.value.entree2)
 // Entree : ["Niels Bohr", "Albert Einstein"] Entree2 : ["Danemark", "Allemagne"] → Sortie : [["Niels Bohr","Danemark"],["Albert Einstein","Allemagne"]]
+```
 
 [Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1wiTmllbHMgQm9oclwiLCBcIkFsYmVydCBFaW5zdGVpblwiXSxcbiAgICAgIFwiZW50cmVlMlwiOiBbXCJEYW5lbWFya1wiLCBcIkFsbGVtYWduZVwiXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gemlwKHNlbGYudmFsdWUuZW50cmVlLHNlbGYudmFsdWUuZW50cmVlMilcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgICAifQ==)
 
+> [!WARNING]
+> `zip` associe les éléments en fonction de leur position dans chaque tableau. Il faut donc veiller à conserver le même ordre et la même correspondance entre les tableaux avant d'utiliser `zip`.
+>
+> Par exemple :
+>
+> ```js
+> TableauA = ["A", "B", "C", "D", "E"]
+> TableauB = [1, 2, 1, 9, 0]
+> ```
+>
+> donne :
+>
+> ```js
+> [["A", 1], ["B", 2], ["C", 1], ["D", 9], ["E", 0]]
+> ```
+>
+> Si `uniq()` est appliqué uniquement à `TableauB`, celui-ci devient :
+>
+> ```js
+> [1, 2, 9, 0]
+> ```
+>
+> Les positions ne correspondent alors plus :
+>
+> ```js
+> [["A", 1], ["B", 2], ["C", 9], ["D", 0], ["E", undefined]]
+> ```
+>
+> Le même problème peut se produire avec `compact`, `filter` ou toute autre transformation supprimant des éléments dans un seul des tableaux.
+
+`unzip` réalise l'opération inverse :
+
+```js
 value = get("value.entree").unzip()
 // Entree : [["Niels Bohr","Danemark"],["Albert Einstein","Allemagne"]] → Sortie : [["Niels Bohr","Albert Einstein"],["Danemark","Allemagne"]]
 ```
 
-[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1tcIk5pZWxzIEJvaHJcIixcIkRhbmVtYXJrXCJdLFtcIkFsYmVydCBFaW5zdGVpblwiLFwiQWxsZW1hZ25lXCJdXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnVuemlwKClcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgICAifQ==)
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwidmFsdWVcIjoge1xuICAgICAgXCJlbnRyZWVcIjogW1tcIk5pZWxzIEJvaHJcIixcIkRhbmVtYXJrXCJdLFtcIkFsYmVydCBFaW5zdGVpblwiLFwiQWxsZW1hZ25lXCJdXVxuICAgIH1cbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bcmVwbGFjZV1cbnBhdGggPSBzb3J0aWVcbnZhbHVlID0gZ2V0KFwidmFsdWUuZW50cmVlXCIpLnVuemlwKClcblxuW2RlYnVnXVxudGV4dCA9IGJlZm9yZSBnZW5lcmF0aW5nIGFuIGlkZW50aWZpZXIgcGVyIG9iamVjdFxuW5kdW1wXVxuaW5kZW50ID0gdHJ1ZSJ9)
 
 ## fromPairs
 
