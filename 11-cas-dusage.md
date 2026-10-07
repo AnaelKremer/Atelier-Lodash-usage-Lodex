@@ -1988,96 +1988,218 @@ value = fix("").uniqueId().padStart(6, "0")
 
 ---
 
-### Dédoublonner des lignes parfaitement identiques
+### Dédoublonner un dataset à partir d'un identifiant toujours renseigné
 
-Dans certains jeux de données, on ne dispose pas de champ discriminant clair (comme un DOI ou autre identifiant unique) qui permet de détecter et supprimer les doublons.  
+Lorsqu'un jeu de données possède un identifiant unique et fiable, le dédoublonnage est très simple avec l'instruction `[dedupe]`.
 
-Dans ces situations, la seule solution consiste à comparer l’objet entier. Si deux lignes sont strictement identiques, l’une d’elles doit être supprimée.  
-
-Or, deux objets JavaScript identiques peuvent être difficiles à comparer directement, surtout dans un flux de données.  
-La seule solution consiste à générer une **empreinte unique** de chaque objet, puis à dédoublonner sur cette empreinte.  
-
-Pour ce faire, il faut utiliser un **SHA** *(Secure Hash Algorithm)*.  
-C'est une fonction de hachage cryptographique qui transforme une donnée (texte, nombre, objet JSON…) en une empreinte numérique unique (une longue chaîne de caractères).  
-*(Si vous souhaitez en connaitre davantage sur ce point, je vous conseille cet excellent [livre](https://www.deboecksuperieur.com/livre/9782807345331-les-algorithmes-c-est-plus-simple-avec-un-dessin)).*
-
-Il faut donc appliquer une fonction SHA à chaque ligne de son dataset pour pouvoir dédoublonner.
-
-Démonstration :
+Prenons un jeu de données bibliographiques dans lequel chaque notice possède un DOI :
 
 ```json
 [
-  { "a": 1, "b": 2 },
-  { "a": 2, "b": 3 },
-  { "a": 1, "b": 2 }
+  {
+    "doi": "10.1111/article-a",
+    "title": "Article A"
+  },
+  {
+    "doi": "10.2222/article-b",
+    "title": "Article B"
+  },
+  {
+    "doi": "10.1111/article-a",
+    "title": "Article A"
+  }
 ]
 ```
 
-```js
-[assign]
-; On met l'objet complet dans un champ hash
-path = hash
-value = self().cloneDeep().thru(obj => _(obj).toPairs().sortBy(0).fromPairs().value())
-; Par sécurité on copie un objet propre pour éviter les références circulaires et on trie ses clés par ordre alphabétique
+Il suffit d'indiquer à `[dedupe]` le champ qui doit servir de clé de dédoublonnage :
 
-[map]
-; On "prépare" le champ hash pour lui appliquer plusieurs transformations spécifiques
-path = hash
-
-[map/identify]
-; On génère un identifiant SHA
-scheme = sha
-path = hash
-
-[map/exchange]
-value = get('hash')
+```ini
+[dedupe]
+path = doi
+ignore = true
 ```
 
-A cette étape du script on a bien généré des empreintes numériques dans le champ *hash* :
+On obtient alors :
 
 ```json
-[{
-    "a": 1,
-    "b": 2,
-    "hash": [
-        "sha:/43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777z"
-    ]
-},
-{
-    "a": 2,
-    "b": 3,
-    "hash": [
-        "sha:/206f7b5543e6f2ef39bf334988fd7097b725caeed16588cd9d785480f2f0f8f6S"
-    ]
-},
-{
-    "a": 1,
-    "b": 2,
-    "hash": [
-        "sha:/43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777z"
-    ]
-}]
+[
+  {
+    "doi": "10.1111/article-a",
+    "title": "Article A"
+  },
+  {
+    "doi": "10.2222/article-b",
+    "title": "Article B"
+  }
+]
 ```
 
-Ne reste plus qu'à dédoublonner et éventuellement enlever le champ *hash* qui a joué son rôle.
+> **Attention :** cette méthode suppose que le champ utilisé pour le dédoublonnage est renseigné pour toutes les lignes. Si plusieurs notices possèdent par exemple un DOI vide `""`, elles auront toutes la même valeur de dédoublonnage et seront donc considérées comme des doublons.
 
-```js
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwiZG9pXCI6IFwiMTAuMTExMS9hcnRpY2xlLWFcIixcbiAgICBcInRpdGxlXCI6IFwiQXJ0aWNsZSBBXCJcbiAgfSxcbiAge1xuICAgIFwiZG9pXCI6IFwiMTAuMjIyMi9hcnRpY2xlLWJcIixcbiAgICBcInRpdGxlXCI6IFwiQXJ0aWNsZSBCXCJcbiAgfSxcbiAge1xuICAgIFwiZG9pXCI6IFwiMTAuMTExMS9hcnRpY2xlLWFcIixcbiAgICBcInRpdGxlXCI6IFwiQXJ0aWNsZSBBXCJcbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bZGVkdXBlXVxucGF0aCA9IGRvaVxuaWdub3JlID0gdHJ1ZVxuXG5bZHVtcF1cbmluZGVudCA9IHRydWVcbiAgIn0=)
+
+---
+
+### Dédoublonner un dataset à partir d'un identifiant qui peut être absent
+
+Dans un jeu de données réel, un identifiant comme le DOI n'est pas nécessairement présent pour toutes les notices.
+
+Prenons l'exemple suivant :
+
+```json
+[
+  {
+    "doi": "10.1111/article-a",
+    "title": "Article A"
+  },
+  {
+    "doi": "",
+    "title": "Article sans DOI A"
+  },
+  {
+    "doi": "",
+    "title": "Article sans DOI B"
+  },
+  {
+    "doi": "10.1111/article-a",
+    "title": "Article A"
+  }
+]
+```
+
+Un simple dédoublonnage sur le DOI poserait ici problème :
+
+```ini
 [dedupe]
-path = hash
+path = doi
+ignore = true
+```
+
+Les deux notices sans DOI possèdent toutes les deux la valeur `""`. Elles seraient donc considérées comme des doublons alors qu'il s'agit de deux publications différentes.
+
+Pour éviter cela, on peut créer une clé temporaire de dédoublonnage :
+
+- si le DOI est renseigné, on utilise le DOI ;
+- s'il est vide, on génère un identifiant différent pour chaque ligne.
+
+```ini
+[assign]
+path = dedupeKey
+value = get("doi").thru(v => _.isEmpty(v) ? _.uniqueId("missing-") : v)
+
+[dedupe]
+path = dedupeKey
 ignore = true
 
 [exchange]
-value = omit("hash")
+value = omit("dedupeKey")
 ```
 
-:point_down:
+Avant le dédoublonnage, les clés générées correspondent par exemple à :
+
+```text
+10.1111/article-a
+missing-1
+missing-2
+10.1111/article-a
+```
+
+Les deux notices possédant le même DOI sont donc considérées comme des doublons, tandis que les notices sans DOI reçoivent chacune une clé différente et sont conservées.
+
+Une fois le dédoublonnage effectué, `[exchange]` et `omit()` permettent de supprimer le champ temporaire `dedupeKey`.
+
+> **À retenir :** `[dedupe]` ne détermine pas lui-même si deux notices représentent réellement la même ressource. Il compare les valeurs de la clé qu'on lui fournit. Il est donc important de construire une clé adaptée aux données.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwiZG9pXCI6IFwiMTAuMTExMS9hcnRpY2xlLWFcIixcbiAgICBcInRpdGxlXCI6IFwiQXJ0aWNsZSBBXCJcbiAgfSxcbiAge1xuICAgIFwiZG9pXCI6IFwiXCIsXG4gICAgXCJ0aXRsZVwiOiBcIkFydGljbGUgc2FucyBET0kgQVwiXG4gIH0sXG4gIHtcbiAgICBcImRvaVwiOiBcIlwiLFxuICAgIFwidGl0bGVcIjogXCJBcnRpY2xlIHNhbnMgRE9JIEJcIlxuICB9LFxuICB7XG4gICAgXCJkb2lcIjogXCIxMC4xMTExL2FydGljbGUtYVwiLFxuICAgIFwidGl0bGVcIjogXCJBcnRpY2xlIEFcIlxuICB9XG5dIiwic2NyaXB0IjoiIyBFWlMgc2NyaXB0XG5bdXNlXVxucGx1Z2luID0gYmFzaWNzXG5cbltKU09OUGFyc2VdXG5zZXBhcmF0b3IgPSAqXG5cblthc3NpZ25dXG5wYXRoID0gZGVkdXBlS2V5XG52YWx1ZSA9IGdldChcImRvaVwiKS50aHJ1KHYgPT4gXy5pc0VtcHR5KHYpID8gXy51bmlxdWVJZChcIm1pc3NpbmctXCIpIDogdilcblxuW2RlZHVwZV1cbnBhdGggPSBkZWR1cGVLZXlcbmlnbm9yZSA9IHRydWVcblxuW2V4Y2hhbmdlXVxudmFsdWUgPSBvbWl0KFwiZGVkdXBlS2V5XCIpXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
+
+---
+
+### Dédoublonner un dataset à partir d'une combinaison de champs
+
+Dans certains jeux de données, aucun champ ne constitue à lui seul un identifiant permettant de repérer les doublons. On peut alors construire une clé de dédoublonnage à partir de plusieurs champs de la notice.
+
+Prenons l'exemple suivant :
 
 ```json
 [
-  {"a":1,"b":2},
-  {"a":2,"b":3}
+  {
+    "line": "001",
+    "title": "Science ouverte",
+    "year": 2025,
+    "type": "article"
+  },
+  {
+    "line": "002",
+    "title": "Science ouverte",
+    "year": 2024,
+    "type": "article"
+  },
+  {
+    "line": "003",
+    "title": "Science ouverte",
+    "year": 2025,
+    "type": "working paper"
+  },
+  {
+    "line": "004",
+    "title": "Science ouverte",
+    "year": 2025,
+    "type": "article"
+  }
 ]
 ```
+
+Les première et quatrième lignes correspondent ici à la même publication. Elles possèdent les mêmes `title`, `year` et `type`.
+
+Cependant, chaque ligne possède également un numéro `line` différent. Ce champ est un identifiant technique propre à chaque ligne : il ne doit donc pas participer au dédoublonnage.
+
+On peut créer une clé temporaire à partir de l'objet complet en excluant le champ `line` avec `omit()`. `JSON.stringify()` permet ensuite de transformer l'objet obtenu en une chaîne de caractères utilisable comme clé de dédoublonnage.
+
+```ini
+[assign]
+path = dedupeKey
+value = self().omit("line").thru(JSON.stringify)
+
+[dedupe]
+path = dedupeKey
+ignore = true
+
+[exchange]
+value = omit("dedupeKey")
+```
+
+Les première et quatrième lignes possèdent désormais la même clé. Elles sont donc considérées comme des doublons.
+
+Une fois le dédoublonnage effectué, le champ temporaire `dedupeKey` est supprimé avec `omit()`.
+
+On obtient finalement :
+
+```json
+[
+  {
+    "line": "001",
+    "title": "Science ouverte",
+    "year": 2025,
+    "type": "article"
+  },
+  {
+    "line": "002",
+    "title": "Science ouverte",
+    "year": 2024,
+    "type": "article"
+  },
+  {
+    "line": "003",
+    "title": "Science ouverte",
+    "year": 2025,
+    "type": "working paper"
+  }
+]
+```
+
+> **À adapter :** `omit()` est particulièrement pratique lorsque l'on souhaite comparer presque tous les champs d'une notice en excluant seulement ceux qui ne sont pas significatifs pour le dédoublonnage (numéro de ligne, date d'import, identifiant technique, etc.). Lorsque seuls quelques champs doivent au contraire participer à la comparaison, `pick()` sera plus adapté.
+
+[Tester cet exemple dans EZS Playground](https://ezs-playground.lodex.inist.fr/?x=eyJpbnB1dCI6IltcbiAge1xuICAgIFwibGluZVwiOiBcIjAwMVwiLFxuICAgIFwidGl0bGVcIjogXCJTY2llbmNlIG91dmVydGVcIixcbiAgICBcInllYXJcIjogMjAyNSxcbiAgICBcInR5cGVcIjogXCJhcnRpY2xlXCJcbiAgfSxcbiAge1xuICAgIFwibGluZVwiOiBcIjAwMlwiLFxuICAgIFwidGl0bGVcIjogXCJTY2llbmNlIG91dmVydGVcIixcbiAgICBcInllYXJcIjogMjAyNCxcbiAgICBcInR5cGVcIjogXCJhcnRpY2xlXCJcbiAgfSxcbiAge1xuICAgIFwibGluZVwiOiBcIjAwM1wiLFxuICAgIFwidGl0bGVcIjogXCJTY2llbmNlIG91dmVydGVcIixcbiAgICBcInllYXJcIjogMjAyNSxcbiAgICBcInR5cGVcIjogXCJ3b3JraW5nIHBhcGVyXCJcbiAgfSxcbiAge1xuICAgIFwibGluZVwiOiBcIjAwNFwiLFxuICAgIFwidGl0bGVcIjogXCJTY2llbmNlIG91dmVydGVcIixcbiAgICBcInllYXJcIjogMjAyNSxcbiAgICBcInR5cGVcIjogXCJhcnRpY2xlXCJcbiAgfVxuXSIsInNjcmlwdCI6IiMgRVpTIHNjcmlwdFxuW3VzZV1cbnBsdWdpbiA9IGJhc2ljc1xuXG5bSlNPTlBhcnNlXVxuc2VwYXJhdG9yID0gKlxuXG5bYXNzaWduXVxucGF0aCA9IGRlZHVwZUtleVxudmFsdWUgPSBzZWxmKCkub21pdChcImxpbmVcIikudGhydShKU09OLnN0cmluZ2lmeSlcblxuW2RlZHVwZV1cbnBhdGggPSBkZWR1cGVLZXlcbmlnbm9yZSA9IHRydWVcblxuW2V4Y2hhbmdlXVxudmFsdWUgPSBvbWl0KFwiZGVkdXBlS2V5XCIpXG5cbltkdW1wXVxuaW5kZW50ID0gdHJ1ZVxuICAifQ==)
 
 ---
 
