@@ -1,6 +1,6 @@
 # Atelier Lodash (usage Lodex) 
 
-## 📚 Sommaire
+## 📚 Sommaire 
 
 1. [Introduction](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/01-introduction.md)
 2. [Comprendre les types de données et les opérateurs](https://github.com/AnaelKremer/Atelier-Lodash-usage-Lodex/blob/main/02-types-et-operateurs.md)
